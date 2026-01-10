@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors - Bronze Primary */
+  --color-primary-50: #faf8f5;
+  --color-primary-100: #f3efe8;
+  --color-primary-200: #e5ddd0;
+  --color-primary-300: #d4c4ad;
+  --color-primary-400: #b89f78;
+  --color-primary-500: #9c7235;
+  --color-primary-600: #8a6530;
+  --color-primary-700: #725429;
+  --color-primary-800: #5d4523;
+  --color-primary-900: #4d391d;
+  --color-primary-950: #2a1f10;
+
+  /* Secondary Colors - Neutral Dark Gray (no blue tint) */
+  --color-secondary-50: #fafafa;
+  --color-secondary-100: #f5f5f5;
+  --color-secondary-200: #e5e5e5;
+  --color-secondary-300: #d4d4d4;
+  --color-secondary-400: #a3a3a3;
+  --color-secondary-500: #737373;
+  --color-secondary-600: #525252;
+  --color-secondary-700: #404040;
+  --color-secondary-800: #262626;
+  --color-secondary-900: #171717;
+  --color-secondary-950: #0a0a0a;
+
+  /* Font Family */
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-secondary-900);
+}
+
+/* Custom utility classes */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Focus styles for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+.transition-base {
+  transition: all 0.2s ease-in-out;
+}

@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "title": "Top Deck Montreal | Professional Deck Staining & Restoration",
+    "description": "Montreal's trusted deck staining experts. Professional pressure washing, sanding, and staining services for decks, fences, and railings."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "getQuote": "Get a Quote",
+    "toggleMenu": "Toggle navigation menu"
+  },
+  "hero": {
+    "title1": "Montreal's Wood",
+    "title2": "Staining Pros",
+    "description": "Professional pressure washing, sanding, and staining for decks, fences, and railings across Montreal.",
+    "cta": "Get a Free Quote",
+    "imageAlt": "Beautiful restored outdoor wood deck"
+  },
+  "servicesPreview": {
+    "title": "Our 3-Step Process",
+    "description": "We bring your outdoor wood back to life with our proven restoration method.",
+    "steps": {
+      "wash": {
+        "title": "Wash",
+        "description": "Deep pressure washing removes years of dirt, mold, and old finishes."
+      },
+      "sand": {
+        "title": "Sand",
+        "description": "Smooth sanding opens wood pores for optimal stain absorption."
+      },
+      "stain": {
+        "title": "Stain",
+        "description": "Premium stains penetrate deep to protect and beautify for years."
+      }
+    },
+    "whatWeWorkOn": "What we work on:",
+    "surfaces": {
+      "decks": "Decks",
+      "fences": "Fences",
+      "railings": "Railings",
+      "patios": "Patios",
+      "pergolas": "Pergolas",
+      "stairs": "Stairs"
+    },
+    "learnMore": "Learn more about our services"
+  },
+  "whyChooseUs": {
+    "subtitle": "Why Choose Us",
+    "title": "Montreal's Trusted Deck Experts",
+    "description": "We've been restoring outdoor wood across Montreal for over 10 years. Our commitment to quality and customer satisfaction sets us apart.",
+    "features": {
+      "quality": {
+        "title": "Quality Materials",
+        "description": "We use only premium stains and sealers from trusted brands that protect your wood for years to come."
+      },
+      "onTime": {
+        "title": "On-Time Service",
+        "description": "We respect your schedule and complete every project on time, keeping you informed every step of the way."
+      },
+      "experience": {
+        "title": "10+ Years Experience",
+        "description": "Over a decade of restoring Montreal's outdoor wood means you get expert craftsmanship every time."
+      }
+    },
+    "servingAreas": "Proudly serving Montreal, Laval, Longueuil, and surrounding areas"
+  },
+  "testimonials": {
+    "projectsCompleted": "Projects Completed",
+    "yearsExperience": "Years Experience",
+    "starRating": "Star Rating"
+  },
+  "ctaBanner": {
+    "title": "Ready to Transform Your Space?",
+    "description": "Get a free quote and let's bring your outdoor wood back to life.",
+    "cta": "Get Your Free Quote",
+    "imageAlt": "Beautiful backyard deck"
+  },
+  "servicesPage": {
+    "heroTitle": "Our Services",
+    "heroDescription": "Professional wood restoration using our proven 3-step process.",
+    "processTitle": "The 3-Step Process",
+    "processDescription": "Every project follows our tried-and-true restoration method for consistent, beautiful results.",
+    "step": "Step",
+    "steps": {
+      "washing": {
+        "title": "Pressure Washing",
+        "description": "We start with a thorough deep clean using professional-grade pressure washing equipment. This removes years of dirt, grime, mold, mildew, and old finishes, revealing the natural wood underneath.",
+        "details": [
+          "Removes built-up dirt and debris",
+          "Eliminates mold and mildew",
+          "Strips old, peeling finishes",
+          "Prepares surface for sanding"
+        ]
+      },
+      "sanding": {
+        "title": "Sanding",
+        "description": "Once dry, we carefully sand the entire surface to create the perfect canvas for staining. Sanding smooths rough spots, opens the wood grain, and ensures optimal stain absorption.",
+        "details": [
+          "Smooths rough and splintered areas",
+          "Opens wood pores for better absorption",
+          "Creates even, uniform surface",
+          "Removes any remaining old finish"
+        ]
+      },
+      "staining": {
+        "title": "Staining",
+        "description": "The final step is applying premium-quality stain that penetrates deep into the wood. Our stains protect against UV damage, moisture, and wear while bringing out the natural beauty of your wood.",
+        "details": [
+          "Premium penetrating stains",
+          "UV and moisture protection",
+          "Wide range of color options",
+          "Long-lasting, beautiful finish"
+        ]
+      }
+    },
+    "surfacesTitle": "What We Work On",
+    "surfacesDescription": "We restore all types of outdoor wood surfaces.",
+    "surfaces": {
+      "decks": {
+        "title": "Decks & Patios",
+        "description": "Restore your outdoor living space to its former glory."
+      },
+      "fences": {
+        "title": "Fences & Gates",
+        "description": "Protect your privacy fence with a fresh, uniform finish."
+      },
+      "railings": {
+        "title": "Railings & Stairs",
+        "description": "Keep your railings safe and beautiful for years to come."
+      },
+      "pergolas": {
+        "title": "Pergolas & Gazebos",
+        "description": "Enhance your backyard structures with professional care."
+      }
+    },
+    "ctaTitle": "Ready to Restore Your Wood?",
+    "ctaDescription": "Get a free, no-obligation quote for your project. We'll assess your needs and provide honest recommendations.",
+    "ctaButton": "Get Your Free Quote"
+  },
+  "galleryPage": {
+    "title": "Our Work",
+    "imageAlt": "Our work",
+    "before": "Before",
+    "after": "After",
+    "projects": {
+      "cedarDeck": "Cedar Deck Restoration",
+      "modernBackyard": "Modern Backyard Deck",
+      "poolside": "Poolside Deck",
+      "outdoorLiving": "Outdoor Living Space",
+      "patioRefinish": "Patio Refinish",
+      "gardenDeck": "Garden Deck",
+      "fenceStaining": "Fence Staining",
+      "luxuryHome": "Luxury Home Deck",
+      "contemporary": "Contemporary Design"
+    }
+  },
+  "contactPage": {
+    "letsTalk": "Let's Talk",
+    "getQuote": "Get a Quote",
+    "mobileDescription": "Fill out the form and we'll get back to you within 24 hours.",
+    "requestQuote": "Request a Quote",
+    "desktopDescription": "We'll get back to you within 24 hours.",
+    "imageAlt": "Beautiful outdoor deck"
+  },
+  "quoteForm": {
+    "labels": {
+      "fullName": "Full Name *",
+      "email": "Email Address *",
+      "phone": "Phone Number *",
+      "address": "Address / Area",
+      "service": "What needs work? *",
+      "size": "Approximate Size / Scope",
+      "timeline": "Preferred Timeline",
+      "message": "Additional Details"
+    },
+    "placeholders": {
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "(514) 555-0123",
+      "address": "Montreal, QC",
+      "size": "e.g., 300 sq ft deck, 50 ft fence",
+      "message": "Tell us more about your project. What's the current condition? Any specific requirements or concerns?"
+    },
+    "surfaces": {
+      "deck": "Deck / Patio",
+      "fence": "Fence / Gate",
+      "railing": "Railing / Stairs",
+      "pergola": "Pergola / Gazebo",
+      "multiple": "Multiple Surfaces",
+      "other": "Other"
+    },
+    "timelines": {
+      "asap": "As soon as possible",
+      "1-2weeks": "Within 1-2 weeks",
+      "1month": "Within a month",
+      "flexible": "Flexible / Planning ahead"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "phoneRequired": "Phone number is required",
+      "serviceRequired": "Please select a service"
+    },
+    "submit": "Request Free Quote",
+    "submitting": "Submitting...",
+    "success": {
+      "title": "Thank You!",
+      "message": "We've received your quote request and will get back to you within 24 hours.",
+      "button": "Submit Another Request"
+    },
+    "disclaimer": "* Required fields. We respect your privacy and will never share your information."
+  },
+  "footer": {
+    "tagline": "Professional deck staining & exterior painting in Montreal.",
+    "quickLinks": "Quick Links",
+    "getInTouch": "Get in Touch",
+    "copyright": "Top Deck Montreal. All rights reserved."
+  }
+}
