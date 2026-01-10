@@ -173,7 +173,8 @@
       "service": "What needs work? *",
       "size": "Approximate Size / Scope",
       "timeline": "Preferred Timeline",
-      "message": "Additional Details"
+      "message": "Additional Details",
+      "images": "Upload Photos (optional)"
     },
     "placeholders": {
       "name": "John Doe",
@@ -181,7 +182,8 @@
       "phone": "(514) 555-0123",
       "address": "Montreal, QC",
       "size": "e.g., 300 sq ft deck, 50 ft fence",
-      "message": "Tell us more about your project. What's the current condition? Any specific requirements or concerns?"
+      "message": "Tell us more about your project. What's the current condition? Any specific requirements or concerns?",
+      "images": "Click to upload photos of your deck or project"
     },
     "surfaces": {
       "deck": "Deck / Patio",
@@ -202,7 +204,8 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Please enter a valid email",
       "phoneRequired": "Phone number is required",
-      "serviceRequired": "Please select a service"
+      "serviceRequired": "Please select a service",
+      "submitFailed": "Failed to submit form. Please try again."
     },
     "submit": "Request Free Quote",
     "submitting": "Submitting...",

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 
-interface FormData {
+interface FormDataState {
   name: string
   email: string
   phone: string
@@ -15,6 +15,7 @@ interface FormData {
   size: string
   timeline: string
   message: string
+  images: File[]
 }
 
 interface FormErrors {
@@ -84,7 +85,7 @@ export function QuoteForm() {
     { value: 'flexible', label: t('timelines.flexible') },
   ]
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataState>({
     name: '',
     email: '',
     phone: '',
@@ -93,12 +94,15 @@ export function QuoteForm() {
     size: '',
     timeline: '',
     message: '',
+    images: [],
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -133,13 +137,38 @@ export function QuoteForm() {
     }
 
     setIsSubmitting(true)
+    setSubmitError(null)
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    try {
+      const submitData = new FormData()
+      submitData.append('name', formData.name)
+      submitData.append('email', formData.email)
+      submitData.append('phone', formData.phone)
+      submitData.append('address', formData.address)
+      submitData.append('service', formData.service)
+      submitData.append('size', formData.size)
+      submitData.append('timeline', formData.timeline)
+      submitData.append('message', formData.message)
 
-    console.log('Form submitted:', formData)
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+      formData.images.forEach((file) => {
+        submitData.append('images', file)
+      })
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        body: submitData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form')
+      }
+
+      setIsSubmitted(true)
+    } catch {
+      setSubmitError(t('errors.submitFailed'))
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -152,6 +181,18 @@ export function QuoteForm() {
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: undefined }))
     }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
+  }
+
+  const removeFile = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }))
   }
 
   if (isSubmitted) {
@@ -351,8 +392,76 @@ export function QuoteForm() {
       </motion.div>
 
       <motion.div
-        className="pt-4"
         custom={5}
+        variants={shouldReduceMotion ? {} : formFieldVariants}
+      >
+        <label className="block text-sm font-medium text-secondary-700 mb-2">
+          {t('labels.images')}
+        </label>
+        <div
+          className="border-2 border-dashed border-secondary-300 rounded-xl p-6 text-center hover:border-primary-400 transition-colors cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <svg
+            className="mx-auto h-12 w-12 text-secondary-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+            />
+          </svg>
+          <p className="mt-2 text-sm text-secondary-600">{t('placeholders.images')}</p>
+        </div>
+
+        {formData.images.length > 0 && (
+          <div className="mt-4 space-y-2">
+            {formData.images.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between bg-secondary-50 rounded-lg px-4 py-2"
+              >
+                <span className="text-sm text-secondary-700 truncate">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFile(index)}
+                  className="text-secondary-400 hover:text-red-500 transition-colors"
+                >
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      {submitError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm"
+        >
+          {submitError}
+        </motion.div>
+      )}
+
+      <motion.div
+        className="pt-4"
+        custom={6}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
         <motion.div
@@ -415,7 +524,7 @@ export function QuoteForm() {
 
       <motion.p
         className="text-sm text-secondary-500"
-        custom={6}
+        custom={7}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
         {t('disclaimer')}

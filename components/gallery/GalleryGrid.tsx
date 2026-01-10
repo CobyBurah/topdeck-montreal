@@ -180,9 +180,6 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
     handleMove(e.touches[0].clientX)
   }
 
-  // Calculate opacity: 0% slider = before visible, 100% slider = after visible
-  const afterOpacity = sliderPosition / 100
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -205,8 +202,11 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
         onTouchMove={handleTouchMove}
         onTouchEnd={() => setIsDragging(false)}
       >
-        {/* Before image (base layer - always full) */}
-        <div className="absolute inset-0">
+        {/* Before image - clipped to left side of slider */}
+        <div
+          className="absolute inset-0"
+          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+        >
           <Image
             src={project.before}
             alt={`${title} - ${beforeLabel}`}
@@ -217,10 +217,10 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
           />
         </div>
 
-        {/* After image (fades in based on slider - always full) */}
+        {/* After image - clipped to right side of slider */}
         <div
           className="absolute inset-0"
-          style={{ opacity: afterOpacity }}
+          style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
         >
           <Image
             src={project.after}

@@ -173,7 +173,8 @@
       "service": "Quel travail est requis? *",
       "size": "Taille / Portée approximative",
       "timeline": "Délai souhaité",
-      "message": "Détails supplémentaires"
+      "message": "Détails supplémentaires",
+      "images": "Télécharger des photos (optionnel)"
     },
     "placeholders": {
       "name": "Jean Tremblay",
@@ -181,7 +182,8 @@
       "phone": "(514) 555-0123",
       "address": "Montréal, QC",
       "size": "ex: terrasse de 300 pi², clôture de 50 pi",
-      "message": "Parlez-nous de votre projet. Quel est l'état actuel? Y a-t-il des exigences ou préoccupations spécifiques?"
+      "message": "Parlez-nous de votre projet. Quel est l'état actuel? Y a-t-il des exigences ou préoccupations spécifiques?",
+      "images": "Cliquez pour télécharger des photos de votre terrasse ou projet"
     },
     "surfaces": {
       "deck": "Terrasse / Patio",
@@ -202,7 +204,8 @@
       "emailRequired": "Le courriel est requis",
       "emailInvalid": "Veuillez entrer un courriel valide",
       "phoneRequired": "Le numéro de téléphone est requis",
-      "serviceRequired": "Veuillez sélectionner un service"
+      "serviceRequired": "Veuillez sélectionner un service",
+      "submitFailed": "Échec de l'envoi du formulaire. Veuillez réessayer."
     },
     "submit": "Demander une soumission gratuite",
     "submitting": "Envoi en cours...",
