@@ -37,6 +37,8 @@ export function Hero() {
           alt={t('imageAlt')}
           fill
           className="object-cover"
+          sizes="100vw"
+          quality={60}
           priority
         />
       </motion.div>

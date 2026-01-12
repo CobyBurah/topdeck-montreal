@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
@@ -15,66 +15,85 @@ interface BeforeAfterProject {
 const projects: BeforeAfterProject[] = [
   {
     id: 1,
-    titleKey: 'cedarDeck',
-    before: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+    titleKey: 'bmNaturalCedartone1',
+    before: '/GalleryImages/1-before.avif',
+    after: '/GalleryImages/1-after-BM-Semi-NaturalCedartone(ES-45).avif',
   },
   {
     id: 2,
-    titleKey: 'modernBackyard',
-    before: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+    titleKey: 'bmSeaGullGray',
+    before: '/GalleryImages/2-before.avif',
+    after: '/GalleryImages/2-after-BM-Solid-SeaGullGray(ES-72).avif',
   },
   {
     id: 3,
-    titleKey: 'poolside',
-    before: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
+    titleKey: 'lignaGoldenPine1',
+    before: '/GalleryImages/3-before.avif',
+    after: '/GalleryImages/3-after-Ligna-GoldenPine.avif',
   },
   {
     id: 4,
-    titleKey: 'outdoorLiving',
-    before: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80',
+    titleKey: 'steinaLightOak1',
+    before: '/GalleryImages/4-before.jpeg',
+    after: '/GalleryImages/4-after-Steina-LightOak.jpeg',
   },
   {
     id: 5,
-    titleKey: 'patioRefinish',
-    before: 'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80',
+    titleKey: 'lignaGoldenPine2',
+    before: '/GalleryImages/5-before.JPG',
+    after: '/GalleryImages/5-after-Ligna-GoldenPine.JPG',
   },
   {
     id: 6,
-    titleKey: 'gardenDeck',
-    before: 'https://images.unsplash.com/photo-1600566752734-2a0cd66c42b7?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1541123603104-512919d6a96c?w=800&q=80',
+    titleKey: 'lignaMapleSugar',
+    before: '/GalleryImages/6-before.JPG',
+    after: '/GalleryImages/6-after-Ligna-MapleSugar.JPG',
   },
   {
     id: 7,
-    titleKey: 'fenceStaining',
-    before: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+    titleKey: 'bmNaturalCedartone2',
+    before: '/GalleryImages/8-before.JPG',
+    after: '/GalleryImages/8-after-BM-Semi-NaturalCedartone(ES-45).JPG',
   },
   {
     id: 8,
-    titleKey: 'luxuryHome',
-    before: 'https://images.unsplash.com/photo-1600047509782-20d39509f26d?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
+    titleKey: 'steinaLightOak2',
+    before: '/GalleryImages/9-before.JPG',
+    after: '/GalleryImages/9-after-Steina-LightOak.JPG',
   },
   {
     id: 9,
-    titleKey: 'contemporary',
-    before: 'https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=800&q=80',
-    after: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80',
+    titleKey: 'bmHiddenValley',
+    before: '/GalleryImages/10-before.JPG',
+    after: '/GalleryImages/10-after-BM-HiddenValley(1134).JPG',
+  },
+  {
+    id: 10,
+    titleKey: 'lignaGoldenPine3',
+    before: '/GalleryImages/11-before.JPG',
+    after: '/GalleryImages/11-after-Ligna-GoldenPine.JPG',
+  },
+  {
+    id: 11,
+    titleKey: 'steinaNaturalCedar',
+    before: '/GalleryImages/12-before.JPG',
+    after: '/GalleryImages/12-after-Steina-NaturalCedar.JPG',
+  },
+  {
+    id: 12,
+    titleKey: 'lignaCamel',
+    before: '/GalleryImages/13-before.JPG',
+    after: '/GalleryImages/13-after-Ligna-Camel.JPG',
   },
 ]
 
-function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
+function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpenFullscreen }: {
   project: BeforeAfterProject
   index: number
   beforeLabel: string
   afterLabel: string
   title: string
+  onOpenFullscreen: (position: number) => void
 }) {
   const [sliderPosition, setSliderPosition] = useState(0) // 0 = before, 100 = after
   const [isDragging, setIsDragging] = useState(false)
@@ -83,6 +102,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
   const animationRef = useRef<number | null>(null)
   const positionRef = useRef(0)
   const showingBeforeRef = useRef(true)
+  const hasDraggedRef = useRef(false)
 
   // Keep positionRef in sync with state
   useEffect(() => {
@@ -155,30 +175,58 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
     setSliderPosition(percentage)
   }, [])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     setIsDragging(true)
+    hasDraggedRef.current = false
     handleMove(e.clientX)
   }
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleSliderMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return
+    hasDraggedRef.current = true
     handleMove(e.clientX)
+  }, [isDragging, handleMove])
+
+  const handleSliderMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  const handleSliderTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation()
+    setIsDragging(true)
+    hasDraggedRef.current = false
+    handleMove(e.touches[0].clientX)
   }
 
-  const handleMouseUp = () => {
+  const handleSliderTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return
+    hasDraggedRef.current = true
+    handleMove(e.touches[0].clientX)
+  }
+
+  const handleSliderTouchEnd = () => {
     setIsDragging(false)
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true)
-    handleMove(e.touches[0].clientX)
+  const handleCardClick = () => {
+    if (!hasDraggedRef.current) {
+      onOpenFullscreen(sliderPosition)
+    }
   }
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return
-    handleMove(e.touches[0].clientX)
-  }
+  // Global mouse move/up handlers for slider dragging
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleSliderMouseMove)
+      window.addEventListener('mouseup', handleSliderMouseUp)
+      return () => {
+        window.removeEventListener('mousemove', handleSliderMouseMove)
+        window.removeEventListener('mouseup', handleSliderMouseUp)
+      }
+    }
+  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp])
 
   return (
     <motion.div
@@ -189,24 +237,13 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
     >
       <div
         ref={containerRef}
-        className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-ew-resize select-none shadow-lg"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => {
-          setIsDragging(false)
-          setIsHovered(false)
-        }}
+        className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
+        onClick={handleCardClick}
+        onMouseLeave={() => setIsHovered(false)}
         onMouseEnter={() => setIsHovered(true)}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={() => setIsDragging(false)}
       >
-        {/* Before image - clipped to left side of slider */}
-        <div
-          className="absolute inset-0"
-          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-        >
+        {/* Before image - full, visible on left side */}
+        <div className="absolute inset-0">
           <Image
             src={project.before}
             alt={`${title} - ${beforeLabel}`}
@@ -217,7 +254,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
           />
         </div>
 
-        {/* After image - clipped to right side of slider */}
+        {/* After image - clipped from left, reveals as slider moves right */}
         <div
           className="absolute inset-0"
           style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
@@ -232,13 +269,20 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
           />
         </div>
 
-        {/* Slider line */}
+        {/* Slider line with extended hit area */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10"
+          className="absolute top-0 bottom-0 w-12 z-10 cursor-ew-resize flex items-center justify-center"
           style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+          onMouseDown={handleSliderMouseDown}
+          onTouchStart={handleSliderTouchStart}
+          onTouchMove={handleSliderTouchMove}
+          onTouchEnd={handleSliderTouchEnd}
+          onClick={(e) => e.stopPropagation()}
         >
+          {/* Visible slider line */}
+          <div className="absolute top-0 bottom-0 w-1 bg-white shadow-lg" />
           {/* Slider handle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
+          <div className="absolute top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-secondary-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
             </svg>
@@ -248,13 +292,13 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
         {/* Labels */}
         <div
           className="absolute top-4 left-4 px-3 py-1.5 bg-black/60 backdrop-blur-sm rounded-lg text-white text-sm font-medium transition-opacity duration-300"
-          style={{ opacity: sliderPosition < 80 ? 1 : 0 }}
+          style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
         >
           {beforeLabel}
         </div>
         <div
           className="absolute top-4 right-4 px-3 py-1.5 bg-primary-500 backdrop-blur-sm rounded-lg text-white text-sm font-medium transition-opacity duration-300"
-          style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
+          style={{ opacity: sliderPosition < 80 ? 1 : 0 }}
         >
           {afterLabel}
         </div>
@@ -268,21 +312,349 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title }: {
   )
 }
 
-export function GalleryGrid() {
-  const t = useTranslations('galleryPage')
+function FullscreenSlider({
+  project,
+  beforeLabel,
+  afterLabel,
+  title,
+  initialPosition
+}: {
+  project: BeforeAfterProject
+  beforeLabel: string
+  afterLabel: string
+  title: string
+  initialPosition: number
+}) {
+  const [sliderPosition, setSliderPosition] = useState(initialPosition)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const animationRef = useRef<number | null>(null)
+  const positionRef = useRef(initialPosition)
+  const showingBeforeRef = useRef(initialPosition < 50)
+
+  useEffect(() => {
+    positionRef.current = sliderPosition
+  }, [sliderPosition])
+
+  // Auto-animate the slider
+  useEffect(() => {
+    if (isDragging || isHovered) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = null
+      }
+      return
+    }
+
+    let timeoutId: NodeJS.Timeout
+    let isCancelled = false
+
+    const runAnimation = () => {
+      if (isCancelled) return
+
+      const target = showingBeforeRef.current ? 100 : 0
+      showingBeforeRef.current = !showingBeforeRef.current
+
+      const duration = 800
+      const startPosition = positionRef.current
+      const startTime = performance.now()
+
+      const animate = () => {
+        if (isCancelled) return
+
+        const elapsed = performance.now() - startTime
+        const progress = Math.min(elapsed / duration, 1)
+        const eased = 1 - Math.pow(1 - progress, 3)
+        const newPosition = startPosition + (target - startPosition) * eased
+        setSliderPosition(newPosition)
+        positionRef.current = newPosition
+
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate)
+        } else {
+          timeoutId = setTimeout(runAnimation, 4000)
+        }
+      }
+
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    timeoutId = setTimeout(runAnimation, 4000)
+
+    return () => {
+      isCancelled = true
+      clearTimeout(timeoutId)
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [isDragging, isHovered])
+
+  const handleMove = useCallback((clientX: number) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const x = clientX - rect.left
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100))
+    setSliderPosition(percentage)
+  }, [])
+
+  const handleSliderMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+    handleMove(e.clientX)
+  }
+
+  const handleSliderMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return
+    handleMove(e.clientX)
+  }, [isDragging, handleMove])
+
+  const handleSliderMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  const handleSliderTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation()
+    setIsDragging(true)
+    handleMove(e.touches[0].clientX)
+  }
+
+  const handleSliderTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return
+    handleMove(e.touches[0].clientX)
+  }
+
+  const handleSliderTouchEnd = () => {
+    setIsDragging(false)
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleSliderMouseMove)
+      window.addEventListener('mouseup', handleSliderMouseUp)
+      return () => {
+        window.removeEventListener('mousemove', handleSliderMouseMove)
+        window.removeEventListener('mouseup', handleSliderMouseUp)
+      }
+    }
+  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp])
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-8 lg:p-12">
-      {projects.map((project, index) => (
-        <BeforeAfterCard
-          key={project.id}
-          project={project}
-          index={index}
-          beforeLabel={t('before')}
-          afterLabel={t('after')}
-          title={t(`projects.${project.titleKey}`)}
+    <div
+      ref={containerRef}
+      className="relative w-full aspect-[4/3] rounded-xl overflow-hidden select-none"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Before image - full, visible on left side */}
+      <div className="absolute inset-0">
+        <Image
+          src={project.before}
+          alt={`${title} - ${beforeLabel}`}
+          fill
+          className="object-cover"
+          sizes="90vw"
+          priority
         />
-      ))}
+      </div>
+
+      {/* After image - clipped from left, reveals as slider moves right */}
+      <div
+        className="absolute inset-0"
+        style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
+      >
+        <Image
+          src={project.after}
+          alt={`${title} - ${afterLabel}`}
+          fill
+          className="object-cover"
+          sizes="90vw"
+          priority
+        />
+      </div>
+
+      {/* Slider line with extended hit area */}
+      <div
+        className="absolute top-0 bottom-0 w-16 z-10 cursor-ew-resize flex items-center justify-center"
+        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+        onMouseDown={handleSliderMouseDown}
+        onTouchStart={handleSliderTouchStart}
+        onTouchMove={handleSliderTouchMove}
+        onTouchEnd={handleSliderTouchEnd}
+      >
+        <div className="absolute top-0 bottom-0 w-1 bg-white shadow-lg" />
+        <div className="absolute top-1/2 -translate-y-1/2 w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center">
+          <svg className="w-7 h-7 text-secondary-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Labels */}
+      <div
+        className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-sm rounded-lg text-white font-medium transition-opacity duration-300"
+        style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
+      >
+        {beforeLabel}
+      </div>
+      <div
+        className="absolute top-6 right-6 px-4 py-2 bg-primary-500 backdrop-blur-sm rounded-lg text-white font-medium transition-opacity duration-300"
+        style={{ opacity: sliderPosition < 80 ? 1 : 0 }}
+      >
+        {afterLabel}
+      </div>
     </div>
+  )
+}
+
+export function GalleryGrid() {
+  const t = useTranslations('galleryPage')
+  const [selectedProject, setSelectedProject] = useState<{ project: BeforeAfterProject; initialPosition: number } | null>(null)
+
+  const currentIndex = selectedProject
+    ? projects.findIndex(p => p.id === selectedProject.project.id)
+    : -1
+
+  const goToPrevious = useCallback(() => {
+    if (currentIndex > 0) {
+      setSelectedProject(prev => prev ? { project: projects[currentIndex - 1], initialPosition: prev.initialPosition } : null)
+    } else if (currentIndex === 0) {
+      setSelectedProject(prev => prev ? { project: projects[projects.length - 1], initialPosition: prev.initialPosition } : null)
+    }
+  }, [currentIndex])
+
+  const goToNext = useCallback(() => {
+    if (currentIndex < projects.length - 1) {
+      setSelectedProject(prev => prev ? { project: projects[currentIndex + 1], initialPosition: prev.initialPosition } : null)
+    } else if (currentIndex === projects.length - 1) {
+      setSelectedProject(prev => prev ? { project: projects[0], initialPosition: prev.initialPosition } : null)
+    }
+  }, [currentIndex])
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setSelectedProject(null)
+    } else if (e.key === 'ArrowLeft') {
+      goToPrevious()
+    } else if (e.key === 'ArrowRight') {
+      goToNext()
+    }
+  }, [goToPrevious, goToNext])
+
+  useEffect(() => {
+    if (selectedProject) {
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [selectedProject, handleKeyDown])
+
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-8 lg:p-12">
+        {projects.map((project, index) => (
+          <BeforeAfterCard
+            key={project.id}
+            project={project}
+            index={index}
+            beforeLabel={t('before')}
+            afterLabel={t('after')}
+            title={t(`projects.${project.titleKey}`)}
+            onOpenFullscreen={(position) => setSelectedProject({ project, initialPosition: position })}
+          />
+        ))}
+      </div>
+
+      {/* Fullscreen Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setSelectedProject(null)}
+          >
+            {/* Close button */}
+            <button
+              className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white transition-colors"
+              onClick={() => setSelectedProject(null)}
+              aria-label="Close"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Previous button */}
+            <button
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                goToPrevious()
+              }}
+              aria-label="Previous project"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Next button */}
+            <button
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                goToNext()
+              }}
+              aria-label="Next project"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Slider container */}
+            <motion.div
+              key={selectedProject.project.id}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-5xl px-4"
+            >
+              <FullscreenSlider
+                project={selectedProject.project}
+                beforeLabel={t('before')}
+                afterLabel={t('after')}
+                title={t(`projects.${selectedProject.project.titleKey}`)}
+                initialPosition={selectedProject.initialPosition}
+              />
+            </motion.div>
+
+            {/* Title and counter */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
+              className="absolute bottom-6 left-0 right-0 text-center"
+            >
+              <p className="text-white text-lg font-medium">{t(`projects.${selectedProject.project.titleKey}`)}</p>
+              <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {projects.length}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

@@ -2,11 +2,12 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/Button'
 
 export default function ServicesPage() {
   const t = useTranslations('servicesPage')
+  const locale = useLocale()
 
   const processSteps = [
     {
@@ -223,7 +224,7 @@ export default function ServicesPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Button href="/contact" size="lg">
+            <Button href={`/${locale}/contact`} size="lg">
               {t('ctaButton')}
             </Button>
           </motion.div>

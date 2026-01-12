@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { Button } from '@/components/ui/Button'
 
 const featureKeys = ['quality', 'onTime', 'experience'] as const
 
@@ -25,6 +26,8 @@ const icons = {
 
 export function WhyChooseUs() {
   const t = useTranslations('whyChooseUs')
+  const tHero = useTranslations('hero')
+  const locale = useLocale()
 
   return (
     <section className="py-16">
@@ -88,9 +91,9 @@ export function WhyChooseUs() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-center mt-12"
           >
-            <p className="text-secondary-500">
-              {t('servingAreas')}
-            </p>
+            <Button href={`/${locale}/gallery`} variant="outline">
+              {tHero('seeOurWork')}
+            </Button>
           </motion.div>
         </div>
       </div>

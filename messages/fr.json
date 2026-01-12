@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Top Deck Montréal | Teinture et Restauration de Terrasses",
+    "title": "Topdeck Montréal | Teinture et Restauration de Terrasses",
     "description": "Les experts en teinture de terrasses de confiance à Montréal. Services professionnels de lavage à pression, ponçage et teinture pour terrasses, clôtures et rampes."
   },
   "nav": {
@@ -16,6 +16,7 @@
     "title2": "de bois à Montréal",
     "description": "Lavage à pression, ponçage et teinture professionnels pour terrasses, clôtures et rampes à travers Montréal.",
     "cta": "Soumission gratuite",
+    "seeOurWork": "Voir nos réalisations",
     "imageAlt": "Belle terrasse en bois restaurée"
   },
   "servicesPreview": {
@@ -145,19 +146,22 @@
     "before": "Avant",
     "after": "Après",
     "projects": {
-      "cedarDeck": "Restauration terrasse en cèdre",
-      "modernBackyard": "Terrasse arrière moderne",
-      "poolside": "Terrasse piscine",
-      "outdoorLiving": "Espace de vie extérieur",
-      "patioRefinish": "Rénovation de patio",
-      "gardenDeck": "Terrasse de jardin",
-      "fenceStaining": "Teinture de clôture",
-      "luxuryHome": "Terrasse maison de luxe",
-      "contemporary": "Design contemporain"
+      "bmNaturalCedartone1": "Benjamin Moore Natural Cedartone",
+      "bmSeaGullGray": "Benjamin Moore Sea Gull Gray",
+      "lignaGoldenPine1": "Ligna Golden Pine",
+      "steinaLightOak1": "Steina Light Oak",
+      "lignaGoldenPine2": "Ligna Golden Pine",
+      "lignaMapleSugar": "Ligna Maple Sugar",
+      "bmNaturalCedartone2": "Benjamin Moore Natural Cedartone",
+      "steinaLightOak2": "Steina Light Oak",
+      "bmHiddenValley": "Benjamin Moore Hidden Valley",
+      "lignaGoldenPine3": "Ligna Golden Pine",
+      "steinaNaturalCedar": "Steina Natural Cedar",
+      "lignaCamel": "Ligna Camel"
     }
   },
   "contactPage": {
-    "letsTalk": "Parlons-en",
+    "letsTalk": "Contactez-nous",
     "getQuote": "Obtenir une soumission",
     "mobileDescription": "Remplissez le formulaire et nous vous répondrons dans les 24 heures.",
     "requestQuote": "Demander une soumission",
@@ -220,6 +224,6 @@
     "tagline": "Teinture de terrasse et peinture extérieure professionnelle à Montréal.",
     "quickLinks": "Liens rapides",
     "getInTouch": "Nous joindre",
-    "copyright": "Top Deck Montréal. Tous droits réservés."
+    "copyright": "Topdeck Montréal. Tous droits réservés."
   }
 }

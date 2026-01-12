@@ -28,7 +28,7 @@ export function Header() {
           <Link href={`/${locale}`} className="flex items-center">
             <Image
               src="/Topdeck Logo.avif"
-              alt="Top Deck Montreal"
+              alt="Topdeck Montreal"
               width={250}
               height={94}
               className="h-[90px] w-auto"
@@ -48,13 +48,29 @@ export function Header() {
               </Link>
             ))}
 
-            {/* Language Switcher */}
-            <Link
-              href={`/${otherLocale}`}
-              className="text-sm font-semibold text-secondary-500 hover:text-primary-500 transition-colors uppercase"
-            >
-              {otherLocale}
-            </Link>
+            {/* Language Switcher - Toggle Pills */}
+            <div className="flex items-center bg-secondary-100 rounded-full p-1">
+              <Link
+                href="/en"
+                className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${
+                  locale === 'en'
+                    ? 'bg-white text-primary-600 shadow-sm'
+                    : 'text-secondary-500 hover:text-secondary-700'
+                }`}
+              >
+                EN
+              </Link>
+              <Link
+                href="/fr"
+                className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${
+                  locale === 'fr'
+                    ? 'bg-white text-primary-600 shadow-sm'
+                    : 'text-secondary-500 hover:text-secondary-700'
+                }`}
+              >
+                FR
+              </Link>
+            </div>
 
             <Button href={`/${locale}/contact`} size="md">
               {t('getQuote')}
@@ -141,20 +157,38 @@ export function Header() {
                   </motion.div>
                 ))}
 
-                {/* Mobile Language Switcher */}
+                {/* Mobile Language Switcher - Toggle Pills */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2, delay: 0.05 * navigation.length }}
+                  className="px-4 py-2"
                 >
-                  <Link
-                    href={`/${otherLocale}`}
-                    className="block px-4 py-3 text-base font-medium text-secondary-500 hover:bg-white hover:text-primary-500 rounded-xl transition-colors duration-200 uppercase"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {otherLocale === 'en' ? 'English' : 'Français'}
-                  </Link>
+                  <div className="flex items-center bg-secondary-100 rounded-full p-1 w-fit">
+                    <Link
+                      href="/en"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                        locale === 'en'
+                          ? 'bg-white text-primary-600 shadow-sm'
+                          : 'text-secondary-500 hover:text-secondary-700'
+                      }`}
+                    >
+                      EN
+                    </Link>
+                    <Link
+                      href="/fr"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                        locale === 'fr'
+                          ? 'bg-white text-primary-600 shadow-sm'
+                          : 'text-secondary-500 hover:text-secondary-700'
+                      }`}
+                    >
+                      FR
+                    </Link>
+                  </div>
                 </motion.div>
 
                 <motion.div

@@ -27,7 +27,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl lg:text-5xl font-bold mb-6"
+            className="text-5xl lg:text-6xl font-bold mb-6 drop-shadow-lg"
           >
             {t('letsTalk')}
           </motion.h1>

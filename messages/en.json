@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "title": "Top Deck Montreal | Professional Deck Staining & Restoration",
+    "title": "Topdeck Montreal | Professional Deck Staining & Restoration",
     "description": "Montreal's trusted deck staining experts. Professional pressure washing, sanding, and staining services for decks, fences, and railings."
   },
   "nav": {
@@ -16,6 +16,7 @@
     "title2": "Staining Pros",
     "description": "Professional pressure washing, sanding, and staining for decks, fences, and railings across Montreal.",
     "cta": "Get a Free Quote",
+    "seeOurWork": "See our Work",
     "imageAlt": "Beautiful restored outdoor wood deck"
   },
   "servicesPreview": {
@@ -145,19 +146,22 @@
     "before": "Before",
     "after": "After",
     "projects": {
-      "cedarDeck": "Cedar Deck Restoration",
-      "modernBackyard": "Modern Backyard Deck",
-      "poolside": "Poolside Deck",
-      "outdoorLiving": "Outdoor Living Space",
-      "patioRefinish": "Patio Refinish",
-      "gardenDeck": "Garden Deck",
-      "fenceStaining": "Fence Staining",
-      "luxuryHome": "Luxury Home Deck",
-      "contemporary": "Contemporary Design"
+      "bmNaturalCedartone1": "Benjamin Moore Natural Cedartone",
+      "bmSeaGullGray": "Benjamin Moore Sea Gull Gray",
+      "lignaGoldenPine1": "Ligna Golden Pine",
+      "steinaLightOak1": "Steina Light Oak",
+      "lignaGoldenPine2": "Ligna Golden Pine",
+      "lignaMapleSugar": "Ligna Maple Sugar",
+      "bmNaturalCedartone2": "Benjamin Moore Natural Cedartone",
+      "steinaLightOak2": "Steina Light Oak",
+      "bmHiddenValley": "Benjamin Moore Hidden Valley",
+      "lignaGoldenPine3": "Ligna Golden Pine",
+      "steinaNaturalCedar": "Steina Natural Cedar",
+      "lignaCamel": "Ligna Camel"
     }
   },
   "contactPage": {
-    "letsTalk": "Let's Talk",
+    "letsTalk": "Contact Us",
     "getQuote": "Get a Quote",
     "mobileDescription": "Fill out the form and we'll get back to you within 24 hours.",
     "requestQuote": "Request a Quote",
@@ -220,6 +224,6 @@
     "tagline": "Professional deck staining & exterior painting in Montreal.",
     "quickLinks": "Quick Links",
     "getInTouch": "Get in Touch",
-    "copyright": "Top Deck Montreal. All rights reserved."
+    "copyright": "Topdeck Montreal. All rights reserved."
   }
 }

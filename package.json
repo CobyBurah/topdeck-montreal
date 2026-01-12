@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "description": "Top Deck Montreal - Professional Deck Staining & Exterior Painting",
+  "description": "Topdeck Montreal - Professional Deck Staining & Exterior Painting",
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "clsx": "^2.1.1",
@@ -17,7 +17,6 @@
     "next-intl": "^4.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "resend": "^6.7.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
