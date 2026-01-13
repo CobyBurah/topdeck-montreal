@@ -145,6 +145,8 @@
     "imageAlt": "Nos réalisations",
     "before": "Avant",
     "after": "Après",
+    "pause": "Pause",
+    "play": "Lecture",
     "projects": {
       "bmNaturalCedartone1": "Benjamin Moore Natural Cedartone",
       "bmSeaGullGray": "Benjamin Moore Sea Gull Gray",
@@ -223,7 +225,7 @@
   "footer": {
     "tagline": "Teinture de terrasse et peinture extérieure professionnelle à Montréal.",
     "quickLinks": "Liens rapides",
-    "getInTouch": "Nous joindre",
+    "getInTouch": "Contactez-nous",
     "copyright": "Topdeck Montréal. Tous droits réservés."
   }
 }

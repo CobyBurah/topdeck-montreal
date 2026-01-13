@@ -145,6 +145,8 @@
     "imageAlt": "Our work",
     "before": "Before",
     "after": "After",
+    "pause": "Pause",
+    "play": "Play",
     "projects": {
       "bmNaturalCedartone1": "Benjamin Moore Natural Cedartone",
       "bmSeaGullGray": "Benjamin Moore Sea Gull Gray",
@@ -223,7 +225,7 @@
   "footer": {
     "tagline": "Professional deck staining & exterior painting in Montreal.",
     "quickLinks": "Quick Links",
-    "getInTouch": "Get in Touch",
+    "getInTouch": "Contact Us",
     "copyright": "Topdeck Montreal. All rights reserved."
   }
 }

@@ -87,16 +87,19 @@ const projects: BeforeAfterProject[] = [
   },
 ]
 
-function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpenFullscreen }: {
+function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, playLabel, title, onOpenFullscreen }: {
   project: BeforeAfterProject
   index: number
   beforeLabel: string
   afterLabel: string
+  pauseLabel: string
+  playLabel: string
   title: string
-  onOpenFullscreen: (position: number) => void
+  onOpenFullscreen: (position: number, isPaused: boolean) => void
 }) {
   const [sliderPosition, setSliderPosition] = useState(0) // 0 = before, 100 = after
   const [isDragging, setIsDragging] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -111,7 +114,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpe
 
   // Auto-animate the slider with step-based transitions
   useEffect(() => {
-    if (isDragging || isHovered) {
+    if (isDragging || isPaused) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
         animationRef.current = null
@@ -165,7 +168,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpe
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isDragging, isHovered])
+  }, [isDragging, isPaused])
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return
@@ -212,7 +215,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpe
 
   const handleCardClick = () => {
     if (!hasDraggedRef.current) {
-      onOpenFullscreen(sliderPosition)
+      onOpenFullscreen(sliderPosition, isPaused)
     }
   }
 
@@ -239,8 +242,8 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpe
         ref={containerRef}
         className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
         onClick={handleCardClick}
-        onMouseLeave={() => setIsHovered(false)}
         onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Before image - full, visible on left side */}
         <div className="absolute inset-0">
@@ -307,6 +310,34 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, title, onOpe
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
           <p className="text-white font-semibold text-lg">{title}</p>
         </div>
+
+        {/* Pause/Play button - visible on hover OR when paused */}
+        {(isHovered || isPaused) && (
+          <button
+            className="absolute bottom-4 right-4 z-20 px-3 py-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors flex items-center gap-2"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsPaused(!isPaused)
+            }}
+            aria-label={isPaused ? 'Play' : 'Pause'}
+          >
+            {isPaused ? (
+              <>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                <span className="text-sm font-medium">{playLabel}</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+                <span className="text-sm font-medium">{pauseLabel}</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
     </motion.div>
   )
@@ -316,17 +347,24 @@ function FullscreenSlider({
   project,
   beforeLabel,
   afterLabel,
+  pauseLabel,
+  playLabel,
   title,
-  initialPosition
+  initialPosition,
+  initialPaused
 }: {
   project: BeforeAfterProject
   beforeLabel: string
   afterLabel: string
+  pauseLabel: string
+  playLabel: string
   title: string
   initialPosition: number
+  initialPaused: boolean
 }) {
   const [sliderPosition, setSliderPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
+  const [isPaused, setIsPaused] = useState(initialPaused)
   const [isHovered, setIsHovered] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -339,7 +377,7 @@ function FullscreenSlider({
 
   // Auto-animate the slider
   useEffect(() => {
-    if (isDragging || isHovered) {
+    if (isDragging || isPaused) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
         animationRef.current = null
@@ -389,7 +427,7 @@ function FullscreenSlider({
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isDragging, isHovered])
+  }, [isDragging, isPaused])
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return
@@ -445,9 +483,9 @@ function FullscreenSlider({
     <div
       ref={containerRef}
       className="relative w-full aspect-[4/3] rounded-xl overflow-hidden select-none"
+      onClick={(e) => e.stopPropagation()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={(e) => e.stopPropagation()}
     >
       {/* Before image - full, visible on left side */}
       <div className="absolute inset-0">
@@ -506,13 +544,41 @@ function FullscreenSlider({
       >
         {afterLabel}
       </div>
+
+      {/* Pause/Play button - visible on hover OR when paused */}
+      {(isHovered || isPaused) && (
+        <button
+          className="absolute bottom-6 right-6 z-20 px-4 py-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors flex items-center gap-2"
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsPaused(!isPaused)
+          }}
+          aria-label={isPaused ? 'Play' : 'Pause'}
+        >
+          {isPaused ? (
+            <>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span className="text-sm font-medium">{playLabel}</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
+              <span className="text-sm font-medium">{pauseLabel}</span>
+            </>
+          )}
+        </button>
+      )}
     </div>
   )
 }
 
 export function GalleryGrid() {
   const t = useTranslations('galleryPage')
-  const [selectedProject, setSelectedProject] = useState<{ project: BeforeAfterProject; initialPosition: number } | null>(null)
+  const [selectedProject, setSelectedProject] = useState<{ project: BeforeAfterProject; initialPosition: number; initialPaused: boolean } | null>(null)
 
   const currentIndex = selectedProject
     ? projects.findIndex(p => p.id === selectedProject.project.id)
@@ -520,17 +586,17 @@ export function GalleryGrid() {
 
   const goToPrevious = useCallback(() => {
     if (currentIndex > 0) {
-      setSelectedProject(prev => prev ? { project: projects[currentIndex - 1], initialPosition: prev.initialPosition } : null)
+      setSelectedProject(prev => prev ? { project: projects[currentIndex - 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     } else if (currentIndex === 0) {
-      setSelectedProject(prev => prev ? { project: projects[projects.length - 1], initialPosition: prev.initialPosition } : null)
+      setSelectedProject(prev => prev ? { project: projects[projects.length - 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     }
   }, [currentIndex])
 
   const goToNext = useCallback(() => {
     if (currentIndex < projects.length - 1) {
-      setSelectedProject(prev => prev ? { project: projects[currentIndex + 1], initialPosition: prev.initialPosition } : null)
+      setSelectedProject(prev => prev ? { project: projects[currentIndex + 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     } else if (currentIndex === projects.length - 1) {
-      setSelectedProject(prev => prev ? { project: projects[0], initialPosition: prev.initialPosition } : null)
+      setSelectedProject(prev => prev ? { project: projects[0], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     }
   }, [currentIndex])
 
@@ -567,8 +633,10 @@ export function GalleryGrid() {
             index={index}
             beforeLabel={t('before')}
             afterLabel={t('after')}
+            pauseLabel={t('pause')}
+            playLabel={t('play')}
             title={t(`projects.${project.titleKey}`)}
-            onOpenFullscreen={(position) => setSelectedProject({ project, initialPosition: position })}
+            onOpenFullscreen={(position, paused) => setSelectedProject({ project, initialPosition: position, initialPaused: paused })}
           />
         ))}
       </div>
@@ -636,8 +704,11 @@ export function GalleryGrid() {
                 project={selectedProject.project}
                 beforeLabel={t('before')}
                 afterLabel={t('after')}
+                pauseLabel={t('pause')}
+                playLabel={t('play')}
                 title={t(`projects.${selectedProject.project.titleKey}`)}
                 initialPosition={selectedProject.initialPosition}
+                initialPaused={selectedProject.initialPaused}
               />
             </motion.div>
 
