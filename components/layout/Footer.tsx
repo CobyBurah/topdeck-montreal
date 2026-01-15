@@ -29,8 +29,10 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h3 className="font-semibold text-white text-lg mb-5">{t('quickLinks')}</h3>
             <nav className="flex flex-col gap-4 text-base text-secondary-400">
+              <Link href={`/${locale}`} className="hover:text-white transition-colors">
+                {tNav('home')}
+              </Link>
               <Link href={`/${locale}/services`} className="hover:text-white transition-colors">
                 {tNav('services')}
               </Link>
@@ -38,7 +40,7 @@ export function Footer() {
                 {tNav('gallery')}
               </Link>
               <Link href={`/${locale}/contact`} className="hover:text-white transition-colors">
-                {tNav('contact')}
+                {tNav('getQuote')}
               </Link>
             </nav>
           </div>

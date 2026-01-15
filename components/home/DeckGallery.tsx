@@ -90,15 +90,87 @@ const galleryImages: GalleryImage[] = [
     alt: 'Deck stained with Ligna Camel',
     title: 'Ligna Camel',
   },
+  {
+    id: 14,
+    src: '/GalleryImages/14-after-Steina-LightOak.JPG',
+    alt: 'Deck stained with Steina Light Oak',
+    title: 'Steina Light Oak',
+  },
+  {
+    id: 15,
+    src: '/GalleryImages/15-after-BM-Solid-CordovanBrown(ES-62).JPG',
+    alt: 'Deck stained with Benjamin Moore Cordovan Brown',
+    title: 'Benjamin Moore Cordovan Brown',
+  },
+  {
+    id: 16,
+    src: '/GalleryImages/16-after-Ligna-GoldenPine.jpg',
+    alt: 'Deck stained with Ligna Golden Pine',
+    title: 'Ligna Golden Pine',
+  },
+  {
+    id: 17,
+    src: '/GalleryImages/17-after-Ligna-Paprika.jpg',
+    alt: 'Deck stained with Ligna Paprika',
+    title: 'Ligna Paprika',
+  },
+  {
+    id: 18,
+    src: '/GalleryImages/18-after-BM-Solid-PlatinumGray(HC-179).JPG',
+    alt: 'Deck stained with Benjamin Moore Platinum Gray',
+    title: 'Benjamin Moore Platinum Gray',
+  },
+  {
+    id: 19,
+    src: '/GalleryImages/19-after-BM-Semi-NaturalCedartone.jpeg',
+    alt: 'Deck stained with Benjamin Moore Natural Cedartone',
+    title: 'Benjamin Moore Natural Cedartone',
+  },
+  {
+    id: 20,
+    src: '/GalleryImages/20-after-Penofin-IPEOil.JPG',
+    alt: 'Deck stained with Penofin IPE Oil',
+    title: 'Penofin IPE Oil',
+  },
+  {
+    id: 21,
+    src: '/GalleryImages/21-after-BM-Solid-TudorBrown(HC-185).JPG',
+    alt: 'Deck stained with Benjamin Moore Tudor Brown',
+    title: 'Benjamin Moore Tudor Brown',
+  },
+  {
+    id: 22,
+    src: '/GalleryImages/22-after-Steina-LightOak.JPG',
+    alt: 'Deck stained with Steina Light Oak',
+    title: 'Steina Light Oak',
+  },
+  {
+    id: 23,
+    src: '/GalleryImages/23-after-Ligna-GoldenPine.JPG',
+    alt: 'Deck stained with Ligna Golden Pine',
+    title: 'Ligna Golden Pine',
+  },
+  {
+    id: 24,
+    src: '/GalleryImages/24-after-BM-Solid-TudorBrown(HC-185).JPG',
+    alt: 'Deck stained with Benjamin Moore Tudor Brown',
+    title: 'Benjamin Moore Tudor Brown',
+  },
+  {
+    id: 25,
+    src: '/GalleryImages/25-after-Ligna-GoldenPine.JPG',
+    alt: 'Deck stained with Ligna Golden Pine',
+    title: 'Ligna Golden Pine',
+  },
 ]
 
 // Split images into two rows
 const topRowImages = galleryImages.filter((_, i) => i % 2 === 0)
 const bottomRowImages = galleryImages.filter((_, i) => i % 2 === 1)
 
-// Duplicate for seamless loop
-const duplicatedTopRow = [...topRowImages, ...topRowImages]
-const duplicatedBottomRow = [...bottomRowImages, ...bottomRowImages]
+// No duplication - each image appears once
+const duplicatedTopRow = topRowImages
+const duplicatedBottomRow = bottomRowImages
 
 export function DeckGallery() {
   const [isPaused, setIsPaused] = useState(false)
@@ -212,9 +284,9 @@ export function DeckGallery() {
     const scroll = () => {
       if (container) {
         container.scrollLeft += 0.5
-        // Reset scroll when reaching halfway (seamless loop)
-        if (container.scrollLeft >= container.scrollWidth / 2) {
-          container.scrollLeft = 0
+        // Stop at the end instead of looping
+        if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+          return
         }
       }
       animationId = requestAnimationFrame(scroll)

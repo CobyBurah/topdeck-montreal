@@ -89,7 +89,9 @@ export function WhyChooseUs() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-center mt-12"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className="text-center mt-12 inline-block w-full"
           >
             <Button href={`/${locale}/gallery`} variant="outline">
               {tHero('seeOurWork')}
