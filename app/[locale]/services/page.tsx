@@ -13,17 +13,17 @@ export default function ServicesPage() {
     {
       step: '01',
       titleKey: 'washing',
-      image: '/FrontPage-Images/PressureWashing.avif',
+      image: '/Services-Images/PressureWashing.avif',
     },
     {
       step: '02',
       titleKey: 'sanding',
-      image: '/FrontPage-Images/Sanding.avif',
+      image: '/Services-Images/Sanding.avif',
     },
     {
       step: '03',
       titleKey: 'staining',
-      image: '/FrontPage-Images/Staining.avif',
+      image: '/Services-Images/Staining.avif',
     },
   ]
 

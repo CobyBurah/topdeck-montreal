@@ -29,7 +29,7 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <nav className="flex flex-col gap-4 text-base text-secondary-400">
+            <nav className="flex flex-col gap-6 text-base text-secondary-400">
               <Link href={`/${locale}`} className="hover:text-white transition-colors">
                 {tNav('home')}
               </Link>

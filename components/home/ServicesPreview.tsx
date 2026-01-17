@@ -9,19 +9,19 @@ const processSteps = [
   {
     step: '01',
     key: 'wash',
-    image: '/FrontPage-Images/PressureWashing.avif',
+    image: '/Services-Images/PressureWashing.avif',
     objectPosition: 'center',
   },
   {
     step: '02',
     key: 'sand',
-    image: '/FrontPage-Images/Sanding.avif',
+    image: '/Services-Images/Sanding.avif',
     objectPosition: 'center',
   },
   {
     step: '03',
     key: 'stain',
-    image: '/FrontPage-Images/Staining.avif',
+    image: '/Services-Images/Staining.avif',
     objectPosition: 'center',
   },
 ]

@@ -33,7 +33,7 @@ export function Hero() {
         style={shouldReduceMotion ? {} : { y: springY }}
       >
         <Image
-          src="/FrontPage-Images/Homepage-Hero.avif"
+          src="/Homepage-Hero.avif"
           alt={t('imageAlt')}
           fill
           className="object-cover"
