@@ -13,7 +13,7 @@ export default function GalleryPage() {
       {/* Hero Section */}
       <section className="relative h-[50vh] flex items-end overflow-hidden pt-20">
         <Image
-          src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80"
+          src="/GalleryCoverImage.avif"
           alt={t('imageAlt')}
           fill
           className="object-cover"

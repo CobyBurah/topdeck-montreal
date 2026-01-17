@@ -159,7 +159,7 @@ const projects: BeforeAfterProject[] = [
   },
 ]
 
-function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, playLabel, title, onOpenFullscreen }: {
+function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, playLabel, title, onOpenFullscreen, isFullscreenOpen }: {
   project: BeforeAfterProject
   index: number
   beforeLabel: string
@@ -168,11 +168,13 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
   playLabel: string
   title: string
   onOpenFullscreen: (position: number, isPaused: boolean) => void
+  isFullscreenOpen: boolean
 }) {
   const [sliderPosition, setSliderPosition] = useState(0) // 0 = before, 100 = after
   const [isDragging, setIsDragging] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
   const positionRef = useRef(0)
@@ -184,9 +186,25 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     positionRef.current = sliderPosition
   }, [sliderPosition])
 
+  // Track visibility with 40% threshold
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.45 }
+    )
+
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [])
+
   // Auto-animate the slider with step-based transitions
   useEffect(() => {
-    if (isDragging || isPaused) {
+    if (isDragging || isPaused || !isVisible || isFullscreenOpen) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
         animationRef.current = null
@@ -240,7 +258,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isDragging, isPaused])
+  }, [isDragging, isPaused, isVisible, isFullscreenOpen])
 
   const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return
@@ -709,6 +727,7 @@ export function GalleryGrid() {
             playLabel={t('play')}
             title={t(`projects.${project.titleKey}`)}
             onOpenFullscreen={(position, paused) => setSelectedProject({ project, initialPosition: position, initialPaused: paused })}
+            isFullscreenOpen={!!selectedProject}
           />
         ))}
       </div>

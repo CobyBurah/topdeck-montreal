@@ -13,7 +13,7 @@ export function Footer() {
     <footer className="py-16 bg-secondary-900 text-white">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 items-start">
           {/* Logo & Tagline */}
           <div>
             <Link href={`/${locale}`} className="hover:opacity-80 transition-opacity inline-block">

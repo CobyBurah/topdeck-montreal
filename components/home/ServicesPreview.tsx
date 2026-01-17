@@ -9,17 +9,20 @@ const processSteps = [
   {
     step: '01',
     key: 'wash',
-    image: 'https://images.unsplash.com/photo-1622372738946-62e02505feb3?w=800&q=80',
+    image: '/FrontPage-Images/PressureWashing.avif',
+    objectPosition: 'center',
   },
   {
     step: '02',
     key: 'sand',
-    image: 'https://images.unsplash.com/photo-1541123603104-512919d6a96c?w=800&q=80',
+    image: '/FrontPage-Images/Sanding.avif',
+    objectPosition: 'center',
   },
   {
     step: '03',
     key: 'stain',
-    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
+    image: '/FrontPage-Images/Staining.avif',
+    objectPosition: 'center',
   },
 ]
 
@@ -59,12 +62,13 @@ export function ServicesPreview() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
             >
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-72 overflow-hidden">
                 <Image
                   src={item.image}
                   alt={t(`steps.${item.key}.title`)}
                   fill
                   className="object-cover"
+                  style={{ objectPosition: item.objectPosition }}
                 />
                 <div className="absolute top-4 left-4 bg-primary-500 text-white text-sm font-bold px-3 py-1 rounded-full">
                   {item.step}

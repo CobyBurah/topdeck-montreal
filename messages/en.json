@@ -73,10 +73,9 @@
     "starRating": "Star Rating"
   },
   "ctaBanner": {
-    "title": "Ready to Transform Your Space?",
-    "description": "Get a free quote and let's bring your outdoor wood back to life.",
-    "cta": "Get Your Free Quote",
-    "imageAlt": "Beautiful backyard deck"
+    "title": "Ready to Restore Your Wood?",
+    "description": "Get a free, no-obligation quote for your project. We'll assess your needs and provide honest recommendations.",
+    "cta": "Get Your Free Quote"
   },
   "servicesPage": {
     "heroTitle": "Our Services",

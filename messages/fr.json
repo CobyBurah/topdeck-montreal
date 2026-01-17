@@ -73,10 +73,9 @@
     "starRating": "Étoiles"
   },
   "ctaBanner": {
-    "title": "Prêt à transformer votre espace?",
-    "description": "Obtenez une soumission gratuite et redonnons vie à votre bois extérieur.",
-    "cta": "Obtenir votre soumission gratuite",
-    "imageAlt": "Belle terrasse arrière"
+    "title": "Prêt à restaurer votre bois?",
+    "description": "Obtenez une soumission gratuite et sans obligation pour votre projet. Nous évaluerons vos besoins et fournirons des recommandations honnêtes.",
+    "cta": "Obtenir votre soumission gratuite"
   },
   "servicesPage": {
     "heroTitle": "Nos services",

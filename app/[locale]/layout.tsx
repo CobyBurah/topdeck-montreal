@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { locales, type Locale } from '@/i18n/config'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -36,6 +37,7 @@ export default async function LocaleLayout({
             {children}
           </main>
           <Footer />
+          <SpeedInsights />
         </NextIntlClientProvider>
       </body>
     </html>

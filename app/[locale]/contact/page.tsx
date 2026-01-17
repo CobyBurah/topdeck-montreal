@@ -13,14 +13,12 @@ export default function ContactPage() {
       {/* Left - Full image */}
       <div className="relative hidden md:block">
         <Image
-          src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80"
+          src="/GalleryImages/10-after-BM-HiddenValley(1134).avif"
           alt={t('imageAlt')}
           fill
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-black/40" />
-
         {/* Contact info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-12 text-white">
           <motion.h1

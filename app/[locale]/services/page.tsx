@@ -13,36 +13,37 @@ export default function ServicesPage() {
     {
       step: '01',
       titleKey: 'washing',
-      image: 'https://images.unsplash.com/photo-1622372738946-62e02505feb3?w=1200&q=80',
+      image: '/FrontPage-Images/PressureWashing.avif',
     },
     {
       step: '02',
       titleKey: 'sanding',
-      image: 'https://images.unsplash.com/photo-1541123603104-512919d6a96c?w=1200&q=80',
+      image: '/FrontPage-Images/Sanding.avif',
     },
     {
       step: '03',
       titleKey: 'staining',
-      image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80',
+      image: '/FrontPage-Images/Staining.avif',
     },
   ]
 
   const surfaces = [
     {
       key: 'decks',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+      image: '/GalleryImages/4-after-Steina-LightOak.avif',
     },
     {
       key: 'fences',
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+      image: '/GalleryImages/21-after-BM-Solid-TudorBrown(HC-185).avif',
     },
     {
       key: 'railings',
-      image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80',
+      image: '/GalleryImages/8-after-BM-Semi-NaturalCedartone(ES-45).avif',
     },
     {
       key: 'pergolas',
-      image: 'https://images.unsplash.com/photo-1600607687644-c7531e489bb4?w=800&q=80',
+      image: '/GalleryImages/26-after-BM-Semi-NaturalCedartone.avif',
+      objectPosition: 'right center',
     },
   ]
 
@@ -51,10 +52,11 @@ export default function ServicesPage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-end overflow-hidden pt-20">
         <Image
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80"
+          src="/GalleryImages/23-after-Ligna-GoldenPine.avif"
           alt={t('heroTitle')}
           fill
           className="object-cover"
+          style={{ objectPosition: 'center 10%' }}
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -175,16 +177,17 @@ export default function ServicesPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <div className="relative h-48">
+                <div className="relative h-56">
                   <Image
                     src={surface.image}
                     alt={t(`surfaces.${surface.key}.title`)}
                     fill
                     className="object-cover"
+                    style={{ objectPosition: surface.objectPosition || 'center' }}
                   />
                 </div>
                 <div className="p-5">
-                  <h3 className="font-bold text-secondary-900 mb-1">
+                  <h3 className="text-lg font-bold text-secondary-900 mb-1">
                     {t(`surfaces.${surface.key}.title`)}
                   </h3>
                   <p className="text-secondary-600 text-sm">
