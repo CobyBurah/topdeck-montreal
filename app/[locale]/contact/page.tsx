@@ -37,10 +37,10 @@ export default function ContactPage() {
             className="space-y-3"
           >
             <a
-              href="tel:+15141234567"
+              href="tel:+15144161588"
               className="block text-xl text-white/90 hover:text-white transition-colors"
             >
-              (514) 123-4567
+              (514) 416-1588
             </a>
             <a
               href="mailto:info@topdeckmontreal.com"

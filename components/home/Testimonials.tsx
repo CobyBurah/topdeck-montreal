@@ -8,7 +8,7 @@ export function Testimonials() {
   const t = useTranslations('testimonials')
 
   const stats = [
-    { value: 500, suffix: '+', labelKey: 'projectsCompleted' },
+    { value: 250, suffix: '+', labelKey: 'projectsCompleted' },
     { value: 10, suffix: '+', labelKey: 'yearsExperience' },
     { value: 5.0, suffix: '', labelKey: 'starRating', decimals: 1 },
   ]
