@@ -191,7 +191,7 @@
       "size": "Approximate Size / Scope",
       "timeline": "Preferred Timeline",
       "message": "Additional Details",
-      "images": "Upload Photos (optional)"
+      "images": "Upload Photos (Show the entire surface that needs to be stained)"
     },
     "placeholders": {
       "name": "John Doe",
@@ -203,10 +203,9 @@
       "images": "Click to upload photos of your deck or project"
     },
     "surfaces": {
-      "deck": "Deck / Patio",
-      "fence": "Fence / Gate",
-      "railing": "Railing / Stairs",
-      "pergola": "Pergola / Gazebo",
+      "deck": "Deck",
+      "fence": "Fence",
+      "pergola": "Pergola/Gazebo",
       "multiple": "Multiple Surfaces",
       "other": "Other"
     },
@@ -238,5 +237,75 @@
     "quickLinks": "Quick Links",
     "getInTouch": "Contact Us",
     "copyright": "Topdeck Montreal. All rights reserved."
+  },
+  "portal": {
+    "title": "Topdeck CRM",
+    "dashboard": "Lead Dashboard",
+    "dashboardDescription": "Manage and track all your leads from website inquiries",
+    "viewSite": "View Website",
+    "logout": "Log Out",
+    "login": {
+      "title": "Employee Portal",
+      "subtitle": "Sign in to access the CRM",
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "error": "Invalid email or password"
+    },
+    "statuses": {
+      "new": "New",
+      "needs_more_details": "Needs More Details",
+      "contacted": "Contacted",
+      "quote_sent": "Quote Sent",
+      "invoiced": "Invoiced",
+      "booked": "Booked",
+      "complete": "Complete"
+    },
+    "sources": {
+      "website": "Website",
+      "referral": "Referral",
+      "phone": "Phone",
+      "email": "Email",
+      "social_media": "Social Media",
+      "other": "Other"
+    },
+    "table": {
+      "name": "Name",
+      "contact": "Contact",
+      "service": "Service",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions",
+      "noLeads": "No leads yet",
+      "noMatch": "No leads match your filters",
+      "search": "Search by name, email, or phone...",
+      "allStatuses": "All Statuses",
+      "edit": "Edit"
+    },
+    "modal": {
+      "contactInfo": "Contact Information",
+      "projectDetails": "Project Details",
+      "crmFields": "CRM Fields",
+      "photos": "Photos",
+      "noPhotos": "No photos uploaded",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "serviceType": "Service Type",
+      "approximateSize": "Approximate Size",
+      "timeline": "Preferred Timeline",
+      "additionalDetails": "Additional Details",
+      "status": "Status",
+      "source": "Lead Source",
+      "internalNotes": "Internal Notes",
+      "internalNotesPlaceholder": "Add notes about this lead (not visible to customer)",
+      "created": "Created",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "error": "Failed to save changes. Please try again."
+    }
   }
 }

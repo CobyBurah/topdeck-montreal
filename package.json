@@ -10,6 +10,8 @@
   },
   "description": "Topdeck Montreal - Professional Deck Staining & Exterior Painting",
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@vercel/speed-insights": "^1.3.1",
     "clsx": "^2.1.1",

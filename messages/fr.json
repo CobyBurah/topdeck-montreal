@@ -191,7 +191,7 @@
       "size": "Taille / Portée approximative",
       "timeline": "Délai souhaité",
       "message": "Détails supplémentaires",
-      "images": "Télécharger des photos (optionnel)"
+      "images": "Télécharger des photos (Montrez toute la surface à teindre)"
     },
     "placeholders": {
       "name": "Jean Tremblay",
@@ -203,10 +203,9 @@
       "images": "Cliquez pour télécharger des photos de votre terrasse ou projet"
     },
     "surfaces": {
-      "deck": "Terrasse / Patio",
-      "fence": "Clôture / Portail",
-      "railing": "Rampe / Escalier",
-      "pergola": "Pergola / Gazebo",
+      "deck": "Terrasse",
+      "fence": "Clôture",
+      "pergola": "Pergola/Gazebo",
       "multiple": "Surfaces multiples",
       "other": "Autre"
     },
@@ -238,5 +237,75 @@
     "quickLinks": "Liens rapides",
     "getInTouch": "Contactez-nous",
     "copyright": "Topdeck Montréal. Tous droits réservés."
+  },
+  "portal": {
+    "title": "Topdeck CRM",
+    "dashboard": "Tableau de bord des prospects",
+    "dashboardDescription": "Gérez et suivez tous vos prospects des demandes du site web",
+    "viewSite": "Voir le site",
+    "logout": "Déconnexion",
+    "login": {
+      "title": "Portail employé",
+      "subtitle": "Connectez-vous pour accéder au CRM",
+      "email": "Courriel",
+      "password": "Mot de passe",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "error": "Courriel ou mot de passe invalide"
+    },
+    "statuses": {
+      "new": "Nouveau",
+      "needs_more_details": "Plus de détails requis",
+      "contacted": "Contacté",
+      "quote_sent": "Soumission envoyée",
+      "invoiced": "Facturé",
+      "booked": "Réservé",
+      "complete": "Complété"
+    },
+    "sources": {
+      "website": "Site web",
+      "referral": "Référence",
+      "phone": "Téléphone",
+      "email": "Courriel",
+      "social_media": "Médias sociaux",
+      "other": "Autre"
+    },
+    "table": {
+      "name": "Nom",
+      "contact": "Contact",
+      "service": "Service",
+      "status": "Statut",
+      "created": "Créé",
+      "actions": "Actions",
+      "noLeads": "Aucun prospect",
+      "noMatch": "Aucun prospect ne correspond à vos filtres",
+      "search": "Rechercher par nom, courriel ou téléphone...",
+      "allStatuses": "Tous les statuts",
+      "edit": "Modifier"
+    },
+    "modal": {
+      "contactInfo": "Informations de contact",
+      "projectDetails": "Détails du projet",
+      "crmFields": "Champs CRM",
+      "photos": "Photos",
+      "noPhotos": "Aucune photo téléchargée",
+      "fullName": "Nom complet",
+      "email": "Courriel",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "serviceType": "Type de service",
+      "approximateSize": "Taille approximative",
+      "timeline": "Délai souhaité",
+      "additionalDetails": "Détails supplémentaires",
+      "status": "Statut",
+      "source": "Source du prospect",
+      "internalNotes": "Notes internes",
+      "internalNotesPlaceholder": "Ajouter des notes sur ce prospect (non visibles par le client)",
+      "created": "Créé",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "cancel": "Annuler",
+      "error": "Échec de l'enregistrement. Veuillez réessayer."
+    }
   }
 }

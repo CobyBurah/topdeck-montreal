@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 
@@ -68,11 +68,11 @@ const confettiColors = ['#F97316', '#22C55E', '#3B82F6', '#EAB308', '#EC4899']
 
 export function QuoteForm() {
   const t = useTranslations('quoteForm')
+  const locale = useLocale()
 
   const surfaceOptions = [
     { value: 'deck', label: t('surfaces.deck') },
     { value: 'fence', label: t('surfaces.fence') },
-    { value: 'railing', label: t('surfaces.railing') },
     { value: 'pergola', label: t('surfaces.pergola') },
     { value: 'multiple', label: t('surfaces.multiple') },
     { value: 'other', label: t('surfaces.other') },
@@ -153,6 +153,9 @@ export function QuoteForm() {
       formData.images.forEach((file) => {
         submitData.append('images', file)
       })
+
+      // Include the user's language preference
+      submitData.append('language', locale)
 
       const response = await fetch('/api/contact', {
         method: 'POST',

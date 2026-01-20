@@ -4,8 +4,6 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { locales, type Locale } from '@/i18n/config'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,11 +30,7 @@ export default async function LocaleLayout({
     <html lang={locale} className="scroll-smooth">
       <body className={`${inter.className} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="pt-20">
-            {children}
-          </main>
-          <Footer />
+          {children}
           <SpeedInsights />
         </NextIntlClientProvider>
       </body>
