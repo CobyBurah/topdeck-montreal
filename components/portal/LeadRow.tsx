@@ -247,6 +247,7 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
             onClose={() => setLightboxIndex(null)}
             onPrev={() => setLightboxIndex((i) => (i !== null ? (i - 1 + photos.length) % photos.length : null))}
             onNext={() => setLightboxIndex((i) => (i !== null ? (i + 1) % photos.length : null))}
+            onSelectIndex={(index) => setLightboxIndex(index)}
           />
         )}
       </AnimatePresence>

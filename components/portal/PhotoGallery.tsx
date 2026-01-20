@@ -333,13 +333,17 @@ export function PhotoLightbox({
   onClose,
   onPrev,
   onNext,
+  onSelectIndex,
 }: {
   photos: LeadPhoto[]
   selectedIndex: number
   onClose: () => void
   onPrev: () => void
   onNext: () => void
+  onSelectIndex?: (index: number) => void
 }) {
+  const [viewMode, setViewMode] = useState<'single' | 'grid'>('single')
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
   const getPhotoUrl = (storagePath: string) => {
@@ -347,82 +351,207 @@ export function PhotoLightbox({
     return data.publicUrl
   }
 
+  // Scroll thumbnail into view when selected index changes
+  useEffect(() => {
+    if (viewMode === 'single' && thumbnailContainerRef.current) {
+      const container = thumbnailContainerRef.current
+      const thumbnail = container.children[selectedIndex] as HTMLElement
+      if (thumbnail) {
+        const containerRect = container.getBoundingClientRect()
+        const thumbnailRect = thumbnail.getBoundingClientRect()
+        const scrollLeft = thumbnail.offsetLeft - containerRect.width / 2 + thumbnailRect.width / 2
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' })
+      }
+    }
+  }, [selectedIndex, viewMode])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') onPrev()
-      if (e.key === 'ArrowRight') onNext()
+      if (viewMode === 'single') {
+        if (e.key === 'ArrowLeft') onPrev()
+        if (e.key === 'ArrowRight') onNext()
+      }
       if (e.key === 'Escape') onClose()
+      if (e.key === 'g') setViewMode(viewMode === 'single' ? 'grid' : 'single')
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onPrev, onNext, onClose])
+  }, [viewMode, onPrev, onNext, onClose])
+
+  const handleThumbnailClick = (index: number) => {
+    if (onSelectIndex) {
+      onSelectIndex(index)
+    }
+  }
+
+  const handleGridPhotoClick = (index: number) => {
+    if (onSelectIndex) {
+      onSelectIndex(index)
+    }
+    setViewMode('single')
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/90 z-[60] flex flex-col"
       onClick={onClose}
     >
-      {/* Previous button */}
-      {photos.length > 1 && (
+      {/* Top toolbar */}
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+        {/* Grid/Single toggle */}
+        {photos.length > 1 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setViewMode(viewMode === 'single' ? 'grid' : 'single')
+            }}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            title={viewMode === 'single' ? 'Grid view (G)' : 'Single view (G)'}
+          >
+            {viewMode === 'single' ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            )}
+          </button>
+        )}
+        {/* Close button */}
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onPrev()
-          }}
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          onClick={onClose}
+          className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
         >
-          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-      )}
+      </div>
 
-      {/* Image */}
-      <motion.img
-        key={selectedIndex}
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        src={getPhotoUrl(photos[selectedIndex].storage_path)}
-        alt={photos[selectedIndex].original_filename || 'Full size photo'}
-        className="max-w-full max-h-full object-contain rounded-lg"
-        onClick={(e) => e.stopPropagation()}
-      />
+      {viewMode === 'single' ? (
+        <>
+          {/* Main content area - flex column to stack image and thumbnails */}
+          <div className="flex-1 flex flex-col items-center justify-center p-4 pt-16">
+            {/* Image container with nav buttons */}
+            <div className="relative flex-1 flex items-center justify-center w-full max-h-[calc(100vh-180px)]">
+              {/* Previous button */}
+              {photos.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onPrev()
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
+                >
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
 
-      {/* Next button */}
-      {photos.length > 1 && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onNext()
-          }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-        >
-          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      )}
+              {/* Image */}
+              <motion.img
+                key={selectedIndex}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                src={getPhotoUrl(photos[selectedIndex].storage_path)}
+                alt={photos[selectedIndex].original_filename || 'Full size photo'}
+                className="max-w-full max-h-full object-contain rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
 
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-      >
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+              {/* Next button */}
+              {photos.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onNext()
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
+                >
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+            </div>
 
-      {/* Counter */}
-      {photos.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white text-sm">
-          {selectedIndex + 1} / {photos.length}
-        </div>
+            {/* Thumbnail strip below the photo - centered */}
+            {photos.length > 1 && (
+              <div
+                className="mt-4 flex flex-col items-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  ref={thumbnailContainerRef}
+                  className="flex justify-center gap-2 p-3 overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 max-w-[90vw]"
+                >
+                  {photos.map((photo, index) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => handleThumbnailClick(index)}
+                      className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all ${
+                        index === selectedIndex
+                          ? 'ring-2 ring-white scale-105'
+                          : 'opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={getPhotoUrl(photo.storage_path)}
+                        alt={photo.original_filename || 'Thumbnail'}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+                {/* Counter */}
+                <div className="mt-2 px-3 py-1 rounded-full bg-white/10 text-white text-xs">
+                  {selectedIndex + 1} / {photos.length}
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Grid View - 2 rows with dynamic columns, larger photos */}
+          <div className="flex-1 flex items-center justify-center p-4 pt-16 overflow-hidden">
+            <div
+              className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto p-2"
+              onClick={(e) => e.stopPropagation()}
+              style={{ maxWidth: '95vw', maxHeight: 'calc(100vh - 120px)' }}
+            >
+              {photos.map((photo, index) => (
+                <motion.button
+                  key={photo.id}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.2, delay: Math.min(index * 0.03, 0.3) }}
+                  onClick={() => handleGridPhotoClick(index)}
+                  className="w-72 h-72 rounded-lg overflow-hidden bg-secondary-800 hover:ring-2 hover:ring-white/50 transition-all flex-shrink-0"
+                >
+                  <img
+                    src={getPhotoUrl(photo.storage_path)}
+                    alt={photo.original_filename || 'Photo'}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.button>
+              ))}
+            </div>
+          </div>
+
+          {/* Photo count */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 text-white text-sm">
+            {photos.length} photos
+          </div>
+        </>
       )}
     </motion.div>
   )
