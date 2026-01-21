@@ -41,7 +41,15 @@ export function CustomerRow({ customer, onEdit }: CustomerRowProps) {
       </td>
       <td className="px-6 py-4">
         {customer.email && (
-          <div className="text-sm text-secondary-600">{customer.email}</div>
+          <a
+            href={`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(customer.email)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="block text-sm text-secondary-600 hover:text-primary-500 hover:underline"
+          >
+            {customer.email}
+          </a>
         )}
         {customer.phone && (
           <a href={`openphone://dial?number=${encodeURIComponent(customer.phone)}&action=call`} className="block text-sm text-secondary-500 hover:text-primary-500 hover:underline">

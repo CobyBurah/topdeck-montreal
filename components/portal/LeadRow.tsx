@@ -200,7 +200,17 @@ export function LeadRow({ lead, onEdit, onUpdate }: LeadRowProps) {
           )}
         </td>
         <td className="px-6 py-4">
-          <div className="text-sm text-secondary-600">{lead.email}</div>
+          {lead.email && (
+            <a
+              href={`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(lead.email)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="block text-sm text-secondary-600 hover:text-primary-500 hover:underline"
+            >
+              {lead.email}
+            </a>
+          )}
           {lead.phone && (
             <a href={`openphone://dial?number=${encodeURIComponent(lead.phone)}&action=call`} className="block text-sm text-secondary-500 hover:text-primary-500 hover:underline">
               {lead.phone}

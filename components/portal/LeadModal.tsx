@@ -21,6 +21,14 @@ interface LeadModalProps {
   onDelete?: (leadId: string) => void
 }
 
+// Helper component for read-only field display
+const DisplayField = ({ label, value }: { label: string; value?: string | null }) => (
+  <div>
+    <p className="text-sm font-medium text-secondary-700 mb-1">{label}</p>
+    <p className="text-secondary-900">{value || '—'}</p>
+  </div>
+)
+
 export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadModalProps) {
   const locale = useLocale()
   const [formData, setFormData] = useState<Partial<Lead>>({})
@@ -29,6 +37,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -36,6 +45,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
       setFormData(lead)
       setCustomerLanguage(lead.customer?.language ?? 'en')
       setPhotos(lead.lead_photos || [])
+      setIsEditing(false)
       setError(null)
     }
   }, [lead])
@@ -53,6 +63,15 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleCancelEdit = () => {
+    if (lead) {
+      setFormData(lead)
+      setCustomerLanguage(lead.customer?.language ?? 'en')
+    }
+    setIsEditing(false)
+    setError(null)
   }
 
   const handleSave = async () => {
@@ -111,7 +130,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
     }
 
     onUpdate(data as Lead)
-    onClose()
+    setIsEditing(false)
   }
 
   const handleDelete = async () => {
@@ -149,6 +168,11 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
       hour: 'numeric',
       minute: '2-digit',
     })
+  }
+
+  const getOptionLabel = (options: { value: string; label: string }[], value?: string | null) => {
+    if (!value) return null
+    return options.find(o => o.value === value)?.label || value
   }
 
   if (!lead) return null
@@ -198,14 +222,27 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                   Created: {formatDate(lead.created_at)}
                 </p>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-secondary-100 rounded-lg transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2">
+                {!isEditing && (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="p-2 hover:bg-secondary-100 rounded-lg transition-colors text-secondary-600 hover:text-secondary-900"
+                    title="Edit lead"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-secondary-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Content */}
@@ -215,117 +252,167 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                 <div className="space-y-4">
                   <h3 className="font-semibold text-secondary-900">Contact Information</h3>
 
-                  <Input
-                    label="Full Name"
-                    name="full_name"
-                    value={formData.full_name || ''}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={formData.email || ''}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Phone"
-                    name="phone"
-                    value={formData.phone || ''}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Address"
-                    name="address"
-                    value={formData.address || ''}
-                    onChange={handleChange}
-                  />
+                  {isEditing ? (
+                    <>
+                      <Input
+                        label="Full Name"
+                        name="full_name"
+                        value={formData.full_name || ''}
+                        onChange={handleChange}
+                      />
+                      <Input
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={formData.email || ''}
+                        onChange={handleChange}
+                      />
+                      <Input
+                        label="Phone"
+                        name="phone"
+                        value={formData.phone || ''}
+                        onChange={handleChange}
+                      />
+                      <Input
+                        label="Address"
+                        name="address"
+                        value={formData.address || ''}
+                        onChange={handleChange}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DisplayField label="Full Name" value={formData.full_name} />
+                      <div>
+                        <p className="text-sm font-medium text-secondary-700 mb-1">Email</p>
+                        {formData.email ? (
+                          <a
+                            href={`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(formData.email)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-secondary-900 hover:text-primary-500 hover:underline"
+                          >
+                            {formData.email}
+                          </a>
+                        ) : (
+                          <p className="text-secondary-900">—</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-secondary-700 mb-1">Phone</p>
+                        {formData.phone ? (
+                          <a
+                            href={`openphone://dial?number=${encodeURIComponent(formData.phone)}&action=call`}
+                            className="text-secondary-900 hover:text-primary-500 hover:underline"
+                          >
+                            {formData.phone}
+                          </a>
+                        ) : (
+                          <p className="text-secondary-900">—</p>
+                        )}
+                      </div>
+                      <DisplayField label="Address" value={formData.address} />
+                    </>
+                  )}
                 </div>
 
                 {/* Project Details */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-secondary-900">Project Details</h3>
 
-                  <Input
-                    label="Service Type"
-                    name="service_type"
-                    value={formData.service_type || ''}
-                    onChange={handleChange}
-                    placeholder="e.g., Deck, Fence, Railing"
-                  />
-
-                  <Input
-                    label="Approximate Size"
-                    name="approximate_size"
-                    value={formData.approximate_size || ''}
-                    onChange={handleChange}
-                    placeholder="e.g., 200 sq ft"
-                  />
-
-                  <Input
-                    label="Preferred Timeline"
-                    name="preferred_timeline"
-                    value={formData.preferred_timeline || ''}
-                    onChange={handleChange}
-                    placeholder="e.g., ASAP, 1-2 weeks"
-                  />
-
-                  <Textarea
-                    label="Additional Details"
-                    name="additional_details"
-                    value={formData.additional_details || ''}
-                    onChange={handleChange}
-                    rows={3}
-                  />
+                  {isEditing ? (
+                    <>
+                      <Input
+                        label="Service Type"
+                        name="service_type"
+                        value={formData.service_type || ''}
+                        onChange={handleChange}
+                        placeholder="e.g., Deck, Fence, Railing"
+                      />
+                      <Input
+                        label="Approximate Size"
+                        name="approximate_size"
+                        value={formData.approximate_size || ''}
+                        onChange={handleChange}
+                        placeholder="e.g., 200 sq ft"
+                      />
+                      <Input
+                        label="Preferred Timeline"
+                        name="preferred_timeline"
+                        value={formData.preferred_timeline || ''}
+                        onChange={handleChange}
+                        placeholder="e.g., ASAP, 1-2 weeks"
+                      />
+                      <Textarea
+                        label="Additional Details"
+                        name="additional_details"
+                        value={formData.additional_details || ''}
+                        onChange={handleChange}
+                        rows={3}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DisplayField label="Service Type" value={formData.service_type} />
+                      <DisplayField label="Approximate Size" value={formData.approximate_size} />
+                      <DisplayField label="Preferred Timeline" value={formData.preferred_timeline} />
+                      <DisplayField label="Additional Details" value={formData.additional_details} />
+                    </>
+                  )}
                 </div>
 
                 {/* CRM Fields */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-secondary-900">CRM Fields</h3>
 
-                  <Select
-                    label="Status"
-                    name="status"
-                    value={formData.status || 'new'}
-                    onChange={handleChange}
-                    options={LEAD_STATUSES}
-                  />
-
-                  <Select
-                    label="Source"
-                    name="source"
-                    value={formData.source || 'form'}
-                    onChange={handleChange}
-                    options={LEAD_SOURCES}
-                  />
-
-                  <Select
-                    label="Language (Customer)"
-                    name="customerLanguage"
-                    value={customerLanguage}
-                    onChange={(e) => setCustomerLanguage(e.target.value as LeadLanguage)}
-                    options={LEAD_LANGUAGES}
-                  />
-
-                  <Select
-                    label="Condition"
-                    name="condition"
-                    value={formData.condition || ''}
-                    onChange={handleChange}
-                    options={[{ value: '', label: 'Not Set' }, ...LEAD_CONDITIONS]}
-                  />
-
-                  <Textarea
-                    label="Internal Notes"
-                    name="internal_notes"
-                    value={formData.internal_notes || ''}
-                    onChange={handleChange}
-                    rows={4}
-                    placeholder="Add notes about this lead (not visible to customer)"
-                  />
+                  {isEditing ? (
+                    <>
+                      <Select
+                        label="Status"
+                        name="status"
+                        value={formData.status || 'new'}
+                        onChange={handleChange}
+                        options={LEAD_STATUSES}
+                      />
+                      <Select
+                        label="Source"
+                        name="source"
+                        value={formData.source || 'form'}
+                        onChange={handleChange}
+                        options={LEAD_SOURCES}
+                      />
+                      <Select
+                        label="Language (Customer)"
+                        name="customerLanguage"
+                        value={customerLanguage}
+                        onChange={(e) => setCustomerLanguage(e.target.value as LeadLanguage)}
+                        options={LEAD_LANGUAGES}
+                      />
+                      <Select
+                        label="Condition"
+                        name="condition"
+                        value={formData.condition || ''}
+                        onChange={handleChange}
+                        options={[{ value: '', label: 'Not Set' }, ...LEAD_CONDITIONS]}
+                      />
+                      <Textarea
+                        label="Internal Notes"
+                        name="internal_notes"
+                        value={formData.internal_notes || ''}
+                        onChange={handleChange}
+                        rows={4}
+                        placeholder="Add notes about this lead (not visible to customer)"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <DisplayField label="Status" value={getOptionLabel(LEAD_STATUSES, formData.status)} />
+                      <DisplayField label="Source" value={getOptionLabel(LEAD_SOURCES, formData.source)} />
+                      <DisplayField label="Language (Customer)" value={getOptionLabel(LEAD_LANGUAGES, customerLanguage)} />
+                      <DisplayField label="Condition" value={getOptionLabel(LEAD_CONDITIONS, formData.condition) || 'Not Set'} />
+                      <DisplayField label="Internal Notes" value={formData.internal_notes} />
+                    </>
+                  )}
                 </div>
 
                 {/* Photos */}
@@ -334,7 +421,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                   <PhotoGallery
                     leadId={lead.id}
                     photos={photos}
-                    editable
+                    editable={isEditing}
                     onUpload={handlePhotoUpload}
                     onDelete={handlePhotoDelete}
                   />
@@ -355,7 +442,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
             {/* Footer */}
             <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
               <div>
-                {onDelete && !showDeleteConfirm && (
+                {isEditing && onDelete && !showDeleteConfirm && (
                   <Button
                     variant="ghost"
                     onClick={() => setShowDeleteConfirm(true)}
@@ -385,12 +472,20 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                 )}
               </div>
               <div className="flex items-center gap-4">
-                <Button variant="ghost" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </Button>
+                {isEditing ? (
+                  <>
+                    <Button variant="ghost" onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSave} disabled={isSaving}>
+                      {isSaving ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="ghost" onClick={onClose}>
+                    Close
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
