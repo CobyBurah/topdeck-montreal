@@ -198,6 +198,7 @@
       "email": "john@example.com",
       "phone": "(514) 555-0123",
       "address": "Montreal, QC",
+      "service": "Select a service",
       "size": "e.g., 300 sq ft deck, 50 ft fence",
       "message": "Tell us more about your project. What's the current condition? Any specific requirements or concerns?",
       "images": "Click to upload photos of your deck or project"

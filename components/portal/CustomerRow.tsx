@@ -44,7 +44,9 @@ export function CustomerRow({ customer, onEdit }: CustomerRowProps) {
           <div className="text-sm text-secondary-600">{customer.email}</div>
         )}
         {customer.phone && (
-          <div className="text-sm text-secondary-500">{customer.phone}</div>
+          <a href={`openphone://dial?number=${encodeURIComponent(customer.phone)}&action=call`} className="block text-sm text-secondary-500 hover:text-primary-500 hover:underline">
+            {customer.phone}
+          </a>
         )}
         {customer.address && (
           <div className="text-sm text-secondary-400 truncate max-w-[200px]" title={customer.address}>

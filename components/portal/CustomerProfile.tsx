@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
 import { LeadsTable } from './LeadsTable'
@@ -19,6 +20,7 @@ interface CustomerProfileProps {
 
 export function CustomerProfile({ customer: initialCustomer, leads: initialLeads }: CustomerProfileProps) {
   const locale = useLocale()
+  const router = useRouter()
   const [customer, setCustomer] = useState(initialCustomer)
   const [customerLeads, setCustomerLeads] = useState(initialLeads)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -31,6 +33,10 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
 
   const handleLeadCreate = (newLead: Lead) => {
     setCustomerLeads((prev) => [newLead, ...prev])
+  }
+
+  const handleCustomerDelete = () => {
+    router.push(`/${locale}/portal/customers`)
   }
 
   // Filter leads by status for tabs
@@ -82,12 +88,12 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
                 </p>
               )}
               {customer.phone && (
-                <p className="flex items-center gap-2">
+                <a href={`openphone://dial?number=${encodeURIComponent(customer.phone)}&action=call`} className="flex items-center gap-2 hover:text-primary-500 transition-colors">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   {customer.phone}
-                </p>
+                </a>
               )}
               {customer.address && (
                 <p className="flex items-center gap-2">
@@ -151,7 +157,7 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
         {/* Tab Content */}
         <div className="p-6">
           {getTabLeads().length > 0 ? (
-            <LeadsTable initialLeads={getTabLeads()} />
+            <LeadsTable initialLeads={getTabLeads()} showStatsCards={false} />
           ) : (
             <div className="py-12 text-center text-secondary-500">
               No {activeTab} found for this customer
@@ -168,6 +174,7 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
         onClose={() => setIsEditModalOpen(false)}
         onUpdate={handleCustomerUpdate}
         onCreate={() => {}}
+        onDelete={handleCustomerDelete}
       />
 
       {/* New Lead Modal */}

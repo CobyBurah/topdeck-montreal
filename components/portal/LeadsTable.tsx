@@ -4,19 +4,49 @@ import { useState, useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { LeadRow } from './LeadRow'
 import { LeadModal } from './LeadModal'
-import { LeadFilters } from './LeadFilters'
+import { LeadFilters, type DateRange } from './LeadFilters'
+import { LeadsStatsCards } from './LeadsStatsCards'
 import type { Lead, LeadStatus } from '@/types/lead'
 
 interface LeadsTableProps {
   initialLeads: Lead[]
+  showStatsCards?: boolean
 }
 
-export function LeadsTable({ initialLeads }: LeadsTableProps) {
+const filterByDateRange = (lead: Lead, range: DateRange): boolean => {
+  if (range === 'all') return true
+
+  const leadDate = new Date(lead.created_at)
+  const now = new Date()
+
+  switch (range) {
+    case 'today': {
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      return leadDate >= todayStart
+    }
+    case 'week': {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      return leadDate >= weekAgo
+    }
+    case 'month': {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      return leadDate >= monthAgo
+    }
+    case '2026':
+    case '2025':
+      return leadDate.getFullYear() === parseInt(range)
+    default:
+      return true
+  }
+}
+
+export function LeadsTable({ initialLeads, showStatsCards = true }: LeadsTableProps) {
   const [leads, setLeads] = useState(initialLeads)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<LeadStatus | 'all'>('all')
+  const [dateRange, setDateRange] = useState<DateRange>('all')
   const [sortField, setSortField] = useState<'created_at' | 'updated_at' | 'full_name' | 'status'>('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
@@ -30,8 +60,9 @@ export function LeadsTable({ initialLeads }: LeadsTableProps) {
           (lead.phone?.toLowerCase().includes(searchLower) ?? false)
 
         const matchesStatus = statusFilter === 'all' || lead.status === statusFilter
+        const matchesDateRange = filterByDateRange(lead, dateRange)
 
-        return matchesSearch && matchesStatus
+        return matchesSearch && matchesStatus && matchesDateRange
       })
       .sort((a, b) => {
         const aVal = a[sortField] ?? ''
@@ -41,7 +72,7 @@ export function LeadsTable({ initialLeads }: LeadsTableProps) {
         }
         return aVal > bVal ? -1 : 1
       })
-  }, [leads, searchQuery, statusFilter, sortField, sortDirection])
+  }, [leads, searchQuery, statusFilter, dateRange, sortField, sortDirection])
 
   const handleLeadUpdate = (updatedLead: Lead) => {
     setLeads((prev) => prev.map((l) => (l.id === updatedLead.id ? updatedLead : l)))
@@ -67,11 +98,21 @@ export function LeadsTable({ initialLeads }: LeadsTableProps) {
 
   return (
     <div className="space-y-6">
+      {showStatsCards && (
+        <LeadsStatsCards
+          leads={leads}
+          activeStatus={statusFilter}
+          onStatusClick={setStatusFilter}
+        />
+      )}
+
       <LeadFilters
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusChange={setStatusFilter}
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
       />
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -129,6 +170,7 @@ export function LeadsTable({ initialLeads }: LeadsTableProps) {
                       setSelectedLead(lead)
                       setIsModalOpen(true)
                     }}
+                    onUpdate={handleLeadUpdate}
                   />
                 ))}
               </AnimatePresence>
@@ -138,7 +180,7 @@ export function LeadsTable({ initialLeads }: LeadsTableProps) {
 
         {filteredLeads.length === 0 && (
           <div className="py-12 text-center text-secondary-500">
-            {searchQuery || statusFilter !== 'all'
+            {searchQuery || statusFilter !== 'all' || dateRange !== 'all'
               ? 'No leads match your filters'
               : 'No leads yet'}
           </div>

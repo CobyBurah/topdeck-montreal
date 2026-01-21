@@ -11,7 +11,7 @@ import { PhotoGallery } from './PhotoGallery'
 import { LeadStatusBadge } from './LeadStatusBadge'
 import { LeadSourceBadge } from './LeadSourceBadge'
 import { LeadLanguageBadge } from './LeadLanguageBadge'
-import { LEAD_STATUSES, LEAD_SOURCES, LEAD_LANGUAGES, LEAD_CONDITIONS, type Lead, type LeadStatus, type LeadSource, type LeadLanguage, type LeadCondition, type LeadPhoto } from '@/types/lead'
+import { LEAD_STATUSES, LEAD_SOURCES, LEAD_LANGUAGES, LEAD_CONDITIONS, type Lead, type LeadStatus, type LeadSource, type LeadLanguage, type LeadCondition, type LeadPhoto, type LeadCustomer } from '@/types/lead'
 
 interface LeadModalProps {
   lead: Lead | null
@@ -24,6 +24,7 @@ interface LeadModalProps {
 export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadModalProps) {
   const locale = useLocale()
   const [formData, setFormData] = useState<Partial<Lead>>({})
+  const [customerLanguage, setCustomerLanguage] = useState<LeadLanguage>('en')
   const [photos, setPhotos] = useState<LeadPhoto[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -33,6 +34,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
   useEffect(() => {
     if (lead) {
       setFormData(lead)
+      setCustomerLanguage(lead.customer?.language ?? 'en')
       setPhotos(lead.lead_photos || [])
       setError(null)
     }
@@ -61,6 +63,21 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
 
     const supabase = createClient()
 
+    // Update customer language if customer exists
+    if (lead.customer_id) {
+      const { error: customerError } = await supabase
+        .from('customers')
+        .update({ language: customerLanguage })
+        .eq('id', lead.customer_id)
+
+      if (customerError) {
+        setError('Failed to save customer language. Please try again.')
+        console.error('Error updating customer:', customerError)
+        setIsSaving(false)
+        return
+      }
+    }
+
     const { data, error: updateError } = await supabase
       .from('leads')
       .update({
@@ -74,14 +91,14 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
         additional_details: formData.additional_details,
         source: formData.source as LeadSource,
         status: formData.status as LeadStatus,
-        language: formData.language as LeadLanguage,
         condition: (formData.condition || null) as LeadCondition | null,
         internal_notes: formData.internal_notes,
       })
       .eq('id', lead.id)
       .select(`
         *,
-        lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at)
+        lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
+        customer:customers (id, full_name, email, phone, language)
       `)
       .single()
 
@@ -175,7 +192,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                   )}
                   <LeadStatusBadge status={lead.status} />
                   <LeadSourceBadge source={lead.source} />
-                  <LeadLanguageBadge language={lead.language} />
+                  <LeadLanguageBadge language={lead.customer?.language ?? 'en'} />
                 </div>
                 <p className="text-sm text-secondary-500 mt-1">
                   Created: {formatDate(lead.created_at)}
@@ -286,10 +303,10 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                   />
 
                   <Select
-                    label="Language"
-                    name="language"
-                    value={formData.language || 'en'}
-                    onChange={handleChange}
+                    label="Language (Customer)"
+                    name="customerLanguage"
+                    value={customerLanguage}
+                    onChange={(e) => setCustomerLanguage(e.target.value as LeadLanguage)}
                     options={LEAD_LANGUAGES}
                   />
 

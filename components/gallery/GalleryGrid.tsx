@@ -180,19 +180,21 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
   const positionRef = useRef(0)
   const showingBeforeRef = useRef(true)
   const hasDraggedRef = useRef(false)
+  const isVisibleRef = useRef(false)
 
   // Keep positionRef in sync with state
   useEffect(() => {
     positionRef.current = sliderPosition
   }, [sliderPosition])
 
-  // Track visibility with 40% threshold
+  // Track visibility with 45% threshold
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting
         setIsVisible(entry.isIntersecting)
       },
       { threshold: 0.45 }
@@ -216,7 +218,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     let isCancelled = false
 
     const runAnimation = () => {
-      if (isCancelled) return
+      if (isCancelled || !isVisibleRef.current) return
 
       // Toggle between showing before (0) and after (100)
       const target = showingBeforeRef.current ? 100 : 0
@@ -227,7 +229,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
       const startTime = performance.now()
 
       const animate = () => {
-        if (isCancelled) return
+        if (isCancelled || !isVisibleRef.current) return
 
         const elapsed = performance.now() - startTime
         const progress = Math.min(elapsed / duration, 1)

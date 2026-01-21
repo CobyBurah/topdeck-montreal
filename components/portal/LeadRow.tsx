@@ -10,19 +10,24 @@ import { LeadLanguageBadge } from './LeadLanguageBadge'
 import { LeadConditionBadge } from './LeadConditionBadge'
 import { PhotoLightbox } from './PhotoGallery'
 import { createClient } from '@/lib/supabase/client'
-import type { Lead } from '@/types/lead'
+import type { Lead, LeadStatus, LeadCondition, LeadLanguage } from '@/types/lead'
+import { LEAD_STATUSES, LEAD_CONDITIONS, LEAD_LANGUAGES } from '@/types/lead'
 
 interface LeadRowProps {
   lead: Lead
   onEdit: () => void
+  onUpdate: (lead: Lead) => void
 }
 
-export function LeadRow({ lead, onEdit }: LeadRowProps) {
+export function LeadRow({ lead, onEdit, onUpdate }: LeadRowProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [actionsOpen, setActionsOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
+  const [editingField, setEditingField] = useState<'status' | 'condition' | 'language' | null>(null)
+  const [fieldDropdownPosition, setFieldDropdownPosition] = useState({ top: 0, left: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const fieldDropdownRef = useRef<HTMLDivElement>(null)
   const locale = useLocale()
   const supabase = createClient()
 
@@ -38,16 +43,22 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
       ) {
         setActionsOpen(false)
       }
+      if (
+        fieldDropdownRef.current &&
+        !fieldDropdownRef.current.contains(target)
+      ) {
+        setEditingField(null)
+      }
     }
 
-    if (actionsOpen) {
+    if (actionsOpen || editingField) {
       document.addEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [actionsOpen])
+  }, [actionsOpen, editingField])
 
   // Update dropdown position when opening
   const handleToggleDropdown = (e: React.MouseEvent) => {
@@ -65,6 +76,69 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
   const handleAction = (action: string) => {
     console.log(`Action: ${action} for lead ${lead.id}`)
     setActionsOpen(false)
+  }
+
+  const handleFieldClick = (field: 'status' | 'condition' | 'language', e: React.MouseEvent) => {
+    e.stopPropagation()
+    const target = e.currentTarget as HTMLElement
+    const rect = target.getBoundingClientRect()
+    setFieldDropdownPosition({
+      top: rect.bottom + 4,
+      left: rect.left,
+    })
+    setEditingField(field)
+  }
+
+  const handleStatusChange = async (newStatus: LeadStatus) => {
+    setEditingField(null)
+    const { data, error } = await supabase
+      .from('leads')
+      .update({ status: newStatus })
+      .eq('id', lead.id)
+      .select('*, lead_photos(*), customer:customers(id, full_name, email, phone, language)')
+      .single()
+
+    if (!error && data) {
+      onUpdate(data as Lead)
+    }
+  }
+
+  const handleConditionChange = async (newCondition: LeadCondition | null) => {
+    setEditingField(null)
+    const { data, error } = await supabase
+      .from('leads')
+      .update({ condition: newCondition })
+      .eq('id', lead.id)
+      .select('*, lead_photos(*), customer:customers(id, full_name, email, phone, language)')
+      .single()
+
+    if (!error && data) {
+      onUpdate(data as Lead)
+    }
+  }
+
+  const handleLanguageChange = async (newLanguage: LeadLanguage) => {
+    setEditingField(null)
+    if (!lead.customer_id) return
+
+    // Update the customer's language
+    const { error: customerError } = await supabase
+      .from('customers')
+      .update({ language: newLanguage })
+      .eq('id', lead.customer_id)
+
+    if (customerError) return
+
+    // Refetch the lead with updated customer data
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*, lead_photos(*), customer:customers(id, full_name, email, phone, language)')
+      .eq('id', lead.id)
+      .single()
+
+    if (!error && data) {
+      onUpdate(data as Lead)
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -128,7 +202,9 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
         <td className="px-6 py-4">
           <div className="text-sm text-secondary-600">{lead.email}</div>
           {lead.phone && (
-            <div className="text-sm text-secondary-500">{lead.phone}</div>
+            <a href={`openphone://dial?number=${encodeURIComponent(lead.phone)}&action=call`} className="block text-sm text-secondary-500 hover:text-primary-500 hover:underline">
+              {lead.phone}
+            </a>
           )}
           {lead.address && (
             <div className="text-sm text-secondary-400 truncate max-w-[200px]" title={lead.address}>
@@ -142,7 +218,12 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
           </div>
         </td>
         <td className="px-6 py-4">
-          <LeadConditionBadge condition={lead.condition} />
+          <button
+            onClick={(e) => handleFieldClick('condition', e)}
+            className="hover:ring-2 hover:ring-secondary-300 rounded-full transition-all"
+          >
+            <LeadConditionBadge condition={lead.condition} />
+          </button>
         </td>
         <td className="px-6 py-4">
           {photos.length > 0 ? (
@@ -174,10 +255,20 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
           )}
         </td>
         <td className="px-6 py-4">
-          <LeadStatusBadge status={lead.status} />
+          <button
+            onClick={(e) => handleFieldClick('status', e)}
+            className="hover:ring-2 hover:ring-secondary-300 rounded-full transition-all"
+          >
+            <LeadStatusBadge status={lead.status} />
+          </button>
         </td>
         <td className="px-6 py-4">
-          <LeadLanguageBadge language={lead.language} />
+          <button
+            onClick={(e) => handleFieldClick('language', e)}
+            className="hover:ring-2 hover:ring-secondary-300 rounded-full transition-all"
+          >
+            <LeadLanguageBadge language={lead.customer?.language ?? 'en'} />
+          </button>
         </td>
         <td className="px-6 py-4">
           <div className="text-sm text-secondary-500">
@@ -237,6 +328,74 @@ export function LeadRow({ lead, onEdit }: LeadRowProps) {
           </div>
         </td>
       </motion.tr>
+
+      {/* Inline Field Editing Dropdown */}
+      {editingField && typeof document !== 'undefined' && ReactDOM.createPortal(
+        <div
+          ref={fieldDropdownRef}
+          className="fixed w-48 bg-white rounded-lg shadow-lg border border-secondary-200 py-1 z-50 max-h-64 overflow-y-auto"
+          style={{ top: fieldDropdownPosition.top, left: fieldDropdownPosition.left }}
+        >
+          {editingField === 'status' && LEAD_STATUSES.map((status) => (
+            <button
+              key={status.value}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleStatusChange(status.value)
+              }}
+              className={`w-full px-4 py-2 text-left text-sm hover:bg-secondary-50 flex items-center gap-2 ${
+                lead.status === status.value ? 'bg-secondary-100 font-medium' : 'text-secondary-700'
+              }`}
+            >
+              {status.label}
+            </button>
+          ))}
+          {editingField === 'condition' && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleConditionChange(null)
+                }}
+                className={`w-full px-4 py-2 text-left text-sm hover:bg-secondary-50 flex items-center gap-2 ${
+                  lead.condition === null ? 'bg-secondary-100 font-medium' : 'text-secondary-700'
+                }`}
+              >
+                None
+              </button>
+              {LEAD_CONDITIONS.map((condition) => (
+                <button
+                  key={condition.value}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleConditionChange(condition.value)
+                  }}
+                  className={`w-full px-4 py-2 text-left text-sm hover:bg-secondary-50 flex items-center gap-2 ${
+                    lead.condition === condition.value ? 'bg-secondary-100 font-medium' : 'text-secondary-700'
+                  }`}
+                >
+                  {condition.label}
+                </button>
+              ))}
+            </>
+          )}
+          {editingField === 'language' && LEAD_LANGUAGES.map((lang) => (
+            <button
+              key={lang.value}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleLanguageChange(lang.value)
+              }}
+              className={`w-full px-4 py-2 text-left text-sm hover:bg-secondary-50 flex items-center gap-2 ${
+                lead.customer?.language === lang.value ? 'bg-secondary-100 font-medium' : 'text-secondary-700'
+              }`}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>,
+        document.body
+      )}
 
       {/* Photo Lightbox */}
       <AnimatePresence>

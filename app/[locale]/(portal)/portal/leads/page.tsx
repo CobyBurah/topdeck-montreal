@@ -9,7 +9,8 @@ export default async function LeadsPage() {
     .from('leads')
     .select(`
       *,
-      lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at)
+      lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
+      customer:customers (id, full_name, email, phone, language)
     `)
     .order('created_at', { ascending: false })
 

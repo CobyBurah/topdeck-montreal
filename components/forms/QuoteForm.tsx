@@ -66,7 +66,23 @@ const checkmarkVariants = {
 
 const confettiColors = ['#F97316', '#22C55E', '#3B82F6', '#EAB308', '#EC4899']
 
-export function QuoteForm() {
+const initialFormData: FormDataState = {
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  service: '',
+  size: '',
+  timeline: '',
+  message: '',
+  images: [],
+}
+
+interface QuoteFormProps {
+  onSubmitStateChange?: (isSubmitted: boolean) => void
+}
+
+export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const t = useTranslations('quoteForm')
   const locale = useLocale()
 
@@ -85,17 +101,7 @@ export function QuoteForm() {
     { value: 'flexible', label: t('timelines.flexible') },
   ]
 
-  const [formData, setFormData] = useState<FormDataState>({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    service: '',
-    size: '',
-    timeline: '',
-    message: '',
-    images: [],
-  })
+  const [formData, setFormData] = useState<FormDataState>(initialFormData)
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -167,6 +173,7 @@ export function QuoteForm() {
       }
 
       setIsSubmitted(true)
+      onSubmitStateChange?.(true)
     } catch {
       setSubmitError(t('errors.submitFailed'))
     } finally {
@@ -283,7 +290,15 @@ export function QuoteForm() {
           whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
           whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
         >
-          <Button onClick={() => setIsSubmitted(false)} variant="outline">
+          <Button
+            onClick={() => {
+              setIsSubmitted(false)
+              setFormData(initialFormData)
+              setErrors({})
+              onSubmitStateChange?.(false)
+            }}
+            variant="outline"
+          >
             {t('success.button')}
           </Button>
         </motion.div>
@@ -356,6 +371,7 @@ export function QuoteForm() {
           value={formData.service}
           onChange={handleChange}
           options={surfaceOptions}
+          placeholder={t('placeholders.service')}
           error={errors.service}
         />
         <Input

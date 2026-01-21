@@ -32,6 +32,14 @@ export interface LeadPhoto {
   uploaded_at: string
 }
 
+export interface LeadCustomer {
+  id: string
+  full_name: string
+  email: string | null
+  phone: string | null
+  language: 'en' | 'fr'
+}
+
 export interface Lead {
   id: string
   created_at: string
@@ -51,6 +59,7 @@ export interface Lead {
   customer_id: string | null
   condition: LeadCondition | null
   lead_photos?: LeadPhoto[]
+  customer?: LeadCustomer
 }
 
 export const LEAD_STATUSES: { value: LeadStatus; label: string }[] = [

@@ -54,36 +54,59 @@ const navItems = [
   },
 ]
 
-export function PortalSidebar() {
+interface PortalSidebarProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function PortalSidebar({ isOpen, onClose }: PortalSidebarProps) {
   const pathname = usePathname()
   const locale = useLocale()
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 w-64 bg-secondary-900 border-r border-secondary-800 z-40">
-      <nav className="p-4 space-y-1">
-        {navItems.map((item) => {
-          const fullHref = `/${locale}${item.href}`
-          const isActive = item.exact
-            ? pathname === fullHref
-            : pathname.startsWith(fullHref)
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
 
-          return (
-            <Link
-              key={item.href}
-              href={fullHref}
-              className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-                isActive
-                  ? 'bg-primary-500 text-white'
-                  : 'text-secondary-400 hover:text-white hover:bg-secondary-800'
-              )}
-            >
-              {item.icon}
-              <span className="font-medium">{item.label}</span>
-            </Link>
-          )
-        })}
-      </nav>
-    </aside>
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          'fixed left-0 top-16 bottom-0 w-64 bg-secondary-900 border-r border-secondary-800 z-40 transition-transform duration-300 ease-in-out',
+          'md:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        <nav className="p-4 space-y-1">
+          {navItems.map((item) => {
+            const fullHref = `/${locale}${item.href}`
+            const isActive = item.exact
+              ? pathname === fullHref
+              : pathname.startsWith(fullHref)
+
+            return (
+              <Link
+                key={item.href}
+                href={fullHref}
+                onClick={onClose}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+                  isActive
+                    ? 'bg-primary-500 text-white'
+                    : 'text-secondary-400 hover:text-white hover:bg-secondary-800'
+                )}
+              >
+                {item.icon}
+                <span className="font-medium">{item.label}</span>
+              </Link>
+            )
+          })}
+        </nav>
+      </aside>
+    </>
   )
 }

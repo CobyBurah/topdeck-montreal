@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -7,6 +8,7 @@ import { QuoteForm } from '@/components/forms/QuoteForm'
 
 export default function ContactPage() {
   const t = useTranslations('contactPage')
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false)
 
   return (
     <main className="min-h-screen grid md:grid-cols-2">
@@ -55,35 +57,39 @@ export default function ContactPage() {
       {/* Right - Form */}
       <div className="flex items-center justify-center p-8 md:p-12 lg:p-16 bg-white">
         <div className="w-full max-w-lg">
-          {/* Mobile header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden mb-8"
-          >
-            <h1 className="text-3xl font-bold text-secondary-900 mb-2">
-              {t('getQuote')}
-            </h1>
-            <p className="text-secondary-600">
-              {t('mobileDescription')}
-            </p>
-          </motion.div>
+          {!isFormSubmitted && (
+            <>
+              {/* Mobile header */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="md:hidden mb-8"
+              >
+                <h1 className="text-3xl font-bold text-secondary-900 mb-2">
+                  {t('getQuote')}
+                </h1>
+                <p className="text-secondary-600">
+                  {t('mobileDescription')}
+                </p>
+              </motion.div>
 
-          {/* Desktop header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="hidden md:block mb-8"
-          >
-            <h2 className="text-2xl font-bold text-secondary-900 mb-2">
-              {t('requestQuote')}
-            </h2>
-            <p className="text-secondary-600">
-              {t('desktopDescription')}
-            </p>
-          </motion.div>
+              {/* Desktop header */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="hidden md:block mb-8"
+              >
+                <h2 className="text-2xl font-bold text-secondary-900 mb-2">
+                  {t('requestQuote')}
+                </h2>
+                <p className="text-secondary-600">
+                  {t('desktopDescription')}
+                </p>
+              </motion.div>
+            </>
+          )}
 
-          <QuoteForm />
+          <QuoteForm onSubmitStateChange={setIsFormSubmitted} />
         </div>
       </div>
     </main>

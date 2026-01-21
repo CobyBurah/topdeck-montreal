@@ -198,6 +198,7 @@
       "email": "jean@exemple.com",
       "phone": "(514) 555-0123",
       "address": "Montréal, QC",
+      "service": "Sélectionnez un service",
       "size": "ex: terrasse de 300 pi², clôture de 50 pi",
       "message": "Parlez-nous de votre projet. Quel est l'état actuel? Y a-t-il des exigences ou préoccupations spécifiques?",
       "images": "Cliquez pour télécharger des photos de votre terrasse ou projet"
