@@ -170,6 +170,11 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
     })
   }
 
+  const handleAction = (action: string) => {
+    console.log(`Action: ${action} for lead ${lead?.id}`)
+    // TODO: Implement actual action handlers
+  }
+
   const getOptionLabel = (options: { value: string; label: string }[], value?: string | null) => {
     if (!value) return null
     return options.find(o => o.value === value)?.label || value
@@ -241,6 +246,31 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="px-6 py-3 border-b border-secondary-200 bg-secondary-50 shrink-0">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-sm font-medium text-secondary-600">Actions:</span>
+                <button
+                  onClick={() => handleAction('ask_for_pictures')}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 rounded-lg hover:bg-secondary-100 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Ask for Pictures
+                </button>
+                <button
+                  onClick={() => handleAction('in_person_estimate')}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-secondary-700 bg-white border border-secondary-300 rounded-lg hover:bg-secondary-100 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  In-Person Estimate
                 </button>
               </div>
             </div>
