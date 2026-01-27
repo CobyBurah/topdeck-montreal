@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Input, Textarea, Select } from '@/components/ui/Input'
@@ -109,6 +109,44 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const successMessageRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isSubmitted && successMessageRef.current) {
+      // Small delay to ensure DOM is updated
+      const timeoutId = setTimeout(() => {
+        successMessageRef.current?.scrollIntoView({
+          behavior: shouldReduceMotion ? 'auto' : 'smooth',
+          block: 'center',
+        })
+      }, 100)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [isSubmitted, shouldReduceMotion])
+
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '')
+
+    // Limit to 10 digits
+    const truncated = numbers.slice(0, 10)
+
+    // Apply formatting based on length
+    if (truncated.length === 0) {
+      return ''
+    } else if (truncated.length <= 2) {
+      return `(${truncated}`
+    } else if (truncated.length === 3) {
+      return `(${truncated}) `
+    } else if (truncated.length <= 5) {
+      return `(${truncated.slice(0, 3)}) ${truncated.slice(3)}`
+    } else if (truncated.length === 6) {
+      return `(${truncated.slice(0, 3)}) ${truncated.slice(3)}-`
+    } else {
+      return `(${truncated.slice(0, 3)}) ${truncated.slice(3, 6)}-${truncated.slice(6)}`
+    }
+  }
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -185,7 +223,11 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // Apply phone formatting for phone field
+    const formattedValue = name === 'phone' ? formatPhoneNumber(value) : value
+
+    setFormData(prev => ({ ...prev, [name]: formattedValue }))
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -208,6 +250,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   if (isSubmitted) {
     return (
       <motion.div
+        ref={successMessageRef}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="text-center py-12 relative overflow-hidden"

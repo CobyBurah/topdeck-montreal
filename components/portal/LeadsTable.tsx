@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { LeadRow } from './LeadRow'
 import { LeadModal } from './LeadModal'
 import { LeadFilters, type DateRange } from './LeadFilters'
 import { LeadsStatsCards } from './LeadsStatsCards'
+import { useLeadsRealtime } from '@/hooks/useLeadsRealtime'
 import type { Lead, LeadStatus } from '@/types/lead'
 
 interface LeadsTableProps {
@@ -49,6 +50,42 @@ export function LeadsTable({ initialLeads, showStatsCards = true }: LeadsTablePr
   const [dateRange, setDateRange] = useState<DateRange>('all')
   const [sortField, setSortField] = useState<'created_at' | 'updated_at' | 'full_name' | 'status'>('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState(false)
+
+  // Memoize realtime callbacks to prevent infinite re-subscription loop
+  const handleRealtimeInsert = useCallback((newLead: Lead) => {
+    setLeads((prev) => [newLead, ...prev])
+  }, [])
+
+  const handleRealtimeUpdate = useCallback((updatedLead: Lead) => {
+    setLeads((prev) =>
+      prev.map((lead) => (lead.id === updatedLead.id ? updatedLead : lead))
+    )
+  }, [])
+
+  const handleRealtimeDelete = useCallback((leadId: string) => {
+    setLeads((prev) => prev.filter((lead) => lead.id !== leadId))
+    // Close modal if deleted lead was open
+    setSelectedLead((current) => {
+      if (current?.id === leadId) {
+        setIsModalOpen(false)
+        return null
+      }
+      return current
+    })
+  }, [])
+
+  const handleConnectionChange = useCallback((isConnected: boolean) => {
+    setIsRealtimeConnected(isConnected)
+  }, [])
+
+  // Set up realtime subscription with memoized callbacks
+  useLeadsRealtime({
+    onLeadInsert: handleRealtimeInsert,
+    onLeadUpdate: handleRealtimeUpdate,
+    onLeadDelete: handleRealtimeDelete,
+    onConnectionChange: handleConnectionChange,
+  })
 
   const filteredLeads = useMemo(() => {
     return leads

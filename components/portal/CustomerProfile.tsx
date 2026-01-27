@@ -6,23 +6,36 @@ import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
 import { LeadsTable } from './LeadsTable'
+import { EstimatesTable } from './EstimatesTable'
+import { InvoicesTable } from './InvoicesTable'
 import { CustomerModal } from './CustomerModal'
 import { NewLeadModal } from './NewLeadModal'
 import { LeadLanguageBadge } from './LeadLanguageBadge'
 import { Button } from '@/components/ui/Button'
 import type { Customer } from '@/types/customer'
 import type { Lead } from '@/types/lead'
+import type { Estimate } from '@/types/estimate'
+import type { Invoice } from '@/types/invoice'
 
 interface CustomerProfileProps {
   customer: Customer
   leads: Lead[]
+  estimates: Estimate[]
+  invoices: Invoice[]
 }
 
-export function CustomerProfile({ customer: initialCustomer, leads: initialLeads }: CustomerProfileProps) {
+export function CustomerProfile({
+  customer: initialCustomer,
+  leads: initialLeads,
+  estimates: initialEstimates,
+  invoices: initialInvoices
+}: CustomerProfileProps) {
   const locale = useLocale()
   const router = useRouter()
   const [customer, setCustomer] = useState(initialCustomer)
   const [customerLeads, setCustomerLeads] = useState(initialLeads)
+  const [customerEstimates, setCustomerEstimates] = useState(initialEstimates)
+  const [customerInvoices, setCustomerInvoices] = useState(initialInvoices)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'leads' | 'estimates' | 'invoices'>('leads')
@@ -39,21 +52,6 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
     router.push(`/${locale}/portal/customers`)
   }
 
-  // Filter leads by status for tabs
-  const allLeads = customerLeads
-  const estimates = customerLeads.filter((lead) => lead.status === 'quote_sent')
-  const invoices = customerLeads.filter((lead) => lead.status === 'invoiced')
-
-  const getTabLeads = () => {
-    switch (activeTab) {
-      case 'estimates':
-        return estimates
-      case 'invoices':
-        return invoices
-      default:
-        return allLeads
-    }
-  }
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-8">
@@ -134,9 +132,9 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
         <div className="border-b border-secondary-200">
           <nav className="flex">
             {[
-              { key: 'leads', label: 'Leads', count: allLeads.length },
-              { key: 'estimates', label: 'Estimates', count: estimates.length },
-              { key: 'invoices', label: 'Invoices', count: invoices.length },
+              { key: 'leads', label: 'Leads', count: customerLeads.length },
+              { key: 'estimates', label: 'Estimates', count: customerEstimates.length },
+              { key: 'invoices', label: 'Invoices', count: customerInvoices.length },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -161,12 +159,32 @@ export function CustomerProfile({ customer: initialCustomer, leads: initialLeads
 
         {/* Tab Content */}
         <div className="p-6">
-          {getTabLeads().length > 0 ? (
-            <LeadsTable initialLeads={getTabLeads()} showStatsCards={false} />
-          ) : (
-            <div className="py-12 text-center text-secondary-500">
-              No {activeTab} found for this customer
-            </div>
+          {activeTab === 'leads' && (
+            customerLeads.length > 0 ? (
+              <LeadsTable initialLeads={customerLeads} showStatsCards={false} />
+            ) : (
+              <div className="py-12 text-center text-secondary-500">
+                No leads found for this customer
+              </div>
+            )
+          )}
+          {activeTab === 'estimates' && (
+            customerEstimates.length > 0 ? (
+              <EstimatesTable initialEstimates={customerEstimates} />
+            ) : (
+              <div className="py-12 text-center text-secondary-500">
+                No estimates found for this customer
+              </div>
+            )
+          )}
+          {activeTab === 'invoices' && (
+            customerInvoices.length > 0 ? (
+              <InvoicesTable initialInvoices={customerInvoices} />
+            ) : (
+              <div className="py-12 text-center text-secondary-500">
+                No invoices found for this customer
+              </div>
+            )
           )}
         </div>
       </div>
