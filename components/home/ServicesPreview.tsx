@@ -69,6 +69,8 @@ export function ServicesPreview() {
                   fill
                   className="object-cover"
                   style={{ objectPosition: item.objectPosition }}
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  quality={60}
                 />
                 <div className="absolute top-4 left-4 bg-primary-500 text-white text-sm font-bold px-3 py-1 rounded-full">
                   {item.step}

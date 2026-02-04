@@ -54,5 +54,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Create activity log entry (persists even if estimate is deleted)
+  await supabase.from('activity_log').insert({
+    customer_id: body.customer_id,
+    event_type: 'estimate_created',
+    reference_id: estimate.id,
+    reference_type: 'estimate',
+    title: 'Estimate Created',
+    description: estimate.service || null,
+    metadata: {
+      estimateId: estimate.estimate_id,
+      service: estimate.service,
+      price: estimate.price,
+    },
+  })
+
   return NextResponse.json(estimate)
 }

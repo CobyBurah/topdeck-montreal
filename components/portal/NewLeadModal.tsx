@@ -117,6 +117,21 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
       return
     }
 
+    // Create activity log entry (persists even if lead is deleted)
+    await supabase.from('activity_log').insert({
+      customer_id: customer.id,
+      event_type: 'lead_created',
+      reference_id: leadData.id,
+      reference_type: 'lead',
+      title: 'Lead Created',
+      description: formData.service_type ? `Service: ${formData.service_type}` : null,
+      metadata: {
+        leadId: leadData.id,
+        service: formData.service_type || null,
+        leadSource: 'manual',
+      },
+    })
+
     // Then, upload any pending photos
     const uploadedPhotos = []
     for (const pendingPhoto of pendingPhotos) {

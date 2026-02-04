@@ -235,6 +235,44 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     }
   }
 
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      const input = e.currentTarget
+      const cursorPos = input.selectionStart || 0
+      const value = input.value
+
+      // Check if cursor is right after a formatting character
+      if (cursorPos > 0) {
+        const charBeforeCursor = value[cursorPos - 1]
+        // Formatting characters: (, ), space, -
+        if (['(', ')', ' ', '-'].includes(charBeforeCursor)) {
+          e.preventDefault()
+          const digits = value.replace(/\D/g, '')
+          // Find which digit position corresponds to cursor
+          let digitCount = 0
+          for (let i = 0; i < cursorPos; i++) {
+            if (/\d/.test(value[i])) digitCount++
+          }
+          // Remove the digit before the formatting character
+          const newDigits = digits.slice(0, digitCount - 1) + digits.slice(digitCount)
+          const newValue = formatPhoneNumber(newDigits)
+          setFormData(prev => ({ ...prev, phone: newValue }))
+
+          // Set cursor position after React re-renders
+          setTimeout(() => {
+            let newCursorPos = 0
+            let count = 0
+            for (let i = 0; i < newValue.length && count < digitCount - 1; i++) {
+              if (/\d/.test(newValue[i])) count++
+              newCursorPos = i + 1
+            }
+            input.setSelectionRange(newCursorPos, newCursorPos)
+          }, 0)
+        }
+      }
+    }
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
@@ -391,6 +429,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           type="tel"
           value={formData.phone}
           onChange={handleChange}
+          onKeyDown={handlePhoneKeyDown}
           placeholder={t('placeholders.phone')}
           error={errors.phone}
         />

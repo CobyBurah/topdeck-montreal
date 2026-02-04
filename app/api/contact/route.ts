@@ -118,6 +118,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 })
     }
 
+    // Create activity log entry for the lead (persists even if lead is deleted)
+    if (customerId) {
+      await supabaseAdmin.from('activity_log').insert({
+        customer_id: customerId,
+        event_type: 'lead_created',
+        reference_id: lead.id,
+        reference_type: 'lead',
+        title: 'Lead Created',
+        description: leadData.service_type ? `Service: ${leadData.service_type}` : null,
+        metadata: {
+          leadId: lead.id,
+          service: leadData.service_type,
+          leadSource: leadData.source,
+        },
+      })
+    }
+
     // Handle image uploads
     const images = formData.getAll('images') as File[]
     const uploadedPhotoPaths: string[] = []

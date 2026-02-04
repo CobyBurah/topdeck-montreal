@@ -56,5 +56,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Create activity log entry (persists even if invoice is deleted)
+  await supabase.from('activity_log').insert({
+    customer_id: body.customer_id,
+    event_type: 'invoice_created',
+    reference_id: invoice.id,
+    reference_type: 'invoice',
+    title: 'Invoice Created',
+    description: invoice.service || null,
+    metadata: {
+      invoiceId: invoice.invoice_id,
+      service: invoice.service,
+      price: invoice.price,
+      invoiceStatus: invoice.status,
+    },
+  })
+
   return NextResponse.json(invoice)
 }
