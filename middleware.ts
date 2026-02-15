@@ -13,12 +13,14 @@ export async function middleware(request: NextRequest) {
   // First, handle i18n routing
   const response = intlMiddleware(request)
 
-  // Check if this is a portal route
-  const isPortalRoute = request.nextUrl.pathname.match(/^\/(en|fr)\/portal(?!\/login)/)
-  const isLoginPage = request.nextUrl.pathname.match(/^\/(en|fr)\/portal\/login/)
+  // Check route types
+  const isPortalRoute = request.nextUrl.pathname.match(/^\/(en|fr)\/employee-portal(?!\/login)/)
+  const isPortalLoginPage = request.nextUrl.pathname.match(/^\/(en|fr)\/employee-portal\/login/)
+  const isClientPortalRoute = request.nextUrl.pathname.match(/^\/(en|fr)\/client-portal(?!\/login)/)
+  const isClientLoginPage = request.nextUrl.pathname.match(/^\/(en|fr)\/client-portal\/login/)
 
-  // If not a portal route, just return the i18n response
-  if (!isPortalRoute && !isLoginPage) {
+  // If not a protected route, just return the i18n response
+  if (!isPortalRoute && !isPortalLoginPage && !isClientPortalRoute && !isClientLoginPage) {
     return response
   }
 
@@ -44,18 +46,45 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-
-  // Extract locale from path
   const locale = request.nextUrl.pathname.split('/')[1] || defaultLocale
+  const userRole = user?.user_metadata?.role || 'employee'
 
-  // If accessing portal (not login) without auth, redirect to login
-  if (isPortalRoute && !user) {
-    return NextResponse.redirect(new URL(`/${locale}/portal/login`, request.url))
+  // --- Employee Portal Routes ---
+  if (isPortalRoute) {
+    if (!user) {
+      return NextResponse.redirect(new URL(`/${locale}/employee-portal/login`, request.url))
+    }
+    if (userRole === 'client') {
+      return NextResponse.redirect(new URL(`/${locale}/client-portal`, request.url))
+    }
+    return response
   }
 
-  // If on login page with auth, redirect to portal
-  if (isLoginPage && user) {
-    return NextResponse.redirect(new URL(`/${locale}/portal`, request.url))
+  // --- Employee Login Page ---
+  if (isPortalLoginPage) {
+    if (user && userRole !== 'client') {
+      return NextResponse.redirect(new URL(`/${locale}/employee-portal`, request.url))
+    }
+    return response
+  }
+
+  // --- Client Portal Routes ---
+  if (isClientPortalRoute) {
+    if (!user) {
+      return NextResponse.redirect(new URL(`/${locale}/client-portal/login`, request.url))
+    }
+    if (userRole === 'employee') {
+      return NextResponse.redirect(new URL(`/${locale}/employee-portal`, request.url))
+    }
+    return response
+  }
+
+  // --- Client Login Page ---
+  if (isClientLoginPage) {
+    if (user && userRole === 'client') {
+      return NextResponse.redirect(new URL(`/${locale}/client-portal`, request.url))
+    }
+    return response
   }
 
   return response

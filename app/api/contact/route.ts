@@ -22,17 +22,19 @@ export async function POST(request: Request) {
 
     // Find or create customer by email or phone
     let customerId: string | null = null
+    let accessToken: string | null = null
 
     // First, try to find by email
     if (email) {
       const { data: existingByEmail } = await supabaseAdmin
         .from('customers')
-        .select('id')
+        .select('id, access_token')
         .eq('email', email)
         .single()
 
       if (existingByEmail) {
         customerId = existingByEmail.id
+        accessToken = existingByEmail.access_token
         // Update customer info if we have new data
         await supabaseAdmin
           .from('customers')
@@ -50,12 +52,13 @@ export async function POST(request: Request) {
     if (!customerId && phone) {
       const { data: existingByPhone } = await supabaseAdmin
         .from('customers')
-        .select('id')
+        .select('id, access_token')
         .eq('phone', phone)
         .single()
 
       if (existingByPhone) {
         customerId = existingByPhone.id
+        accessToken = existingByPhone.access_token
         // Update customer info if we have new data
         await supabaseAdmin
           .from('customers')
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
           address: address,
           language: language as 'en' | 'fr',
         })
-        .select('id')
+        .select('id, access_token')
         .single()
 
       if (customerError) {
@@ -88,6 +91,7 @@ export async function POST(request: Request) {
         // Continue without customer link if creation fails
       } else {
         customerId = newCustomer.id
+        accessToken = newCustomer.access_token
       }
     }
 
@@ -135,21 +139,85 @@ export async function POST(request: Request) {
       })
     }
 
+    // --- Client Portal: Create auth user + build permanent portal link ---
+    let clientPortalLink: string | null = null
+
+    if (email && customerId) {
+      try {
+        // Check if customer already has an auth user linked
+        const { data: customerRecord } = await supabaseAdmin
+          .from('customers')
+          .select('auth_user_id')
+          .eq('id', customerId)
+          .single()
+
+        let authUserId = customerRecord?.auth_user_id
+
+        if (!authUserId) {
+          // Check if a Supabase auth user with this email already exists
+          const { data: existingAuthUsers } = await supabaseAdmin.auth.admin.listUsers()
+          const existingAuthUser = existingAuthUsers?.users?.find(u => u.email === email)
+
+          if (existingAuthUser) {
+            authUserId = existingAuthUser.id
+            // Ensure client role is set
+            if (existingAuthUser.user_metadata?.role !== 'client') {
+              await supabaseAdmin.auth.admin.updateUserById(authUserId, {
+                user_metadata: { ...existingAuthUser.user_metadata, role: 'client', customer_id: customerId },
+              })
+            }
+          } else {
+            // Create new auth user for client portal access
+            const { data: newUser, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
+              email,
+              email_confirm: true,
+              user_metadata: { role: 'client', customer_id: customerId },
+            })
+
+            if (createUserError) {
+              console.error('Error creating auth user for client:', createUserError)
+            } else {
+              authUserId = newUser.user.id
+            }
+          }
+
+          // Link auth user to customer record
+          if (authUserId) {
+            await supabaseAdmin
+              .from('customers')
+              .update({ auth_user_id: authUserId })
+              .eq('id', customerId)
+          }
+        }
+
+        // Build permanent portal link using the customer's access_token
+        if (accessToken) {
+          const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+          clientPortalLink = `${siteUrl}/auth/auto-login?token=${accessToken}`
+        }
+      } catch (authError) {
+        console.error('Client portal auth error:', authError)
+      }
+    }
+
     // Handle image uploads
     const images = formData.getAll('images') as File[]
     const uploadedPhotoPaths: string[] = []
+    console.log(`Received ${images.length} image(s) for lead ${lead.id}`)
 
     for (const image of images) {
       if (image.size > 0) {
-        const fileName = `${lead.id}/${Date.now()}-${image.name}`
+        const safeName = image.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const fileName = `${lead.id}/${Date.now()}-${safeName}`
 
-        // Convert File to ArrayBuffer for upload
+        // Convert File to Buffer for Node.js compatibility with Supabase Storage
         const arrayBuffer = await image.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
 
         // Upload to Supabase Storage
         const { error: uploadError } = await supabaseAdmin.storage
           .from('lead-photos')
-          .upload(fileName, arrayBuffer, {
+          .upload(fileName, buffer, {
             contentType: image.type,
           })
 
@@ -161,13 +229,17 @@ export async function POST(request: Request) {
         uploadedPhotoPaths.push(fileName)
 
         // Create photo record
-        await supabaseAdmin.from('lead_photos').insert({
+        const { error: insertError } = await supabaseAdmin.from('lead_photos').insert({
           lead_id: lead.id,
           storage_path: fileName,
           original_filename: image.name,
           file_size: image.size,
           mime_type: image.type,
         })
+
+        if (insertError) {
+          console.error('Error creating photo record:', insertError)
+        }
       }
     }
 
@@ -198,6 +270,7 @@ export async function POST(request: Request) {
             photo_urls: photoUrls,
             photo_count: photoUrls.length,
             created_at: lead.created_at,
+            client_portal_link: clientPortalLink,
           }),
         })
       } catch (webhookError) {
@@ -208,7 +281,7 @@ export async function POST(request: Request) {
 
     console.log('New lead created:', lead.id)
 
-    return NextResponse.json({ success: true, leadId: lead.id })
+    return NextResponse.json({ success: true, leadId: lead.id, clientPortalLink })
   } catch (error) {
     console.error('API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

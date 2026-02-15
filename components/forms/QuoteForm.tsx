@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { AddressAutocomplete } from '@/components/forms/AddressAutocomplete'
 
 interface FormDataState {
   name: string
@@ -107,6 +108,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [clientPortalLink, setClientPortalLink] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const successMessageRef = useRef<HTMLDivElement>(null)
@@ -210,6 +212,8 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
         throw new Error('Failed to submit form')
       }
 
+      const data = await response.json()
+      setClientPortalLink(data.clientPortalLink || null)
       setIsSubmitted(true)
       onSubmitStateChange?.(true)
     } catch {
@@ -232,6 +236,12 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: undefined }))
+    }
+  }
+
+  const handleEmailBlur = () => {
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setErrors(prev => ({ ...prev, email: t('errors.emailInvalid') }))
     }
   }
 
@@ -364,10 +374,34 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           {t('success.message')}
         </motion.p>
 
+        {clientPortalLink && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mb-4"
+          >
+            <motion.div
+              whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
+              whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+            >
+              <Button
+                href={clientPortalLink}
+                size="lg"
+              >
+                {t('success.trackProject')}
+              </Button>
+            </motion.div>
+            <p className="text-sm text-secondary-500 mt-2">
+              {t('success.trackProjectDescription')}
+            </p>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: clientPortalLink ? 0.9 : 0.8 }}
           whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
           whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
         >
@@ -376,6 +410,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
               setIsSubmitted(false)
               setFormData(initialFormData)
               setErrors({})
+              setClientPortalLink(null)
               onSubmitStateChange?.(false)
             }}
             variant="outline"
@@ -413,6 +448,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           type="email"
           value={formData.email}
           onChange={handleChange}
+          onBlur={handleEmailBlur}
           placeholder={t('placeholders.email')}
           error={errors.email}
         />
@@ -433,11 +469,12 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           placeholder={t('placeholders.phone')}
           error={errors.phone}
         />
-        <Input
+        <AddressAutocomplete
           label={t('labels.address')}
           name="address"
           value={formData.address}
-          onChange={handleChange}
+          onChange={(val) => setFormData(prev => ({ ...prev, address: val }))}
+          onAddressSelect={(addr) => setFormData(prev => ({ ...prev, address: addr }))}
           placeholder={t('placeholders.address')}
         />
       </motion.div>
@@ -488,7 +525,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           value={formData.message}
           onChange={handleChange}
           placeholder={t('placeholders.message')}
-          rows={5}
+          rows={3}
         />
       </motion.div>
 

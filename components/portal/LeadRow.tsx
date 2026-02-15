@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { LeadStatusBadge } from './LeadStatusBadge'
 import { LeadLanguageBadge } from './LeadLanguageBadge'
 import { LeadConditionBadge } from './LeadConditionBadge'
+import { LastInteractionBadge } from './LastInteractionBadge'
 import { PhotoLightbox } from './PhotoGallery'
 import { createClient } from '@/lib/supabase/client'
 import type { Lead, LeadStatus, LeadCondition, LeadLanguage } from '@/types/lead'
@@ -15,6 +16,7 @@ import { LEAD_STATUSES, LEAD_CONDITIONS, LEAD_LANGUAGES } from '@/types/lead'
 
 interface LeadRowProps {
   lead: Lead
+  lastInteractionAt?: string | null
   onEdit: () => void
   onUpdate: (lead: Lead) => void
 }
@@ -24,12 +26,13 @@ const statusBorderColors: Record<LeadStatus, string> = {
   needs_more_details: 'border-l-yellow-500',
   contacted: 'border-l-purple-500',
   quote_sent: 'border-l-orange-500',
+  estimate_sent: 'border-l-teal-500',
   invoiced: 'border-l-cyan-500',
   booked: 'border-l-green-500',
   complete: 'border-l-secondary-400',
 }
 
-export function LeadRow({ lead, onEdit, onUpdate }: LeadRowProps) {
+export function LeadRow({ lead, lastInteractionAt, onEdit, onUpdate }: LeadRowProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [actionsOpen, setActionsOpen] = useState(false)
   const [showCallConfirm, setShowCallConfirm] = useState(false)
@@ -199,13 +202,16 @@ export function LeadRow({ lead, onEdit, onUpdate }: LeadRowProps) {
       >
         <td className="px-6 py-4">
           {lead.customer_id ? (
-            <Link
-              href={`/${locale}/portal/customers/${lead.customer_id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="font-medium text-primary-600 hover:text-primary-700 hover:underline transition-colors"
-            >
-              {lead.full_name}
-            </Link>
+            <>
+              <Link
+                href={`/${locale}/employee-portal/customers/${lead.customer_id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-medium text-primary-600 hover:text-primary-700 hover:underline transition-colors"
+              >
+                {lead.full_name}
+              </Link>
+              <LastInteractionBadge lastInteractionAt={lastInteractionAt} />
+            </>
           ) : (
             <div className="font-medium text-secondary-900">{lead.full_name}</div>
           )}

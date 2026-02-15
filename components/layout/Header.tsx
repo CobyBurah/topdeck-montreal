@@ -198,7 +198,7 @@ export function Header() {
                   transition={{ duration: 0.2, delay: 0.05 * (navigation.length + 1) }}
                   className="pt-2"
                 >
-                  <Button href={`/${locale}/contact`} className="w-full">
+                  <Button href={`/${locale}/contact`} className="w-full" onClick={() => setMobileMenuOpen(false)}>
                     {t('getQuote')}
                   </Button>
                 </motion.div>

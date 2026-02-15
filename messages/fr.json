@@ -25,7 +25,7 @@
     "steps": {
       "wash": {
         "title": "Lavage",
-        "description": "Le lavage à pression en profondeur élimine des années de saleté, de moisissure et de vieux finis."
+        "description": "Le lavage à pression en profondeur élimine des années de saleté, de moisissure et de crasse."
       },
       "sand": {
         "title": "Ponçage",
@@ -33,7 +33,7 @@
       },
       "stain": {
         "title": "Teinture",
-        "description": "Les teintures premium pénètrent en profondeur pour protéger et embellir pendant des années."
+        "description": "Les teintures premium pénètrent en profondeur pour protéger et embellir votre bois."
       }
     },
     "whatWeWorkOn": "Ce que nous traitons :",
@@ -50,7 +50,7 @@
   "whyChooseUs": {
     "subtitle": "Pourquoi nous choisir",
     "title": "Les experts en terrasses de confiance à Montréal",
-    "description": "Nous restaurons le bois extérieur à travers Montréal depuis plus de 10 ans. Notre engagement envers la qualité et la satisfaction client nous distingue.",
+    "description": "Nous sommes une équipe entièrement licenciée et assurée, dédiée à la restauration du bois extérieur à travers Montréal. Notre engagement envers la qualité et la satisfaction client nous distingue.",
     "features": {
       "quality": {
         "title": "Matériaux de qualité",
@@ -61,8 +61,8 @@
         "description": "Nous respectons votre horaire et complétons chaque projet à temps, en vous tenant informé à chaque étape."
       },
       "experience": {
-        "title": "10+ ans d'expérience",
-        "description": "Plus d'une décennie de restauration du bois extérieur à Montréal signifie que vous obtenez un savoir-faire expert à chaque fois."
+        "title": "Licencié RBQ et assuré",
+        "description": "Nous détenons une licence RBQ valide et une assurance responsabilité de 2 millions de dollars, pour que votre projet soit entièrement protégé."
       }
     },
     "servingAreas": "Fièrement au service de Montréal, Laval, Longueuil et les environs"
@@ -74,7 +74,7 @@
   },
   "ctaBanner": {
     "title": "Prêt à restaurer votre bois?",
-    "description": "Obtenez une soumission gratuite et sans obligation pour votre projet. Nous évaluerons vos besoins et fournirons des recommandations honnêtes.",
+    "description": "Obtenez une soumission personnalisée et gratuite pour votre projet. Nous évaluerons vos besoins et recommanderons la meilleure approche pour votre bois.",
     "cta": "Obtenir votre soumission gratuite"
   },
   "servicesPage": {
@@ -86,11 +86,11 @@
     "steps": {
       "washing": {
         "title": "Lavage à pression",
-        "description": "Nous commençons par un nettoyage en profondeur à l'aide d'équipement de lavage à pression professionnel. Cela élimine des années de saleté, de crasse, de moisissure et de vieux finis, révélant le bois naturel en dessous.",
+        "description": "Nous commençons par un nettoyage en profondeur à l'aide d'équipement de lavage à pression professionnel. Cela élimine des années de saleté, de crasse et de moisissure, préparant la surface pour le ponçage.",
         "details": [
           "Élimine la saleté et les débris accumulés",
           "Élimine la moisissure",
-          "Décape les vieux finis écaillés",
+          "Ravive et rafraîchit la surface du bois",
           "Prépare la surface pour le ponçage"
         ]
       },
@@ -98,10 +98,10 @@
         "title": "Ponçage",
         "description": "Une fois sec, nous ponçons soigneusement toute la surface pour créer la toile parfaite pour la teinture. Le ponçage lisse les zones rugueuses, ouvre le grain du bois et assure une absorption optimale de la teinture.",
         "details": [
-          "Lisse les zones rugueuses et éclatées",
+          "Prépare la texture du bois pour la teinture",
           "Ouvre les pores du bois pour une meilleure absorption",
           "Crée une surface uniforme",
-          "Élimine tout reste de vieux fini"
+          "Assure une surface lisse, prête à teindre"
         ]
       },
       "staining": {
@@ -111,7 +111,7 @@
           "Teintures pénétrantes premium",
           "Protection UV et contre l'humidité",
           "Large gamme d'options de couleurs",
-          "Fini durable et magnifique"
+          "Fini riche et magnifique"
         ]
       }
     },
@@ -136,7 +136,7 @@
       }
     },
     "ctaTitle": "Prêt à restaurer votre bois?",
-    "ctaDescription": "Obtenez une soumission gratuite et sans obligation pour votre projet. Nous évaluerons vos besoins et fournirons des recommandations honnêtes.",
+    "ctaDescription": "Obtenez une soumission personnalisée et gratuite pour votre projet. Nous évaluerons vos besoins et recommanderons la meilleure approche pour votre bois.",
     "ctaButton": "Obtenir votre soumission gratuite"
   },
   "galleryPage": {
@@ -186,7 +186,7 @@
       "fullName": "Nom complet *",
       "email": "Adresse courriel *",
       "phone": "Numéro de téléphone *",
-      "address": "Adresse / Secteur",
+      "address": "Adresse",
       "service": "Quel travail est requis? *",
       "size": "Taille / Portée approximative",
       "timeline": "Délai souhaité",
@@ -197,7 +197,7 @@
       "name": "Jean Tremblay",
       "email": "jean@exemple.com",
       "phone": "(514) 555-0123",
-      "address": "Montréal, QC",
+      "address": "Commencez à taper une adresse...",
       "service": "Sélectionnez un service",
       "size": "ex: terrasse de 300 pi², clôture de 50 pi",
       "message": "Parlez-nous de votre projet. Quel est l'état actuel? Y a-t-il des exigences ou préoccupations spécifiques?",
@@ -229,7 +229,9 @@
     "success": {
       "title": "Merci!",
       "message": "Nous avons reçu votre demande de soumission et vous répondrons dans les 24 heures.",
-      "button": "Soumettre une autre demande"
+      "button": "Soumettre une autre demande",
+      "trackProject": "Suivre votre projet",
+      "trackProjectDescription": "Consultez l'état et les mises à jour de votre projet à tout moment."
     },
     "disclaimer": "* Champs obligatoires. Nous respectons votre vie privée et ne partagerons jamais vos informations."
   },
@@ -307,6 +309,104 @@
       "saving": "Enregistrement...",
       "cancel": "Annuler",
       "error": "Échec de l'enregistrement. Veuillez réessayer."
+    }
+  },
+  "clientPortal": {
+    "greeting": "Bonjour, {name} !",
+    "subtitle": "Voici les dernières nouvelles de votre projet avec Topdeck Montréal.",
+    "progressTitle": "État du projet",
+    "error": "Impossible de charger les informations de votre projet. Veuillez réessayer plus tard.",
+    "backToWebsite": "Retour au site",
+    "logout": "Déconnexion",
+    "steps": {
+      "requestReceived": "Demande reçue",
+      "estimateSent": "Soumission envoyée",
+      "invoiceCreated": "Facture créée"
+    },
+    "stepsDescription": {
+      "requestReceived": "Nous avons reçu votre demande et vous contacterons bientôt.",
+      "estimateSent": "Votre soumission est prête à être consultée.",
+      "invoiceCreated": "Votre facture a été créée."
+    },
+    "estimateCard": {
+      "title": "Votre soumission",
+      "service": "Service",
+      "price": "Prix",
+      "viewEstimate": "Voir la soumission"
+    },
+    "invoiceCard": {
+      "title": "Votre facture",
+      "service": "Service",
+      "price": "Montant",
+      "status": "Statut",
+      "viewInvoice": "Voir / Payer la facture"
+    },
+    "invoiceStatuses": {
+      "unpaid": "Impayée",
+      "deposit_paid": "Acompte payé",
+      "fully_paid": "Payée"
+    },
+    "estimateStatuses": {
+      "sent": "Envoyée",
+      "invoice_sent": "Facture envoyée"
+    },
+    "login": {
+      "title": "Suivre votre projet",
+      "subtitle": "Entrez votre courriel pour recevoir un lien de connexion.",
+      "emailLabel": "Adresse courriel",
+      "emailPlaceholder": "vous@exemple.com",
+      "emailInvalid": "Veuillez entrer une adresse courriel valide",
+      "sendLink": "Envoyer le lien de connexion",
+      "sending": "Envoi en cours...",
+      "checkEmail": "Vérifiez votre courriel",
+      "checkEmailDescription": "Nous avons envoyé un lien de connexion à votre courriel. Cliquez sur le lien pour accéder à votre projet.",
+      "error": "Impossible d'envoyer le lien de connexion. Assurez-vous d'utiliser le courriel de votre demande de soumission.",
+      "backToWebsite": "Retour au site"
+    },
+    "stainSelector": {
+      "title": "Choisissez votre teinture",
+      "subtitle": "Explorez les options de teinture disponibles pour l'état de votre terrasse.",
+      "back": "Retour",
+      "categories": {
+        "semiTransparent": "Semi-transparente",
+        "semiTransparentDescription": "Met en valeur le grain naturel du bois tout en ajoutant couleur et protection UV. Idéale pour les terrasses neuves ou légèrement usées.",
+        "solid": "Opaque",
+        "solidDescription": "Offre une couverture complète avec une couleur riche et uniforme tout en protégeant le bois. Parfaite pour les surfaces plus anciennes ou très usées."
+      },
+      "brands": {
+        "ligna": "Ligna Hybri-Deck",
+        "lignaDescription": "Une teinture hybride haute performance offrant une pénétration supérieure et une protection durable avec un fini naturel.",
+        "steina": "Steina",
+        "steinaDescription": "Teinture semi-transparente premium avec des pigments riches pour un fini naturel et élégant qui met en valeur le grain du bois."
+      },
+      "colors": {
+        "goldenPine": "Pin doré",
+        "mapleSugar": "Sucre d'érable",
+        "camel": "Chameau",
+        "paprika": "Paprika",
+        "lightOak": "Chêne clair",
+        "naturalCedar": "Cèdre naturel",
+        "honeyGold": "Or miel",
+        "redwood": "Séquoia",
+        "seaGullGray": "Gris mouette",
+        "kendallCharcoal": "Charbon Kendall",
+        "tudorBrown": "Brun Tudor",
+        "cordovanBrown": "Brun Cordovan",
+        "platinumGray": "Gris platine",
+        "hiddenValley": "Vallée cachée"
+      },
+      "colorDetail": {
+        "title": "{name}",
+        "galleryLabel": "Exemples de projets avec cette couleur"
+      },
+      "breadcrumb": {
+        "categories": "Teintures"
+      },
+      "favouriteButton": "Ajouter aux favoris",
+      "unfavouriteButton": "Retirer des favoris",
+      "favouriteDescription": "Ceci informera Topdeck Montréal de vos préférences de couleur.",
+      "yourFavourites": "Vos favoris",
+      "disclaimer": "Ces images sont à titre indicatif seulement — les résultats réels peuvent varier. Votre choix de couleur n'est pas définitif. Topdeck Montréal communiquera avec vous pour confirmer et valider votre sélection avant de commencer les travaux."
     }
   }
 }

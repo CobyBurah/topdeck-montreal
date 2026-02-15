@@ -3,6 +3,7 @@ export type LeadStatus =
   | 'needs_more_details'
   | 'contacted'
   | 'quote_sent'
+  | 'estimate_sent'
   | 'invoiced'
   | 'booked'
   | 'complete'
@@ -22,6 +23,8 @@ export type LeadCondition =
   | 'semi_transparent'
   | 'opaque'
 
+export type StainChoice = 'steina' | 'ligna' | 'solid'
+
 export interface LeadPhoto {
   id: string
   lead_id: string
@@ -37,7 +40,11 @@ export interface LeadCustomer {
   full_name: string
   email: string | null
   phone: string | null
+  address: string | null
   language: 'en' | 'fr'
+  internal_notes: string | null
+  access_token?: string
+  last_interaction_at?: string | null
 }
 
 export interface Lead {
@@ -58,6 +65,8 @@ export interface Lead {
   internal_notes: string | null
   customer_id: string | null
   condition: LeadCondition | null
+  favourite_stains?: string[] | null
+  stain_choices?: StainChoice[] | null
   lead_photos?: LeadPhoto[]
   customer?: LeadCustomer
 }
@@ -67,6 +76,7 @@ export const LEAD_STATUSES: { value: LeadStatus; label: string }[] = [
   { value: 'needs_more_details', label: 'Needs More Details' },
   { value: 'contacted', label: 'Contacted' },
   { value: 'quote_sent', label: 'Quote Sent' },
+  { value: 'estimate_sent', label: 'Estimate Sent' },
   { value: 'invoiced', label: 'Invoiced' },
   { value: 'booked', label: 'Booked' },
   { value: 'complete', label: 'Complete' },
@@ -90,4 +100,10 @@ export const LEAD_CONDITIONS: { value: LeadCondition; label: string }[] = [
   { value: 'unstained_grey', label: 'Unstained Grey' },
   { value: 'semi_transparent', label: 'Semi-Transparent' },
   { value: 'opaque', label: 'Opaque' },
+]
+
+export const STAIN_CHOICES: { value: StainChoice; label: string }[] = [
+  { value: 'steina', label: 'Steina' },
+  { value: 'ligna', label: 'Ligna' },
+  { value: 'solid', label: 'BM Solid' },
 ]

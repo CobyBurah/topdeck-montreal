@@ -6,14 +6,16 @@ import Link from 'next/link'
 import { useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
 import { LeadLanguageBadge } from './LeadLanguageBadge'
+import { LastInteractionBadge } from './LastInteractionBadge'
 import type { Estimate } from '@/types/estimate'
 
 interface EstimateRowProps {
   estimate: Estimate
+  lastInteractionAt?: string | null
   onEdit: () => void
 }
 
-export function EstimateRow({ estimate, onEdit }: EstimateRowProps) {
+export function EstimateRow({ estimate, lastInteractionAt, onEdit }: EstimateRowProps) {
   const [actionsOpen, setActionsOpen] = useState(false)
   const [showCallConfirm, setShowCallConfirm] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
@@ -136,12 +138,13 @@ export function EstimateRow({ estimate, onEdit }: EstimateRowProps) {
         {/* Name Column */}
         <td className="px-6 py-4">
           <Link
-            href={`/${locale}/portal/customers/${estimate.customer_id}`}
+            href={`/${locale}/employee-portal/customers/${estimate.customer_id}`}
             onClick={(e) => e.stopPropagation()}
             className="font-medium text-primary-600 hover:text-primary-700 hover:underline transition-colors"
           >
             {customer?.full_name || 'Unknown Customer'}
           </Link>
+          <LastInteractionBadge lastInteractionAt={lastInteractionAt} />
         </td>
 
         {/* Contact Column */}

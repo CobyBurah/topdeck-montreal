@@ -6,47 +6,37 @@ import Link from 'next/link'
 import { useLocale } from 'next-intl'
 import { motion } from 'framer-motion'
 import { LeadLanguageBadge } from './LeadLanguageBadge'
+import { LastInteractionBadge } from './LastInteractionBadge'
 import { createClient } from '@/lib/supabase/client'
 import type { Invoice, InvoiceStatus } from '@/types/invoice'
 import { INVOICE_STATUSES } from '@/types/invoice'
 
 interface InvoiceRowProps {
   invoice: Invoice
+  lastInteractionAt?: string | null
   onEdit: () => void
   onUpdate: (invoice: Invoice) => void
 }
 
 const statusBorderColors: Record<InvoiceStatus, string> = {
-  sent: 'border-l-blue-500',
-  viewed: 'border-l-purple-500',
-  paid: 'border-l-green-500',
-  partially_paid: 'border-l-yellow-500',
-  overdue: 'border-l-red-500',
-  cancelled: 'border-l-secondary-400',
-  refunded: 'border-l-orange-500',
+  unpaid: 'border-l-amber-500',
+  deposit_paid: 'border-l-blue-500',
+  fully_paid: 'border-l-green-500',
 }
 
 const statusStyles: Record<InvoiceStatus, string> = {
-  sent: 'bg-blue-100 text-blue-700',
-  viewed: 'bg-purple-100 text-purple-700',
-  paid: 'bg-green-100 text-green-700',
-  partially_paid: 'bg-yellow-100 text-yellow-700',
-  overdue: 'bg-red-100 text-red-700',
-  cancelled: 'bg-secondary-100 text-secondary-700',
-  refunded: 'bg-orange-100 text-orange-700',
+  unpaid: 'bg-amber-100 text-amber-700',
+  deposit_paid: 'bg-blue-100 text-blue-700',
+  fully_paid: 'bg-green-100 text-green-700',
 }
 
 const statusLabels: Record<InvoiceStatus, string> = {
-  sent: 'Sent',
-  viewed: 'Viewed',
-  paid: 'Paid',
-  partially_paid: 'Partially Paid',
-  overdue: 'Overdue',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
+  unpaid: 'Unpaid',
+  deposit_paid: 'Deposit Paid',
+  fully_paid: 'Fully Paid',
 }
 
-export function InvoiceRow({ invoice, onEdit, onUpdate }: InvoiceRowProps) {
+export function InvoiceRow({ invoice, lastInteractionAt, onEdit, onUpdate }: InvoiceRowProps) {
   const [actionsOpen, setActionsOpen] = useState(false)
   const [showCallConfirm, setShowCallConfirm] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
@@ -181,12 +171,13 @@ export function InvoiceRow({ invoice, onEdit, onUpdate }: InvoiceRowProps) {
         {/* Name Column */}
         <td className="px-6 py-4">
           <Link
-            href={`/${locale}/portal/customers/${invoice.customer_id}`}
+            href={`/${locale}/employee-portal/customers/${invoice.customer_id}`}
             onClick={(e) => e.stopPropagation()}
             className="font-medium text-primary-600 hover:text-primary-700 hover:underline transition-colors"
           >
             {customer?.full_name || 'Unknown Customer'}
           </Link>
+          <LastInteractionBadge lastInteractionAt={lastInteractionAt} />
         </td>
 
         {/* Contact Column */}

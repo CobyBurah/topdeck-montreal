@@ -38,6 +38,8 @@ export interface Database {
           address: string | null
           language: LeadLanguage
           internal_notes: string | null
+          auth_user_id: string | null
+          access_token: string
         }
         Insert: {
           id?: string
@@ -49,6 +51,8 @@ export interface Database {
           address?: string | null
           language?: LeadLanguage
           internal_notes?: string | null
+          auth_user_id?: string | null
+          access_token?: string
         }
         Update: {
           id?: string
@@ -60,6 +64,8 @@ export interface Database {
           address?: string | null
           language?: LeadLanguage
           internal_notes?: string | null
+          auth_user_id?: string | null
+          access_token?: string
         }
       }
       leads: {

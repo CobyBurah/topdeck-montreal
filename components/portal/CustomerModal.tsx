@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Input, Textarea, Select } from '@/components/ui/Input'
+import { AddressAutocomplete } from '@/components/forms/AddressAutocomplete'
 import { Button } from '@/components/ui/Button'
 import { LEAD_LANGUAGES, type LeadLanguage } from '@/types/lead'
 import type { Customer } from '@/types/customer'
@@ -13,22 +14,17 @@ interface CustomerModalProps {
   isOpen: boolean
   isNew: boolean
   onClose: () => void
-  onUpdate: (customer: Customer) => void
   onCreate: (customer: Customer) => void
-  onDelete?: (customerId: string) => void
 }
 
-export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCreate, onDelete }: CustomerModalProps) {
+export function CustomerModal({ customer, isOpen, isNew, onClose, onCreate }: CustomerModalProps) {
   const [formData, setFormData] = useState<Partial<Customer>>({})
   const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailError, setEmailError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (customer) {
-      setFormData(customer)
-    } else if (isNew) {
+    if (isOpen) {
       setFormData({
         full_name: '',
         email: '',
@@ -37,15 +33,26 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
         language: 'en',
         internal_notes: '',
       })
+      setError(null)
+      setEmailError(null)
     }
-    setError(null)
-  }, [customer, isNew])
+  }, [isOpen])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    if (name === 'email' && emailError) {
+      setEmailError(null)
+    }
+  }
+
+  const handleEmailBlur = () => {
+    const email = formData.email || ''
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError('Please enter a valid email address')
+    }
   }
 
   const handleSave = async () => {
@@ -59,93 +66,29 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
 
     const supabase = createClient()
 
-    if (isNew) {
-      const { data, error: insertError } = await supabase
-        .from('customers')
-        .insert({
-          full_name: formData.full_name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          language: (formData.language as LeadLanguage) || 'en',
-          internal_notes: formData.internal_notes || null,
-        })
-        .select()
-        .single()
-
-      setIsSaving(false)
-
-      if (insertError) {
-        setError('Failed to create customer. Please try again.')
-        console.error('Error creating customer:', insertError)
-        return
-      }
-
-      onCreate(data as Customer)
-      onClose()
-    } else if (customer) {
-      const { data, error: updateError } = await supabase
-        .from('customers')
-        .update({
-          full_name: formData.full_name,
-          email: formData.email || null,
-          phone: formData.phone || null,
-          address: formData.address || null,
-          language: (formData.language as LeadLanguage) || 'en',
-          internal_notes: formData.internal_notes || null,
-        })
-        .eq('id', customer.id)
-        .select()
-        .single()
-
-      setIsSaving(false)
-
-      if (updateError) {
-        setError('Failed to save changes. Please try again.')
-        console.error('Error updating customer:', updateError)
-        return
-      }
-
-      onUpdate(data as Customer)
-      onClose()
-    }
-  }
-
-  const handleDelete = async () => {
-    if (!customer || !onDelete) return
-
-    setIsDeleting(true)
-    setError(null)
-
-    const supabase = createClient()
-
-    const { error: deleteError } = await supabase
+    const { data, error: insertError } = await supabase
       .from('customers')
-      .delete()
-      .eq('id', customer.id)
+      .insert({
+        full_name: formData.full_name,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+        language: (formData.language as LeadLanguage) || 'en',
+        internal_notes: formData.internal_notes || null,
+      })
+      .select()
+      .single()
 
-    setIsDeleting(false)
+    setIsSaving(false)
 
-    if (deleteError) {
-      setError('Failed to delete customer. Please try again.')
-      console.error('Error deleting customer:', deleteError)
+    if (insertError) {
+      setError('Failed to create customer. Please try again.')
+      console.error('Error creating customer:', insertError)
       return
     }
 
-    onDelete(customer.id)
-    setShowDeleteConfirm(false)
+    onCreate(data as Customer)
     onClose()
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
   }
 
   return (
@@ -171,16 +114,9 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-secondary-200 shrink-0">
-              <div>
-                <h2 className="text-xl font-bold text-secondary-900">
-                  {isNew ? 'Add New Customer' : formData.full_name}
-                </h2>
-                {customer && (
-                  <p className="text-sm text-secondary-500">
-                    Created: {formatDate(customer.created_at)}
-                  </p>
-                )}
-              </div>
+              <h2 className="text-xl font-bold text-secondary-900">
+                Add New Customer
+              </h2>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-secondary-100 rounded-lg transition-colors"
@@ -208,6 +144,8 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
                   type="email"
                   value={formData.email || ''}
                   onChange={handleChange}
+                  onBlur={handleEmailBlur}
+                  error={emailError || undefined}
                   placeholder="john@example.com"
                 />
 
@@ -219,11 +157,12 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
                   placeholder="(514) 555-1234"
                 />
 
-                <Input
+                <AddressAutocomplete
                   label="Address"
                   name="address"
                   value={formData.address || ''}
-                  onChange={handleChange}
+                  onChange={(val) => setFormData(prev => ({ ...prev, address: val }))}
+                  onAddressSelect={(addr) => setFormData(prev => ({ ...prev, address: addr }))}
                   placeholder="123 Main St, Montreal, QC"
                 />
 
@@ -257,43 +196,13 @@ export function CustomerModal({ customer, isOpen, isNew, onClose, onUpdate, onCr
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
-              <div>
-                {onDelete && !isNew && !showDeleteConfirm && (
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowDeleteConfirm(true)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    Delete Customer
-                  </Button>
-                )}
-                {showDeleteConfirm && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-red-600">Are you sure?</span>
-                    <Button
-                      variant="ghost"
-                      onClick={handleDelete}
-                      disabled={isDeleting}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      {isDeleting ? 'Deleting...' : 'Yes, Delete'}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setShowDeleteConfirm(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center justify-end px-6 py-4 border-t border-secondary-200 shrink-0">
               <div className="flex items-center gap-4">
                 <Button variant="ghost" onClick={onClose}>
                   Cancel
                 </Button>
                 <Button onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? 'Saving...' : isNew ? 'Create Customer' : 'Save Changes'}
+                  {isSaving ? 'Saving...' : 'Create Customer'}
                 </Button>
               </div>
             </div>

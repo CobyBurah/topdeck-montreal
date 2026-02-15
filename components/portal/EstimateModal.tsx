@@ -78,7 +78,7 @@ export function EstimateModal({ estimate, isOpen, onClose, onUpdate, onDelete }:
       .eq('id', estimate.id)
       .select(`
         *,
-        customer:customers (id, full_name, email, phone, language)
+        customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
       `)
       .single()
 
@@ -174,7 +174,7 @@ export function EstimateModal({ estimate, isOpen, onClose, onUpdate, onDelete }:
               <div>
                 <div className="flex items-center gap-3">
                   <Link
-                    href={`/${locale}/portal/customers/${estimate.customer_id}`}
+                    href={`/${locale}/employee-portal/customers/${estimate.customer_id}`}
                     className="text-xl font-bold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
                   >
                     {customer?.full_name || 'Unknown Customer'}

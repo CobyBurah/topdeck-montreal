@@ -10,6 +10,8 @@ export interface Customer {
   address: string | null
   language: 'en' | 'fr'
   internal_notes: string | null
+  access_token: string
   leads?: Lead[]
   lead_count?: number
+  last_interaction_at?: string | null
 }

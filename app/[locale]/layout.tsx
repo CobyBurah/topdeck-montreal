@@ -5,7 +5,10 @@ import { getMessages } from 'next-intl/server'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { locales, type Locale } from '@/i18n/config'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -27,8 +30,8 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className="scroll-smooth">
-      <body className={`${inter.className} antialiased`}>
+    <html lang={locale} className={`${inter.variable} scroll-smooth`}>
+      <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           {children}
           <SpeedInsights />

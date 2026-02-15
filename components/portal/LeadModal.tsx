@@ -39,6 +39,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailError, setEmailError] = useState<string | null>(null)
 
   useEffect(() => {
     if (lead) {
@@ -47,6 +48,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
       setPhotos(lead.lead_photos || [])
       setIsEditing(false)
       setError(null)
+      setEmailError(null)
     }
   }, [lead])
 
@@ -63,6 +65,16 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    if (name === 'email' && emailError) {
+      setEmailError(null)
+    }
+  }
+
+  const handleEmailBlur = () => {
+    const email = formData.email || ''
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError('Please enter a valid email address')
+    }
   }
 
   const handleCancelEdit = () => {
@@ -72,6 +84,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
     }
     setIsEditing(false)
     setError(null)
+    setEmailError(null)
   }
 
   const handleSave = async () => {
@@ -117,7 +130,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
       .select(`
         *,
         lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
-        customer:customers (id, full_name, email, phone, language)
+        customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
       `)
       .single()
 
@@ -209,7 +222,7 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                 <div className="flex items-center gap-3">
                   {lead.customer_id ? (
                     <Link
-                      href={`/${locale}/portal/customers/${lead.customer_id}`}
+                      href={`/${locale}/employee-portal/customers/${lead.customer_id}`}
                       className="text-xl font-bold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
                     >
                       {formData.full_name}
@@ -305,6 +318,8 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                         type="email"
                         value={formData.email || ''}
                         onChange={handleChange}
+                        onBlur={handleEmailBlur}
+                        error={emailError || undefined}
                       />
                       <Input
                         label="Phone"

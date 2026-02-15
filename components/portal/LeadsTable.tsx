@@ -12,6 +12,7 @@ import type { Lead, LeadStatus } from '@/types/lead'
 interface LeadsTableProps {
   initialLeads: Lead[]
   showStatsCards?: boolean
+  lastInteractions?: Record<string, string>
 }
 
 const filterByDateRange = (lead: Lead, range: DateRange): boolean => {
@@ -41,7 +42,7 @@ const filterByDateRange = (lead: Lead, range: DateRange): boolean => {
   }
 }
 
-export function LeadsTable({ initialLeads, showStatsCards = true }: LeadsTableProps) {
+export function LeadsTable({ initialLeads, showStatsCards = true, lastInteractions = {} }: LeadsTableProps) {
   const [leads, setLeads] = useState(initialLeads)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -203,6 +204,7 @@ export function LeadsTable({ initialLeads, showStatsCards = true }: LeadsTablePr
                   <LeadRow
                     key={lead.id}
                     lead={lead}
+                    lastInteractionAt={lead.customer_id ? lastInteractions[lead.customer_id] || null : null}
                     onEdit={() => {
                       setSelectedLead(lead)
                       setIsModalOpen(true)

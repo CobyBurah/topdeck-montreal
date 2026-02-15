@@ -82,7 +82,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="pt-8 border-t border-secondary-800">
           <p className="text-sm text-secondary-500 text-center">
-            &copy; 2026 Topdeck Montreal Painting Inc.
+            &copy; 2026 Topdeck Montreal Painting Inc. &middot; RBQ 5845-6906-01
           </p>
         </div>
       </div>

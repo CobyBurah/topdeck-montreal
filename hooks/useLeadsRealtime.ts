@@ -38,7 +38,7 @@ export function useLeadsRealtime({
                 `
                 *,
                 lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
-                customer:customers (id, full_name, email, phone, language)
+                customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
               `
               )
               .eq('id', payload.new.id)
@@ -64,7 +64,7 @@ export function useLeadsRealtime({
                 `
                 *,
                 lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
-                customer:customers (id, full_name, email, phone, language)
+                customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
               `
               )
               .eq('id', payload.new.id)
@@ -103,7 +103,7 @@ export function useLeadsRealtime({
                 `
                 *,
                 lead_photos (id, lead_id, storage_path, original_filename, file_size, mime_type, uploaded_at),
-                customer:customers (id, full_name, email, phone, language)
+                customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
               `
               )
               .eq('customer_id', payload.new.id)

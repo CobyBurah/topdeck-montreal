@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { InvoiceRow } from './InvoiceRow'
 import { InvoiceModal } from './InvoiceModal'
@@ -11,6 +11,8 @@ import { INVOICE_STATUSES } from '@/types/invoice'
 
 interface InvoicesTableProps {
   initialInvoices: Invoice[]
+  lastInteractions?: Record<string, string>
+  initialSelectedInvoiceId?: string
 }
 
 type DateRange = 'all' | 'today' | 'week' | 'month' | '2026' | '2025'
@@ -42,10 +44,22 @@ const filterByDateRange = (invoice: Invoice, range: DateRange): boolean => {
   }
 }
 
-export function InvoicesTable({ initialInvoices }: InvoicesTableProps) {
+export function InvoicesTable({ initialInvoices, lastInteractions = {}, initialSelectedInvoiceId }: InvoicesTableProps) {
   const [invoices, setInvoices] = useState(initialInvoices)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Auto-open modal from initialSelectedInvoiceId (direct link) or sessionStorage
+  useEffect(() => {
+    const idToOpen = initialSelectedInvoiceId || sessionStorage.getItem('portal-selected-invoice')
+    if (idToOpen) {
+      const found = initialInvoices.find((i) => i.id === idToOpen)
+      if (found) {
+        setSelectedInvoice(found)
+        setIsModalOpen(true)
+      }
+    }
+  }, [initialSelectedInvoiceId, initialInvoices])
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all')
   const [dateRange, setDateRange] = useState<DateRange>('all')
@@ -76,6 +90,7 @@ export function InvoicesTable({ initialInvoices }: InvoicesTableProps) {
     setSelectedInvoice((current) => {
       if (current?.id === invoiceId) {
         setIsModalOpen(false)
+        sessionStorage.removeItem('portal-selected-invoice')
         return null
       }
       return current
@@ -274,9 +289,11 @@ export function InvoicesTable({ initialInvoices }: InvoicesTableProps) {
                   <InvoiceRow
                     key={invoice.id}
                     invoice={invoice}
+                    lastInteractionAt={lastInteractions[invoice.customer_id] || null}
                     onEdit={() => {
                       setSelectedInvoice(invoice)
                       setIsModalOpen(true)
+                      sessionStorage.setItem('portal-selected-invoice', invoice.id)
                     }}
                     onUpdate={handleInvoiceUpdate}
                   />
@@ -301,6 +318,7 @@ export function InvoicesTable({ initialInvoices }: InvoicesTableProps) {
         onClose={() => {
           setIsModalOpen(false)
           setSelectedInvoice(null)
+          sessionStorage.removeItem('portal-selected-invoice')
         }}
         onUpdate={handleInvoiceUpdate}
         onDelete={handleInvoiceDelete}

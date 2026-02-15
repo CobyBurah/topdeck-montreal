@@ -10,6 +10,12 @@ interface UseInvoicesRealtimeOptions {
   onConnectionChange?: (isConnected: boolean) => void
 }
 
+const INVOICE_SELECT = `
+  *,
+  customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token),
+  lead:leads (*, lead_photos (*))
+`
+
 export function useInvoicesRealtime({
   onInvoiceInsert,
   onInvoiceUpdate,
@@ -31,15 +37,9 @@ export function useInvoicesRealtime({
             table: 'invoices',
           },
           async (payload) => {
-            // Fetch full invoice data with relations
             const { data } = await supabase
               .from('invoices')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(INVOICE_SELECT)
               .eq('id', payload.new.id)
               .single()
 
@@ -56,15 +56,9 @@ export function useInvoicesRealtime({
             table: 'invoices',
           },
           async (payload) => {
-            // Fetch updated invoice with relations
             const { data } = await supabase
               .from('invoices')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(INVOICE_SELECT)
               .eq('id', payload.new.id)
               .single()
 
@@ -94,15 +88,9 @@ export function useInvoicesRealtime({
             table: 'customers',
           },
           async (payload) => {
-            // Refetch all invoices for this customer to update customer info
             const { data } = await supabase
               .from('invoices')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(INVOICE_SELECT)
               .eq('customer_id', payload.new.id)
 
             if (data && onInvoiceUpdate) {
@@ -119,7 +107,6 @@ export function useInvoicesRealtime({
 
     setupRealtimeSubscription()
 
-    // Cleanup subscription on unmount
     return () => {
       if (channel) {
         supabase.removeChannel(channel)

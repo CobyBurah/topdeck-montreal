@@ -25,7 +25,7 @@
     "steps": {
       "wash": {
         "title": "Wash",
-        "description": "Deep pressure washing removes years of dirt, mold, and old finishes."
+        "description": "Deep pressure washing removes years of dirt, mold, and grime."
       },
       "sand": {
         "title": "Sand",
@@ -33,7 +33,7 @@
       },
       "stain": {
         "title": "Stain",
-        "description": "Premium stains penetrate deep to protect and beautify for years."
+        "description": "Premium stains penetrate deep to protect and beautify your wood."
       }
     },
     "whatWeWorkOn": "What we work on:",
@@ -50,7 +50,7 @@
   "whyChooseUs": {
     "subtitle": "Why Choose Us",
     "title": "Montreal's Trusted Deck Experts",
-    "description": "We've been restoring outdoor wood across Montreal for over 10 years. Our commitment to quality and customer satisfaction sets us apart.",
+    "description": "We're a fully licensed and insured team dedicated to restoring outdoor wood across Montreal. Our commitment to quality and customer satisfaction sets us apart.",
     "features": {
       "quality": {
         "title": "Quality Materials",
@@ -61,8 +61,8 @@
         "description": "We respect your schedule and complete every project on time, keeping you informed every step of the way."
       },
       "experience": {
-        "title": "10+ Years Experience",
-        "description": "Over a decade of restoring Montreal's outdoor wood means you get expert craftsmanship every time."
+        "title": "RBQ Licensed & Insured",
+        "description": "We hold a valid RBQ license and carry $2 million in liability insurance, so your project is fully protected."
       }
     },
     "servingAreas": "Proudly serving Montreal, Laval, Longueuil, and surrounding areas"
@@ -74,7 +74,7 @@
   },
   "ctaBanner": {
     "title": "Ready to Restore Your Wood?",
-    "description": "Get a free, no-obligation quote for your project. We'll assess your needs and provide honest recommendations.",
+    "description": "Get a free, personalized quote for your project. We'll assess your needs and recommend the best approach for your wood.",
     "cta": "Get Your Free Quote"
   },
   "servicesPage": {
@@ -86,11 +86,11 @@
     "steps": {
       "washing": {
         "title": "Pressure Washing",
-        "description": "We start with a thorough deep clean using professional-grade pressure washing equipment. This removes years of dirt, grime, mold, mildew, and old finishes, revealing the natural wood underneath.",
+        "description": "We start with a thorough deep clean using professional-grade pressure washing equipment. This removes years of dirt, grime, mold, and mildew, preparing the surface for sanding.",
         "details": [
           "Removes built-up dirt and debris",
           "Eliminates mold and mildew",
-          "Strips old, peeling finishes",
+          "Brightens and refreshes wood surface",
           "Prepares surface for sanding"
         ]
       },
@@ -98,10 +98,10 @@
         "title": "Sanding",
         "description": "Once dry, we carefully sand the entire surface to create the perfect canvas for staining. Sanding smooths rough spots, opens the wood grain, and ensures optimal stain absorption.",
         "details": [
-          "Smooths rough and splintered areas",
+          "Prepares the wood texture for staining",
           "Opens wood pores for better absorption",
           "Creates even, uniform surface",
-          "Removes any remaining old finish"
+          "Ensures a smooth, ready-to-stain surface"
         ]
       },
       "staining": {
@@ -111,7 +111,7 @@
           "Premium penetrating stains",
           "UV and moisture protection",
           "Wide range of color options",
-          "Long-lasting, beautiful finish"
+          "Rich, beautiful finish"
         ]
       }
     },
@@ -136,7 +136,7 @@
       }
     },
     "ctaTitle": "Ready to Restore Your Wood?",
-    "ctaDescription": "Get a free, no-obligation quote for your project. We'll assess your needs and provide honest recommendations.",
+    "ctaDescription": "Get a free, personalized quote for your project. We'll assess your needs and recommend the best approach for your wood.",
     "ctaButton": "Get Your Free Quote"
   },
   "galleryPage": {
@@ -186,7 +186,7 @@
       "fullName": "Full Name *",
       "email": "Email Address *",
       "phone": "Phone Number *",
-      "address": "Address / Area",
+      "address": "Address",
       "service": "What needs work? *",
       "size": "Approximate Size / Scope",
       "timeline": "Preferred Timeline",
@@ -197,7 +197,7 @@
       "name": "John Doe",
       "email": "john@example.com",
       "phone": "(514) 555-0123",
-      "address": "Montreal, QC",
+      "address": "Start typing an address...",
       "service": "Select a service",
       "size": "e.g., 300 sq ft deck, 50 ft fence",
       "message": "Tell us more about your project. What's the current condition? Any specific requirements or concerns?",
@@ -229,7 +229,9 @@
     "success": {
       "title": "Thank You!",
       "message": "We've received your quote request and will get back to you within 24 hours.",
-      "button": "Submit Another Request"
+      "button": "Submit Another Request",
+      "trackProject": "Track Your Project",
+      "trackProjectDescription": "View your project status and updates anytime."
     },
     "disclaimer": "* Required fields. We respect your privacy and will never share your information."
   },
@@ -286,6 +288,7 @@
     },
     "modal": {
       "contactInfo": "Contact Information",
+
       "projectDetails": "Project Details",
       "crmFields": "CRM Fields",
       "photos": "Photos",
@@ -307,6 +310,104 @@
       "saving": "Saving...",
       "cancel": "Cancel",
       "error": "Failed to save changes. Please try again."
+    }
+  },
+  "clientPortal": {
+    "greeting": "Hello, {name}!",
+    "subtitle": "Here's the latest on your project with Topdeck Montreal.",
+    "progressTitle": "Project Status",
+    "error": "Unable to load your project information. Please try again later.",
+    "backToWebsite": "Back to Website",
+    "logout": "Log Out",
+    "steps": {
+      "requestReceived": "Request Received",
+      "estimateSent": "Estimate Sent",
+      "invoiceCreated": "Invoice Created"
+    },
+    "stepsDescription": {
+      "requestReceived": "We've received your request and will be in touch shortly.",
+      "estimateSent": "Your estimate is ready for review.",
+      "invoiceCreated": "Your invoice has been created."
+    },
+    "estimateCard": {
+      "title": "Your Estimate",
+      "service": "Service",
+      "price": "Price",
+      "viewEstimate": "View Estimate"
+    },
+    "invoiceCard": {
+      "title": "Your Invoice",
+      "service": "Service",
+      "price": "Amount",
+      "status": "Status",
+      "viewInvoice": "View / Pay Invoice"
+    },
+    "invoiceStatuses": {
+      "unpaid": "Unpaid",
+      "deposit_paid": "Deposit Paid",
+      "fully_paid": "Fully Paid"
+    },
+    "estimateStatuses": {
+      "sent": "Sent",
+      "invoice_sent": "Invoice Sent"
+    },
+    "login": {
+      "title": "Track Your Project",
+      "subtitle": "Enter your email to receive a sign-in link.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "you@example.com",
+      "emailInvalid": "Please enter a valid email address",
+      "sendLink": "Send Sign-In Link",
+      "sending": "Sending...",
+      "checkEmail": "Check Your Email",
+      "checkEmailDescription": "We've sent a sign-in link to your email. Click the link to access your project.",
+      "error": "Unable to send sign-in link. Please make sure you used the email from your quote request.",
+      "backToWebsite": "Back to Website"
+    },
+    "stainSelector": {
+      "title": "Choose Your Stain",
+      "subtitle": "Explore the stain options available for your deck's condition.",
+      "back": "Back",
+      "categories": {
+        "semiTransparent": "Semi-Transparent",
+        "semiTransparentDescription": "Enhances the natural grain of the wood while adding color and UV protection. Ideal for new or lightly worn decks.",
+        "solid": "Solid",
+        "solidDescription": "Provides full coverage with rich, uniform color while protecting the wood. Great for older or heavily weathered surfaces."
+      },
+      "brands": {
+        "ligna": "Ligna Hybri-Deck",
+        "lignaDescription": "A high-performance hybrid stain offering superior penetration and long-lasting protection with a natural finish.",
+        "steina": "Steina",
+        "steinaDescription": "Premium semi-transparent stain with rich pigments for a natural, elegant finish that highlights wood grain."
+      },
+      "colors": {
+        "goldenPine": "Golden Pine",
+        "mapleSugar": "Maple Sugar",
+        "camel": "Camel",
+        "paprika": "Paprika",
+        "lightOak": "Light Oak",
+        "naturalCedar": "Natural Cedar",
+        "honeyGold": "Honey Gold",
+        "redwood": "Redwood",
+        "seaGullGray": "Sea Gull Gray",
+        "kendallCharcoal": "Kendall Charcoal",
+        "tudorBrown": "Tudor Brown",
+        "cordovanBrown": "Cordovan Brown",
+        "platinumGray": "Platinum Gray",
+        "hiddenValley": "Hidden Valley"
+      },
+      "colorDetail": {
+        "title": "{name}",
+        "galleryLabel": "Project examples with this color"
+      },
+      "breadcrumb": {
+        "categories": "Stains"
+      },
+      "favouriteButton": "Favourite This Stain",
+      "unfavouriteButton": "Remove Favourite",
+      "favouriteDescription": "This will let Topdeck Montreal know about your colour preferences.",
+      "yourFavourites": "Your Favourites",
+      "disclaimer": "These images are for reference only — actual results may vary. Your colour choice is not final. Topdeck Montreal will reach out to confirm and validate your selection before beginning any work."
     }
   }
 }

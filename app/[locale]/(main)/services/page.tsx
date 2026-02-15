@@ -58,6 +58,8 @@ export default function ServicesPage() {
           className="object-cover"
           style={{ objectPosition: 'center 10%' }}
           priority
+          sizes="100vw"
+          quality={60}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
@@ -118,6 +120,8 @@ export default function ServicesPage() {
                     alt={t(`steps.${step.titleKey}.title`)}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 640px"
+                    quality={60}
                   />
                   <div className="absolute top-6 left-6 bg-primary-500 text-white text-lg font-bold px-4 py-2 rounded-full">
                     {t('step')} {step.step}
@@ -184,6 +188,8 @@ export default function ServicesPage() {
                     fill
                     className="object-cover"
                     style={{ objectPosition: surface.objectPosition || 'center' }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 320px"
+                    quality={60}
                   />
                 </div>
                 <div className="p-5">

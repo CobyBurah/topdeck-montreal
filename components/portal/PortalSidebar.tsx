@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   {
-    href: '/portal',
+    href: '/employee-portal',
     label: 'Home',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -17,7 +17,7 @@ const navItems = [
     exact: true,
   },
   {
-    href: '/portal/customers',
+    href: '/employee-portal/customers',
     label: 'Customers',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -26,7 +26,7 @@ const navItems = [
     ),
   },
   {
-    href: '/portal/leads',
+    href: '/employee-portal/leads',
     label: 'Leads',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,7 +35,7 @@ const navItems = [
     ),
   },
   {
-    href: '/portal/estimates',
+    href: '/employee-portal/estimates',
     label: 'Estimates',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -44,7 +44,7 @@ const navItems = [
     ),
   },
   {
-    href: '/portal/invoices',
+    href: '/employee-portal/invoices',
     label: 'Invoices',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,22 +53,26 @@ const navItems = [
     ),
   },
   {
-    href: '/portal/communications',
-    label: 'Communications',
+    href: '/employee-portal/map',
+    label: 'Map',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     ),
+    exact: true,
   },
 ]
 
 interface PortalSidebarProps {
   isOpen: boolean
   onClose: () => void
+  isCollapsed: boolean
+  onToggleCollapse: () => void
 }
 
-export function PortalSidebar({ isOpen, onClose }: PortalSidebarProps) {
+export function PortalSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: PortalSidebarProps) {
   const pathname = usePathname()
   const locale = useLocale()
 
@@ -85,12 +89,30 @@ export function PortalSidebar({ isOpen, onClose }: PortalSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-16 bottom-0 w-64 bg-secondary-900 border-r border-secondary-800 z-40 transition-transform duration-300 ease-in-out',
+          'fixed left-0 top-16 bottom-0 bg-secondary-900 border-r border-secondary-800 z-40 transition-all duration-300 ease-in-out',
+          isCollapsed ? 'md:w-16' : 'md:w-64',
+          'w-64',
           'md:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <nav className="p-4 space-y-1">
+        {/* Collapse toggle button - desktop only */}
+        <button
+          onClick={onToggleCollapse}
+          className="hidden md:flex absolute -right-3 top-6 w-6 h-6 items-center justify-center rounded-full bg-secondary-800 border border-secondary-700 text-secondary-400 hover:text-white hover:bg-secondary-700 transition-colors z-50"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg
+            className={cn('w-3 h-3 transition-transform duration-300', isCollapsed && 'rotate-180')}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <nav className={cn('p-4 space-y-1', isCollapsed && 'md:p-2')}>
           {navItems.map((item) => {
             const fullHref = `/${locale}${item.href}`
             const isActive = item.exact
@@ -102,15 +124,17 @@ export function PortalSidebar({ isOpen, onClose }: PortalSidebarProps) {
                 key={item.href}
                 href={fullHref}
                 onClick={onClose}
+                title={isCollapsed ? item.label : undefined}
                 className={cn(
                   'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+                  isCollapsed && 'md:justify-center md:px-0 md:gap-0',
                   isActive
                     ? 'bg-primary-500 text-white'
                     : 'text-secondary-400 hover:text-white hover:bg-secondary-800'
                 )}
               >
                 {item.icon}
-                <span className="font-medium">{item.label}</span>
+                <span className={cn('font-medium', isCollapsed && 'md:hidden')}>{item.label}</span>
               </Link>
             )
           })}

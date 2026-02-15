@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { EstimateRow } from './EstimateRow'
 import { EstimateModal } from './EstimateModal'
@@ -10,6 +10,8 @@ import type { Estimate } from '@/types/estimate'
 
 interface EstimatesTableProps {
   initialEstimates: Estimate[]
+  lastInteractions?: Record<string, string>
+  initialSelectedEstimateId?: string
 }
 
 type DateRange = 'all' | 'today' | 'week' | 'month' | '2026' | '2025'
@@ -41,10 +43,22 @@ const filterByDateRange = (estimate: Estimate, range: DateRange): boolean => {
   }
 }
 
-export function EstimatesTable({ initialEstimates }: EstimatesTableProps) {
+export function EstimatesTable({ initialEstimates, lastInteractions = {}, initialSelectedEstimateId }: EstimatesTableProps) {
   const [estimates, setEstimates] = useState(initialEstimates)
   const [selectedEstimate, setSelectedEstimate] = useState<Estimate | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Auto-open modal from initialSelectedEstimateId (direct link) or sessionStorage
+  useEffect(() => {
+    const idToOpen = initialSelectedEstimateId || sessionStorage.getItem('portal-selected-estimate')
+    if (idToOpen) {
+      const found = initialEstimates.find((e) => e.id === idToOpen)
+      if (found) {
+        setSelectedEstimate(found)
+        setIsModalOpen(true)
+      }
+    }
+  }, [initialSelectedEstimateId, initialEstimates])
   const [searchQuery, setSearchQuery] = useState('')
   const [dateRange, setDateRange] = useState<DateRange>('all')
   const [sortField, setSortField] = useState<'created_at' | 'price' | 'customer_name'>('created_at')
@@ -67,6 +81,7 @@ export function EstimatesTable({ initialEstimates }: EstimatesTableProps) {
     setSelectedEstimate((current) => {
       if (current?.id === estimateId) {
         setIsModalOpen(false)
+        sessionStorage.removeItem('portal-selected-estimate')
         return null
       }
       return current
@@ -246,9 +261,11 @@ export function EstimatesTable({ initialEstimates }: EstimatesTableProps) {
                   <EstimateRow
                     key={estimate.id}
                     estimate={estimate}
+                    lastInteractionAt={lastInteractions[estimate.customer_id] || null}
                     onEdit={() => {
                       setSelectedEstimate(estimate)
                       setIsModalOpen(true)
+                      sessionStorage.setItem('portal-selected-estimate', estimate.id)
                     }}
                   />
                 ))}
@@ -272,6 +289,7 @@ export function EstimatesTable({ initialEstimates }: EstimatesTableProps) {
         onClose={() => {
           setIsModalOpen(false)
           setSelectedEstimate(null)
+          sessionStorage.removeItem('portal-selected-estimate')
         }}
         onUpdate={handleEstimateUpdate}
         onDelete={handleEstimateDelete}

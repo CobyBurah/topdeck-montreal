@@ -28,7 +28,7 @@
   --color-secondary-950: #0a0a0a;
 
   /* Font Family */
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
 html {

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
+import { NotificationBell } from './NotificationBell'
 import Link from 'next/link'
 
 interface PortalHeaderProps {
@@ -18,7 +19,7 @@ export function PortalHeader({ onMenuToggle }: PortalHeaderProps) {
   const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push(`/${locale}/portal/login`)
+    router.push(`/${locale}/employee-portal/login`)
     router.refresh()
   }
 
@@ -38,7 +39,7 @@ export function PortalHeader({ onMenuToggle }: PortalHeaderProps) {
               </svg>
             </button>
 
-            <Link href={`/${locale}/portal`} className="flex items-center">
+            <Link href={`/${locale}/employee-portal`} className="flex items-center">
               <Image
                 src="/Topdeck Logo.avif"
                 alt="Topdeck Montreal"
@@ -57,6 +58,7 @@ export function PortalHeader({ onMenuToggle }: PortalHeaderProps) {
             >
               View Website
             </Link>
+            <NotificationBell />
             <Button variant="outline" size="sm" onClick={handleLogout}>
               Log Out
             </Button>

@@ -259,6 +259,68 @@ export function useCommunicationsRealtime({
           }
         )
 
+      // Scheduled messages
+      channel
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'scheduled_messages',
+            ...(customerId && { filter: `customer_id=eq.${customerId}` }),
+          },
+          async (payload) => {
+            const { data } = await supabase
+              .from('scheduled_messages')
+              .select('*, customer:customers(id, full_name)')
+              .eq('id', payload.new.id)
+              .single()
+
+            if (data && data.status === 'pending' && onItemInsert) {
+              onItemInsert(transformScheduledToTimelineItem(data))
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'scheduled_messages',
+            ...(customerId && { filter: `customer_id=eq.${customerId}` }),
+          },
+          async (payload) => {
+            // If status changed from pending, remove from timeline
+            if (payload.new.status !== 'pending' && onItemDelete) {
+              onItemDelete(payload.new.id, payload.new.type as TimelineItemType)
+            } else if (payload.new.status === 'pending' && onItemUpdate) {
+              const { data } = await supabase
+                .from('scheduled_messages')
+                .select('*, customer:customers(id, full_name)')
+                .eq('id', payload.new.id)
+                .single()
+
+              if (data) {
+                onItemUpdate(transformScheduledToTimelineItem(data))
+              }
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'scheduled_messages',
+            ...(customerId && { filter: `customer_id=eq.${customerId}` }),
+          },
+          (payload) => {
+            if (onItemDelete) {
+              onItemDelete(payload.old.id, payload.old.type as TimelineItemType)
+            }
+          }
+        )
+
       channel.subscribe((status) => {
         if (onConnectionChange) {
           onConnectionChange(status === 'SUBSCRIBED')
@@ -384,5 +446,32 @@ function transformActivityToTimelineItem(activity: ActivityLogWithCustomer): Tim
       invoiceStatus: activity.metadata.status as string | undefined,
     },
     customer: activity.customer || undefined,
+  }
+}
+
+interface ScheduledMessageWithCustomer {
+  id: string
+  type: 'email' | 'sms'
+  subject: string | null
+  message: string
+  scheduled_for: string
+  status: string
+  customer: { id: string; full_name: string } | null
+}
+
+function transformScheduledToTimelineItem(scheduled: ScheduledMessageWithCustomer): TimelineItem {
+  return {
+    id: scheduled.id,
+    type: scheduled.type,
+    direction: 'outbound',
+    timestamp: scheduled.scheduled_for,
+    title: scheduled.type === 'email' ? (scheduled.subject || '(No subject)') : 'Scheduled SMS',
+    description: scheduled.message,
+    metadata: {
+      subject: scheduled.subject,
+      scheduledFor: scheduled.scheduled_for,
+      isScheduled: true,
+    },
+    customer: scheduled.customer || undefined,
   }
 }

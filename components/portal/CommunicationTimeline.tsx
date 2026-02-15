@@ -9,9 +9,10 @@ interface CommunicationTimelineProps {
   items: TimelineItemType[]
   showCustomer?: boolean
   onReply?: (emailId: string, subject: string, customerId: string) => void
+  onCancelScheduled?: (scheduledId: string) => void
 }
 
-export function CommunicationTimeline({ items, showCustomer = false, onReply }: CommunicationTimelineProps) {
+export function CommunicationTimeline({ items, showCustomer = false, onReply, onCancelScheduled }: CommunicationTimelineProps) {
   // Group items by date for visual separation
   const groupedItems = useMemo(() => {
     const groups: Record<string, TimelineItemType[]> = {}
@@ -34,25 +35,25 @@ export function CommunicationTimeline({ items, showCustomer = false, onReply }: 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {Object.entries(groupedItems).map(([date, dateItems]) => (
         <div key={date}>
           {/* Date header */}
           <div className="sticky top-0 z-10 bg-white py-2">
             <div className="flex items-center gap-4">
-              <div className="h-px flex-1 bg-secondary-200" />
-              <span className="text-sm font-medium text-secondary-500">
+              <div className="h-px flex-1 bg-secondary-100" />
+              <span className="text-xs font-medium text-secondary-400 bg-white px-2">
                 {formatDateHeader(date)}
               </span>
-              <div className="h-px flex-1 bg-secondary-200" />
+              <div className="h-px flex-1 bg-secondary-100" />
             </div>
           </div>
 
           {/* Items for this date */}
-          <div className="space-y-4 mt-4">
+          <div className="space-y-3 mt-3">
             <AnimatePresence>
               {dateItems.map((item) => (
-                <TimelineItem key={`${item.type}-${item.id}`} item={item} showCustomer={showCustomer} onReply={onReply} />
+                <TimelineItem key={`${item.type}-${item.id}`} item={item} showCustomer={showCustomer} onReply={onReply} onCancelScheduled={onCancelScheduled} />
               ))}
             </AnimatePresence>
           </div>

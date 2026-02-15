@@ -344,7 +344,8 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
             alt={`${title} - ${beforeLabel}`}
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+            quality={60}
             draggable={false}
           />
         </div>
@@ -359,7 +360,8 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
             alt={`${title} - ${afterLabel}`}
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+            quality={60}
             draggable={false}
           />
         </div>
@@ -587,6 +589,7 @@ function FullscreenSlider({
           fill
           className="object-cover"
           sizes="90vw"
+          quality={85}
           priority
         />
       </div>
@@ -602,6 +605,7 @@ function FullscreenSlider({
           fill
           className="object-cover"
           sizes="90vw"
+          quality={85}
           priority
         />
       </div>

@@ -10,6 +10,12 @@ interface UseEstimatesRealtimeOptions {
   onConnectionChange?: (isConnected: boolean) => void
 }
 
+const ESTIMATE_SELECT = `
+  *,
+  customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token),
+  lead:leads (*, lead_photos (*))
+`
+
 export function useEstimatesRealtime({
   onEstimateInsert,
   onEstimateUpdate,
@@ -31,15 +37,9 @@ export function useEstimatesRealtime({
             table: 'estimates',
           },
           async (payload) => {
-            // Fetch full estimate data with relations
             const { data } = await supabase
               .from('estimates')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(ESTIMATE_SELECT)
               .eq('id', payload.new.id)
               .single()
 
@@ -56,15 +56,9 @@ export function useEstimatesRealtime({
             table: 'estimates',
           },
           async (payload) => {
-            // Fetch updated estimate with relations
             const { data } = await supabase
               .from('estimates')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(ESTIMATE_SELECT)
               .eq('id', payload.new.id)
               .single()
 
@@ -94,15 +88,9 @@ export function useEstimatesRealtime({
             table: 'customers',
           },
           async (payload) => {
-            // Refetch all estimates for this customer to update customer info
             const { data } = await supabase
               .from('estimates')
-              .select(
-                `
-                *,
-                customer:customers (id, full_name, email, phone, language)
-              `
-              )
+              .select(ESTIMATE_SELECT)
               .eq('customer_id', payload.new.id)
 
             if (data && onEstimateUpdate) {
@@ -119,7 +107,6 @@ export function useEstimatesRealtime({
 
     setupRealtimeSubscription()
 
-    // Cleanup subscription on unmount
     return () => {
       if (channel) {
         supabase.removeChannel(channel)

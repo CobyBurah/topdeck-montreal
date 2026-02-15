@@ -3,14 +3,22 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { APIProvider } from '@vis.gl/react-google-maps'
 import { QuoteForm } from '@/components/forms/QuoteForm'
 
 export default function ContactPage() {
   const t = useTranslations('contactPage')
+  const locale = useLocale()
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
 
   return (
+    <APIProvider
+      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
+      version="beta"
+      language={locale}
+      region="CA"
+    >
     <main className="min-h-screen grid md:grid-cols-2">
       {/* Left - Full image */}
       <div className="relative hidden md:block">
@@ -93,5 +101,6 @@ export default function ContactPage() {
         </div>
       </div>
     </main>
+    </APIProvider>
   )
 }

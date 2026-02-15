@@ -36,9 +36,6 @@ const config: Config = {
           950: '#0a0a0a',
         },
       },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
     },
   },
   plugins: [],

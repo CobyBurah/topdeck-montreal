@@ -37,6 +37,7 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailError, setEmailError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleChange = (
@@ -44,6 +45,15 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    if (name === 'email' && emailError) {
+      setEmailError(null)
+    }
+  }
+
+  const handleEmailBlur = () => {
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setEmailError('Please enter a valid email address')
+    }
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,6 +215,7 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
     })
     setPendingPhotos([])
     setError(null)
+    setEmailError(null)
     onClose()
   }
 
@@ -269,6 +280,8 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
+                    onBlur={handleEmailBlur}
+                    error={emailError || undefined}
                   />
 
                   <Input

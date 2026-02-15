@@ -118,7 +118,7 @@ export function CustomerMergeModal({
     setError(null)
 
     try {
-      const response = await fetch('/api/portal/customers/merge', {
+      const response = await fetch('/api/employee-portal/customers/merge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

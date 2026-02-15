@@ -20,23 +20,15 @@ interface InvoiceModalProps {
 }
 
 const statusStyles: Record<InvoiceStatus, string> = {
-  sent: 'bg-blue-100 text-blue-700',
-  viewed: 'bg-purple-100 text-purple-700',
-  paid: 'bg-green-100 text-green-700',
-  partially_paid: 'bg-yellow-100 text-yellow-700',
-  overdue: 'bg-red-100 text-red-700',
-  cancelled: 'bg-secondary-100 text-secondary-700',
-  refunded: 'bg-orange-100 text-orange-700',
+  unpaid: 'bg-amber-100 text-amber-700',
+  deposit_paid: 'bg-blue-100 text-blue-700',
+  fully_paid: 'bg-green-100 text-green-700',
 }
 
 const statusLabels: Record<InvoiceStatus, string> = {
-  sent: 'Sent',
-  viewed: 'Viewed',
-  paid: 'Paid',
-  partially_paid: 'Partially Paid',
-  overdue: 'Overdue',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
+  unpaid: 'Unpaid',
+  deposit_paid: 'Deposit Paid',
+  fully_paid: 'Fully Paid',
 }
 
 // Helper component for read-only field display
@@ -58,7 +50,10 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
 
   useEffect(() => {
     if (invoice) {
-      setFormData(invoice)
+      setFormData({
+        ...invoice,
+        internal_notes: invoice.customer?.internal_notes ?? invoice.internal_notes,
+      })
       setIsEditing(false)
       setError(null)
     }
@@ -87,6 +82,7 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
 
     const supabase = createClient()
 
+    // Update invoice fields
     const { data, error: updateError } = await supabase
       .from('invoices')
       .update({
@@ -95,14 +91,21 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
         service: formData.service,
         price: formData.price ? parseFloat(String(formData.price)) : null,
         status: formData.status,
-        internal_notes: formData.internal_notes,
       })
       .eq('id', invoice.id)
       .select(`
         *,
-        customer:customers (id, full_name, email, phone, language)
+        customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
       `)
       .single()
+
+    // Update customer-level internal notes
+    if (invoice.customer_id) {
+      await supabase
+        .from('customers')
+        .update({ internal_notes: formData.internal_notes || null })
+        .eq('id', invoice.customer_id)
+    }
 
     setIsSaving(false)
 
@@ -112,7 +115,17 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
       return
     }
 
-    onUpdate(data as Invoice)
+    // Re-fetch to get updated customer notes
+    const { data: refreshed } = await supabase
+      .from('invoices')
+      .select(`
+        *,
+        customer:customers (id, full_name, email, phone, address, language, internal_notes, access_token)
+      `)
+      .eq('id', invoice.id)
+      .single()
+
+    onUpdate((refreshed || data) as Invoice)
     setIsEditing(false)
   }
 
@@ -196,7 +209,7 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
               <div>
                 <div className="flex items-center gap-3">
                   <Link
-                    href={`/${locale}/portal/customers/${invoice.customer_id}`}
+                    href={`/${locale}/employee-portal/customers/${invoice.customer_id}`}
                     className="text-xl font-bold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
                   >
                     {customer?.full_name || 'Unknown Customer'}
@@ -379,9 +392,9 @@ export function InvoiceModal({ invoice, isOpen, onClose, onUpdate, onDelete }: I
                       <div>
                         <p className="text-sm font-medium text-secondary-700 mb-1">Status</p>
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusStyles[formData.status as InvoiceStatus || 'sent']}`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusStyles[formData.status as InvoiceStatus || 'unpaid']}`}
                         >
-                          {statusLabels[formData.status as InvoiceStatus || 'sent']}
+                          {statusLabels[formData.status as InvoiceStatus || 'unpaid']}
                         </span>
                       </div>
                       <DisplayField label="Internal Notes" value={formData.internal_notes} />

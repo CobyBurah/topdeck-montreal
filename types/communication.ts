@@ -90,6 +90,9 @@ export interface TimelineItem {
     service?: string | null
     leadSource?: string
     invoiceStatus?: string
+    // For scheduled messages
+    scheduledFor?: string
+    isScheduled?: boolean
   }
   // Optional customer info for global communications view
   customer?: {
