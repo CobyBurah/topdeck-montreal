@@ -400,7 +400,7 @@ function transformCallToTimelineItem(call: CallLogWithCustomer): TimelineItem {
     direction: call.direction,
     timestamp: call.called_at,
     title: call.direction === 'outbound' ? 'Outbound Call' : 'Inbound Call',
-    description: null,
+    description: call.summary || null,
     metadata: {},
     customer: call.customer || undefined,
   }

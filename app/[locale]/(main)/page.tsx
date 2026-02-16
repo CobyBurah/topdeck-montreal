@@ -1,5 +1,35 @@
+import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { Hero } from '@/components/home/Hero'
+
+const meta = {
+  en: {
+    title: 'Deck Painting Montreal | Topdeck | Get A Free Quote',
+    description: 'Expert deck staining, fence staining, railing services, and pressure washing in Montreal. Protect and enhance your outdoor spaces with Topdeck Montreal.',
+  },
+  fr: {
+    title: 'Peinture de Terrasse Montréal | Topdeck | Soumission Gratuite',
+    description: 'Experts en teinture de terrasses, clôtures, rampes et lavage à pression à Montréal. Protégez et embellissez vos espaces extérieurs avec Topdeck Montréal.',
+  },
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const m = meta[locale as keyof typeof meta] ?? meta.en
+  return {
+    ...m,
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { en: '/en', fr: '/fr' },
+    },
+    openGraph: {
+      title: m.title,
+      description: m.description,
+      url: `/${locale}`,
+      locale: locale === 'fr' ? 'fr_CA' : 'en_CA',
+    },
+  }
+}
 
 const ServicesPreview = dynamic(
   () => import('@/components/home/ServicesPreview').then(mod => ({ default: mod.ServicesPreview })),

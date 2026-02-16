@@ -296,35 +296,36 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     handleMove(e.touches[0].clientX)
   }
 
-  const handleSliderTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return
-    e.preventDefault()
-    hasDraggedRef.current = true
-    handleMove(e.touches[0].clientX)
-  }
-
-  const handleSliderTouchEnd = () => {
-    setIsDragging(false)
-    setTimeout(() => { hasDraggedRef.current = false }, 0)
-  }
-
   const handleCardClick = () => {
     if (!hasDraggedRef.current) {
       onOpenFullscreen(sliderPosition, isPaused)
     }
   }
 
-  // Global mouse move/up handlers for slider dragging
+  // Global mouse/touch move/up handlers for slider dragging
   useEffect(() => {
     if (isDragging) {
+      const handleGlobalTouchMove = (e: TouchEvent) => {
+        e.preventDefault()
+        hasDraggedRef.current = true
+        handleMove(e.touches[0].clientX)
+      }
+      const handleGlobalTouchEnd = () => {
+        setIsDragging(false)
+        setTimeout(() => { hasDraggedRef.current = false }, 0)
+      }
       window.addEventListener('mousemove', handleSliderMouseMove)
       window.addEventListener('mouseup', handleSliderMouseUp)
+      window.addEventListener('touchmove', handleGlobalTouchMove, { passive: false })
+      window.addEventListener('touchend', handleGlobalTouchEnd)
       return () => {
         window.removeEventListener('mousemove', handleSliderMouseMove)
         window.removeEventListener('mouseup', handleSliderMouseUp)
+        window.removeEventListener('touchmove', handleGlobalTouchMove)
+        window.removeEventListener('touchend', handleGlobalTouchEnd)
       }
     }
-  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp])
+  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp, handleMove])
 
   return (
     <motion.div
@@ -372,11 +373,9 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
         {/* Slider line with extended hit area */}
         <div
           className="absolute top-0 bottom-0 w-12 z-10 cursor-ew-resize flex items-center justify-center"
-          style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+          style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)', touchAction: 'none' }}
           onMouseDown={handleSliderMouseDown}
           onTouchStart={handleSliderTouchStart}
-          onTouchMove={handleSliderTouchMove}
-          onTouchEnd={handleSliderTouchEnd}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Visible slider line */}
@@ -556,26 +555,27 @@ function FullscreenSlider({
     handleMove(e.touches[0].clientX)
   }
 
-  const handleSliderTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return
-    e.preventDefault()
-    handleMove(e.touches[0].clientX)
-  }
-
-  const handleSliderTouchEnd = () => {
-    setIsDragging(false)
-  }
-
   useEffect(() => {
     if (isDragging) {
+      const handleGlobalTouchMove = (e: TouchEvent) => {
+        e.preventDefault()
+        handleMove(e.touches[0].clientX)
+      }
+      const handleGlobalTouchEnd = () => {
+        setIsDragging(false)
+      }
       window.addEventListener('mousemove', handleSliderMouseMove)
       window.addEventListener('mouseup', handleSliderMouseUp)
+      window.addEventListener('touchmove', handleGlobalTouchMove, { passive: false })
+      window.addEventListener('touchend', handleGlobalTouchEnd)
       return () => {
         window.removeEventListener('mousemove', handleSliderMouseMove)
         window.removeEventListener('mouseup', handleSliderMouseUp)
+        window.removeEventListener('touchmove', handleGlobalTouchMove)
+        window.removeEventListener('touchend', handleGlobalTouchEnd)
       }
     }
-  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp])
+  }, [isDragging, handleSliderMouseMove, handleSliderMouseUp, handleMove])
 
   return (
     <div
@@ -617,11 +617,9 @@ function FullscreenSlider({
       {/* Slider line with extended hit area */}
       <div
         className="absolute top-0 bottom-0 w-16 z-10 cursor-ew-resize flex items-center justify-center"
-        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)', touchAction: 'none' }}
         onMouseDown={handleSliderMouseDown}
         onTouchStart={handleSliderTouchStart}
-        onTouchMove={handleSliderTouchMove}
-        onTouchEnd={handleSliderTouchEnd}
       >
         <div className="absolute top-0 bottom-0 w-1 bg-white shadow-lg" />
         <div className="absolute top-1/2 -translate-y-1/2 w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center">

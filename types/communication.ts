@@ -33,6 +33,7 @@ export interface CallLog {
   id: string
   customer_id: string
   direction: CommunicationDirection
+  summary: string | null
   external_id: string | null
   called_at: string
   created_at: string

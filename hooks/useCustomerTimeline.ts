@@ -94,7 +94,7 @@ export function useCustomerTimeline(customerId: string | null): UseCustomerTimel
         direction: call.direction,
         timestamp: call.called_at,
         title: `${call.direction === 'inbound' ? 'Incoming' : 'Outgoing'} Call`,
-        description: null,
+        description: call.summary || null,
         metadata: {},
       })
     })

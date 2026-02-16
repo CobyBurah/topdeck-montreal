@@ -117,7 +117,13 @@ export function TimelineItem({ item, showCustomer = false, onReply, onCancelSche
         )}
 
         {/* Description */}
-        {item.description && (
+        {item.description && item.type === 'call' ? (
+          <ul className="mt-1 text-sm text-secondary-700 list-disc list-inside space-y-0.5">
+            {item.description.split('\n').filter(Boolean).map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+        ) : item.description && (
           <p className={cn(
             'text-sm text-secondary-700 whitespace-pre-wrap',
             (showCustomer && item.customer && item.type !== 'email') && 'mt-1',
