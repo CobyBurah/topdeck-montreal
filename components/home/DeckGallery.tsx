@@ -178,6 +178,31 @@ const bottomRowImages = galleryImages.filter((_, i) => i % 2 === 1)
 const duplicatedTopRow = topRowImages
 const duplicatedBottomRow = bottomRowImages
 
+function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; onMouseDown: () => void; onTouchStart: () => void }) {
+  return (
+    <div
+      className="flex-shrink-0 w-[280px] md:w-[320px] cursor-pointer"
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+    >
+      <div className="relative w-full h-[200px] md:h-[220px] rounded-xl overflow-hidden group">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 280px, 320px"
+          draggable={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <p className="text-white font-medium text-sm">{image.title}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function DeckGallery() {
   const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -188,6 +213,7 @@ export function DeckGallery() {
   const startYRef = useRef(0)
   const scrollLeftRef = useRef(0)
   const scrollPosRef = useRef(0)
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickedImageRef = useRef<GalleryImage | null>(null)
 
   // Get current image index
@@ -238,7 +264,6 @@ export function DeckGallery() {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
-    setIsPaused(true)
     setHasDragged(false)
     startXRef.current = e.pageX
     startYRef.current = e.pageY
@@ -249,11 +274,11 @@ export function DeckGallery() {
     if (!isDragging || !containerRef.current) return
     e.preventDefault()
 
-    // Only consider it a drag if moved more than 5 pixels
     const deltaX = Math.abs(e.pageX - startXRef.current)
     const deltaY = Math.abs(e.pageY - startYRef.current)
     if (deltaX > 5 || deltaY > 5) {
       setHasDragged(true)
+      if (deltaX > 5) setIsPaused(true)
     }
 
     const x = e.pageX - (containerRef.current.offsetLeft || 0)
@@ -263,11 +288,11 @@ export function DeckGallery() {
   }
 
   const handleMouseUp = () => {
-    // If we didn't drag and we have a clicked image, open it
     if (!hasDragged && clickedImageRef.current) {
       setSelectedImage(clickedImageRef.current)
     }
     setIsDragging(false)
+    setIsPaused(false)
     clickedImageRef.current = null
   }
 
@@ -282,7 +307,6 @@ export function DeckGallery() {
   }
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setIsPaused(true)
     setHasDragged(false)
     startXRef.current = e.touches[0].pageX
     startYRef.current = e.touches[0].pageY
@@ -294,6 +318,7 @@ export function DeckGallery() {
     const deltaY = Math.abs(e.touches[0].pageY - startYRef.current)
     if (deltaX > 5 || deltaY > 5) {
       setHasDragged(true)
+      if (deltaX > 5) setIsPaused(true)
     }
   }
 
@@ -304,6 +329,13 @@ export function DeckGallery() {
     setIsPaused(false)
     clickedImageRef.current = null
   }
+
+  const scheduleResume = useCallback(() => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = setTimeout(() => {
+      setIsPaused(false)
+    }, 3000)
+  }, [])
 
   // Auto-scroll effect
   useEffect(() => {
@@ -316,8 +348,11 @@ export function DeckGallery() {
     const scroll = () => {
       scrollPosRef.current += 0.5
       container.scrollLeft = scrollPosRef.current
-      // Stop at the end instead of looping
       if (scrollPosRef.current >= container.scrollWidth - container.clientWidth) {
+        // Reached the end — reset to start after a delay
+        scrollPosRef.current = 0
+        container.scrollLeft = 0
+        setIsPaused(true)
         return
       }
       animationId = requestAnimationFrame(scroll)
@@ -325,30 +360,17 @@ export function DeckGallery() {
 
     animationId = requestAnimationFrame(scroll)
     return () => cancelAnimationFrame(animationId)
-  }, [isPaused])
+  }, [isPaused, scheduleResume])
 
-  const ImageCard = ({ image }: { image: GalleryImage }) => (
-    <div
-      className="flex-shrink-0 w-[280px] md:w-[320px] cursor-pointer"
-      onMouseDown={() => handleImageMouseDown(image)}
-      onTouchStart={() => handleImageMouseDown(image)}
-    >
-      <div className="relative w-full h-[200px] md:h-[220px] rounded-xl overflow-hidden group">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 280px, 320px"
-          draggable={false}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <p className="text-white font-medium text-sm">{image.title}</p>
-        </div>
-      </div>
-    </div>
-  )
+  // When paused by user interaction, auto-resume after 3 seconds
+  useEffect(() => {
+    if (isPaused) {
+      scheduleResume()
+    }
+    return () => {
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    }
+  }, [isPaused, scheduleResume])
 
   return (
     <section className="py-10 bg-secondary-50 overflow-hidden">
@@ -360,7 +382,6 @@ export function DeckGallery() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
-        onMouseEnter={() => !isDragging && setIsPaused(true)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -368,13 +389,13 @@ export function DeckGallery() {
         {/* Top row */}
         <div className="flex gap-4 mb-4">
           {duplicatedTopRow.map((image, idx) => (
-            <ImageCard key={`top-${image.id}-${idx}`} image={image} />
+            <ImageCard key={`top-${image.id}-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
         </div>
         {/* Bottom row - offset for visual interest */}
         <div className="flex gap-4 pl-[140px] md:pl-[160px]">
           {duplicatedBottomRow.map((image, idx) => (
-            <ImageCard key={`bottom-${image.id}-${idx}`} image={image} />
+            <ImageCard key={`bottom-${image.id}-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
         </div>
       </div>
