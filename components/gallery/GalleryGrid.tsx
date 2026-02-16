@@ -286,6 +286,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
 
   const handleSliderMouseUp = useCallback(() => {
     setIsDragging(false)
+    setTimeout(() => { hasDraggedRef.current = false }, 0)
   }, [])
 
   const handleSliderTouchStart = (e: React.TouchEvent) => {
@@ -297,12 +298,14 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
 
   const handleSliderTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return
+    e.preventDefault()
     hasDraggedRef.current = true
     handleMove(e.touches[0].clientX)
   }
 
   const handleSliderTouchEnd = () => {
     setIsDragging(false)
+    setTimeout(() => { hasDraggedRef.current = false }, 0)
   }
 
   const handleCardClick = () => {
@@ -555,6 +558,7 @@ function FullscreenSlider({
 
   const handleSliderTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return
+    e.preventDefault()
     handleMove(e.touches[0].clientX)
   }
 
