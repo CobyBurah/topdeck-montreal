@@ -389,6 +389,7 @@ function transformSmsToTimelineItem(sms: SmsLogWithCustomer): TimelineItem {
 interface CallLogWithCustomer {
   id: string
   direction: 'inbound' | 'outbound'
+  summary: string | null
   called_at: string
   customer: { id: string; full_name: string } | null
 }
