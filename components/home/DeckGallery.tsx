@@ -187,6 +187,7 @@ export function DeckGallery() {
   const startXRef = useRef(0)
   const startYRef = useRef(0)
   const scrollLeftRef = useRef(0)
+  const scrollPosRef = useRef(0)
   const clickedImageRef = useRef<GalleryImage | null>(null)
 
   // Get current image index
@@ -280,20 +281,44 @@ export function DeckGallery() {
     clickedImageRef.current = image
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true)
+    setHasDragged(false)
+    startXRef.current = e.touches[0].pageX
+    startYRef.current = e.touches[0].pageY
+    scrollLeftRef.current = containerRef.current?.scrollLeft || 0
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const deltaX = Math.abs(e.touches[0].pageX - startXRef.current)
+    const deltaY = Math.abs(e.touches[0].pageY - startYRef.current)
+    if (deltaX > 5 || deltaY > 5) {
+      setHasDragged(true)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    if (!hasDragged && clickedImageRef.current) {
+      setSelectedImage(clickedImageRef.current)
+    }
+    setIsPaused(false)
+    clickedImageRef.current = null
+  }
+
   // Auto-scroll effect
   useEffect(() => {
     if (isPaused || !containerRef.current) return
 
     const container = containerRef.current
+    scrollPosRef.current = container.scrollLeft
     let animationId: number
 
     const scroll = () => {
-      if (container) {
-        container.scrollLeft += 0.5
-        // Stop at the end instead of looping
-        if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
-          return
-        }
+      scrollPosRef.current += 0.5
+      container.scrollLeft = scrollPosRef.current
+      // Stop at the end instead of looping
+      if (scrollPosRef.current >= container.scrollWidth - container.clientWidth) {
+        return
       }
       animationId = requestAnimationFrame(scroll)
     }
@@ -306,6 +331,7 @@ export function DeckGallery() {
     <div
       className="flex-shrink-0 w-[280px] md:w-[320px] cursor-pointer"
       onMouseDown={() => handleImageMouseDown(image)}
+      onTouchStart={() => handleImageMouseDown(image)}
     >
       <div className="relative w-full h-[200px] md:h-[220px] rounded-xl overflow-hidden group">
         <Image
@@ -335,6 +361,9 @@ export function DeckGallery() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onMouseEnter={() => !isDragging && setIsPaused(true)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Top row */}
         <div className="flex gap-4 mb-4">
