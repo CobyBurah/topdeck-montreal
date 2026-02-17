@@ -330,6 +330,10 @@ export function DeckGallery() {
     clickedImageRef.current = null
   }
 
+  const handleWheel = () => {
+    setIsPaused(true)
+  }
+
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
@@ -385,6 +389,7 @@ export function DeckGallery() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onWheel={handleWheel}
       >
         {/* Top row */}
         <div className="flex gap-4 mb-4">

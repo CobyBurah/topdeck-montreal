@@ -30,7 +30,6 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
     language: customer.language || 'en',
     service_type: '',
     approximate_size: '',
-    preferred_timeline: '',
     additional_details: '',
     condition: '' as LeadCondition | '',
   })
@@ -111,7 +110,6 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
         language: formData.language as LeadLanguage,
         service_type: formData.service_type || null,
         approximate_size: formData.approximate_size || null,
-        preferred_timeline: formData.preferred_timeline || null,
         additional_details: formData.additional_details || null,
         condition: (formData.condition || null) as LeadCondition | null,
         source: 'manual',
@@ -209,7 +207,6 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
       language: customer.language || 'en',
       service_type: '',
       approximate_size: '',
-      preferred_timeline: '',
       additional_details: '',
       condition: '' as LeadCondition | '',
     })
@@ -325,14 +322,6 @@ export function NewLeadModal({ customer, isOpen, onClose, onCreate }: NewLeadMod
                     value={formData.approximate_size}
                     onChange={handleChange}
                     placeholder="e.g., 200 sq ft"
-                  />
-
-                  <Input
-                    label="Preferred Timeline"
-                    name="preferred_timeline"
-                    value={formData.preferred_timeline}
-                    onChange={handleChange}
-                    placeholder="e.g., ASAP, 1-2 weeks"
                   />
 
                   <Textarea

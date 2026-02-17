@@ -4,11 +4,11 @@ import { Hero } from '@/components/home/Hero'
 
 const meta = {
   en: {
-    title: 'Deck Painting Montreal | Topdeck | Get A Free Quote',
+    title: 'Deck Staining Montreal | Topdeck | Get A Free Quote',
     description: 'Expert deck staining, fence staining, railing services, and pressure washing in Montreal. Protect and enhance your outdoor spaces with Topdeck Montreal.',
   },
   fr: {
-    title: 'Peinture de Terrasse Montréal | Topdeck | Soumission Gratuite',
+    title: 'Teinture de Terrasse Montréal | Topdeck | Soumission Gratuite',
     description: 'Experts en teinture de terrasses, clôtures, rampes et lavage à pression à Montréal. Protégez et embellissez vos espaces extérieurs avec Topdeck Montréal.',
   },
 }
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     ...m,
     alternates: {
       canonical: `/${locale}`,
-      languages: { en: '/en', fr: '/fr' },
+      languages: { en: '/en', fr: '/fr', 'x-default': '/en' },
     },
     openGraph: {
       title: m.title,

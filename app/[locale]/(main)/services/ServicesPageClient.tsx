@@ -50,7 +50,7 @@ export default function ServicesPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-end overflow-hidden pt-20">
+      <section className="relative h-[48vh] flex items-end overflow-hidden pt-20">
         <Image
           src="/GalleryImages/23-after-Ligna-GoldenPine.avif"
           alt={t('heroTitle')}
@@ -63,7 +63,7 @@ export default function ServicesPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-        <div className="relative w-full p-8 md:p-16 lg:p-24">
+        <div className="relative w-full p-8 pb-6 md:p-16 md:pb-10 lg:p-24 lg:pb-14">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

@@ -687,14 +687,6 @@ export function LeadDetailPanel({ lead, onUpdate, onDelete, onBack }: LeadDetail
               placeholder="e.g., 200 sq ft"
             />
             <EditableField
-              label="Timeline"
-              value={lead.preferred_timeline}
-              fieldName="preferred_timeline"
-              type="text"
-              onSave={handleFieldSave}
-              placeholder="e.g., ASAP"
-            />
-            <EditableField
               label="Condition"
               value={lead.condition}
               displayValue={getOptionLabel(LEAD_CONDITIONS, lead.condition)}

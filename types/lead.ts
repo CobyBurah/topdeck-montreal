@@ -57,7 +57,6 @@ export interface Lead {
   address: string | null
   service_type: string | null
   approximate_size: string | null
-  preferred_timeline: string | null
   additional_details: string | null
   source: LeadSource
   status: LeadStatus

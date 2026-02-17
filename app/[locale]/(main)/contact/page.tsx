@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     ...m,
     alternates: {
       canonical: `/${locale}/contact`,
-      languages: { en: '/en/contact', fr: '/fr/contact' },
+      languages: { en: '/en/contact', fr: '/fr/contact', 'x-default': '/en/contact' },
     },
     openGraph: {
       title: m.title,

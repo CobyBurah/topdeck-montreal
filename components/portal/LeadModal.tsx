@@ -119,7 +119,6 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
         address: formData.address,
         service_type: formData.service_type,
         approximate_size: formData.approximate_size,
-        preferred_timeline: formData.preferred_timeline,
         additional_details: formData.additional_details,
         source: formData.source as LeadSource,
         status: formData.status as LeadStatus,
@@ -390,13 +389,6 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                         onChange={handleChange}
                         placeholder="e.g., 200 sq ft"
                       />
-                      <Input
-                        label="Preferred Timeline"
-                        name="preferred_timeline"
-                        value={formData.preferred_timeline || ''}
-                        onChange={handleChange}
-                        placeholder="e.g., ASAP, 1-2 weeks"
-                      />
                       <Textarea
                         label="Additional Details"
                         name="additional_details"
@@ -409,7 +401,6 @@ export function LeadModal({ lead, isOpen, onClose, onUpdate, onDelete }: LeadMod
                     <>
                       <DisplayField label="Service Type" value={formData.service_type} />
                       <DisplayField label="Approximate Size" value={formData.approximate_size} />
-                      <DisplayField label="Preferred Timeline" value={formData.preferred_timeline} />
                       <DisplayField label="Additional Details" value={formData.additional_details} />
                     </>
                   )}

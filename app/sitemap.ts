@@ -5,12 +5,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages = ['', '/services', '/gallery', '/contact']
   const locales = ['en', 'fr']
 
-  return locales.flatMap((locale) =>
-    pages.map((page) => ({
-      url: `${baseUrl}/${locale}${page}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: page === '' ? 1.0 : 0.8,
-    }))
-  )
+  return pages.map((page) => ({
+    url: `${baseUrl}/en${page}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: page === '' ? 1.0 : 0.8,
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((locale) => [locale, `${baseUrl}/${locale}${page}`])
+      ),
+    },
+  }))
 }

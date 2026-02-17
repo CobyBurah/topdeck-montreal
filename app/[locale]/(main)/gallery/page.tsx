@@ -3,12 +3,12 @@ import GalleryPageClient from './GalleryPageClient'
 
 const meta = {
   en: {
-    title: 'Gallery | Deck & Fence Painting Portfolio | Topdeck',
-    description: 'View our gallery of restored outdoor wood in Montreal. See before and after photos of our premium deck painting, fence staining, and pressure washing projects.',
+    title: 'Gallery | Deck & Fence Staining Portfolio | Topdeck',
+    description: 'View our gallery of restored outdoor wood in Montreal. See before and after photos of our premium deck staining, fence staining, and pressure washing projects.',
   },
   fr: {
-    title: 'Galerie | Portfolio de peinture de terrasses et clôtures | Topdeck',
-    description: 'Consultez notre galerie de bois extérieur restauré à Montréal. Voyez les photos avant et après de nos projets de peinture de terrasses, teinture de clôtures et lavage à pression.',
+    title: 'Galerie | Portfolio de teinture de terrasses et clôtures | Topdeck',
+    description: 'Consultez notre galerie de bois extérieur restauré à Montréal. Voyez les photos avant et après de nos projets de teinture de terrasses, teinture de clôtures et lavage à pression.',
   },
 }
 
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     ...m,
     alternates: {
       canonical: `/${locale}/gallery`,
-      languages: { en: '/en/gallery', fr: '/fr/gallery' },
+      languages: { en: '/en/gallery', fr: '/fr/gallery', 'x-default': '/en/gallery' },
     },
     openGraph: {
       title: m.title,

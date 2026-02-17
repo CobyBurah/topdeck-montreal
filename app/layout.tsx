@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description: 'Expert deck staining, fence staining, and pressure washing in Montreal. Protect and enhance your outdoor spaces with Topdeck Montreal.',
   alternates: {
     canonical: '/en',
+    languages: {
+      en: '/en',
+      fr: '/fr',
+      'x-default': '/en',
+    },
   },
   openGraph: {
     type: 'website',

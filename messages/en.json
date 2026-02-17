@@ -189,7 +189,6 @@
       "address": "Address",
       "service": "What needs work? *",
       "size": "Approximate Size / Scope",
-      "timeline": "Preferred Timeline",
       "message": "Additional Details",
       "images": "Upload Photos (Show the entire surface that needs to be stained)"
     },
@@ -210,17 +209,12 @@
       "multiple": "Multiple Surfaces",
       "other": "Other"
     },
-    "timelines": {
-      "asap": "As soon as possible",
-      "1-2weeks": "Within 1-2 weeks",
-      "1month": "Within a month",
-      "flexible": "Flexible / Planning ahead"
-    },
     "errors": {
       "nameRequired": "Name is required",
       "emailRequired": "Email is required",
       "emailInvalid": "Please enter a valid email",
       "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid 10-digit phone number",
       "serviceRequired": "Please select a service",
       "submitFailed": "Failed to submit form. Please try again."
     },
@@ -299,7 +293,6 @@
       "address": "Address",
       "serviceType": "Service Type",
       "approximateSize": "Approximate Size",
-      "timeline": "Preferred Timeline",
       "additionalDetails": "Additional Details",
       "status": "Status",
       "source": "Lead Source",

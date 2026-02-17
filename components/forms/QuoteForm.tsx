@@ -14,7 +14,6 @@ interface FormDataState {
   address: string
   service: string
   size: string
-  timeline: string
   message: string
   images: File[]
 }
@@ -74,7 +73,6 @@ const initialFormData: FormDataState = {
   address: '',
   service: '',
   size: '',
-  timeline: '',
   message: '',
   images: [],
 }
@@ -93,13 +91,6 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     { value: 'pergola', label: t('surfaces.pergola') },
     { value: 'multiple', label: t('surfaces.multiple') },
     { value: 'other', label: t('surfaces.other') },
-  ]
-
-  const timelineOptions = [
-    { value: 'asap', label: t('timelines.asap') },
-    { value: '1-2-weeks', label: t('timelines.1-2weeks') },
-    { value: '1-month', label: t('timelines.1month') },
-    { value: 'flexible', label: t('timelines.flexible') },
   ]
 
   const [formData, setFormData] = useState<FormDataState>(initialFormData)
@@ -193,7 +184,6 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
       submitData.append('address', formData.address)
       submitData.append('service', formData.service)
       submitData.append('size', formData.size)
-      submitData.append('timeline', formData.timeline)
       submitData.append('message', formData.message)
 
       formData.images.forEach((file) => {
@@ -242,6 +232,13 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const handleEmailBlur = () => {
     if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setErrors(prev => ({ ...prev, email: t('errors.emailInvalid') }))
+    }
+  }
+
+  const handlePhoneBlur = () => {
+    const digits = formData.phone.replace(/\D/g, '')
+    if (digits.length > 0 && digits.length < 10) {
+      setErrors(prev => ({ ...prev, phone: t('errors.phoneInvalid') }))
     }
   }
 
@@ -425,12 +422,12 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   return (
     <motion.form
       onSubmit={handleSubmit}
-      className="space-y-6"
+      className="space-y-2"
       initial="hidden"
       animate="visible"
     >
       <motion.div
-        className="grid sm:grid-cols-2 gap-6"
+        className="grid sm:grid-cols-2 gap-x-6 gap-y-2"
         custom={0}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
@@ -455,7 +452,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
       </motion.div>
 
       <motion.div
-        className="grid sm:grid-cols-2 gap-6"
+        className="grid sm:grid-cols-2 gap-x-6 gap-y-2"
         custom={1}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
@@ -466,6 +463,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
           value={formData.phone}
           onChange={handleChange}
           onKeyDown={handlePhoneKeyDown}
+          onBlur={handlePhoneBlur}
           placeholder={t('placeholders.phone')}
           error={errors.phone}
         />
@@ -480,7 +478,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
       </motion.div>
 
       <motion.div
-        className="grid sm:grid-cols-2 gap-6"
+        className="grid sm:grid-cols-2 gap-x-6 gap-y-2"
         custom={2}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
@@ -506,19 +504,6 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
         custom={3}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
-        <Select
-          label={t('labels.timeline')}
-          name="timeline"
-          value={formData.timeline}
-          onChange={handleChange}
-          options={timelineOptions}
-        />
-      </motion.div>
-
-      <motion.div
-        custom={4}
-        variants={shouldReduceMotion ? {} : formFieldVariants}
-      >
         <Textarea
           label={t('labels.message')}
           name="message"
@@ -530,7 +515,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
       </motion.div>
 
       <motion.div
-        custom={5}
+        custom={4}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
         <label className="block text-sm font-medium text-secondary-700 mb-2">
@@ -599,7 +584,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
 
       <motion.div
         className="pt-4"
-        custom={6}
+        custom={5}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
         <motion.div
@@ -662,7 +647,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
 
       <motion.p
         className="text-sm text-secondary-500"
-        custom={7}
+        custom={6}
         variants={shouldReduceMotion ? {} : formFieldVariants}
       >
         {t('disclaimer')}

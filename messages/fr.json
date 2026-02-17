@@ -189,7 +189,6 @@
       "address": "Adresse",
       "service": "Quel travail est requis? *",
       "size": "Taille / Portée approximative",
-      "timeline": "Délai souhaité",
       "message": "Détails supplémentaires",
       "images": "Télécharger des photos (Montrez toute la surface à teindre)"
     },
@@ -210,17 +209,12 @@
       "multiple": "Surfaces multiples",
       "other": "Autre"
     },
-    "timelines": {
-      "asap": "Dès que possible",
-      "1-2weeks": "D'ici 1-2 semaines",
-      "1month": "D'ici un mois",
-      "flexible": "Flexible / Planification à long terme"
-    },
     "errors": {
       "nameRequired": "Le nom est requis",
       "emailRequired": "Le courriel est requis",
       "emailInvalid": "Veuillez entrer un courriel valide",
       "phoneRequired": "Le numéro de téléphone est requis",
+      "phoneInvalid": "Veuillez entrer un numéro de téléphone valide à 10 chiffres",
       "serviceRequired": "Veuillez sélectionner un service",
       "submitFailed": "Échec de l'envoi du formulaire. Veuillez réessayer."
     },
@@ -298,7 +292,6 @@
       "address": "Adresse",
       "serviceType": "Type de service",
       "approximateSize": "Taille approximative",
-      "timeline": "Délai souhaité",
       "additionalDetails": "Détails supplémentaires",
       "status": "Statut",
       "source": "Source du prospect",
