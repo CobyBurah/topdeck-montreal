@@ -220,6 +220,7 @@
     },
     "submit": "Demander une soumission gratuite",
     "submitting": "Envoi en cours...",
+    "compressingImages": "Compression des photos...",
     "success": {
       "title": "Merci!",
       "message": "Nous avons reçu votre demande de soumission et vous répondrons dans les 24 heures.",

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
+import imageCompression from 'browser-image-compression'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { AddressAutocomplete } from '@/components/forms/AddressAutocomplete'
@@ -96,6 +97,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const [formData, setFormData] = useState<FormDataState>(initialFormData)
 
   const [errors, setErrors] = useState<FormErrors>({})
+  const [isCompressing, setIsCompressing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -280,9 +282,30 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
+    if (files.length === 0) return
+
+    setIsCompressing(true)
+    try {
+      const compressed = await Promise.all(
+        files.map((file) =>
+          imageCompression(file, {
+            maxSizeMB: 0.8,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          })
+        )
+      )
+      const compressedFiles = compressed.map(
+        (blob, i) => new File([blob], files[i].name, { type: blob.type })
+      )
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...compressedFiles] }))
+    } catch {
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
+    } finally {
+      setIsCompressing(false)
+    }
   }
 
   const removeFile = (index: number) => {
@@ -546,7 +569,9 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
               d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
             />
           </svg>
-          <p className="mt-2 text-sm text-secondary-600">{t('placeholders.images')}</p>
+          <p className="mt-2 text-sm text-secondary-600">
+            {isCompressing ? t('compressingImages') : t('placeholders.images')}
+          </p>
         </div>
 
         {formData.images.length > 0 && (
@@ -596,7 +621,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
             type="submit"
             size="lg"
             className="w-full sm:w-auto"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isCompressing}
           >
             <AnimatePresence mode="wait">
               {isSubmitting ? (

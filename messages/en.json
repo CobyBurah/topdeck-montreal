@@ -220,6 +220,7 @@
     },
     "submit": "Request Free Quote",
     "submitting": "Submitting...",
+    "compressingImages": "Compressing photos...",
     "success": {
       "title": "Thank You!",
       "message": "We've received your quote request and will get back to you within 24 hours.",
