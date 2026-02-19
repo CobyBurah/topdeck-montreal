@@ -174,9 +174,9 @@ const galleryImages: GalleryImage[] = [
 const topRowImages = galleryImages.filter((_, i) => i % 2 === 0)
 const bottomRowImages = galleryImages.filter((_, i) => i % 2 === 1)
 
-// No duplication - each image appears once
-const duplicatedTopRow = topRowImages
-const duplicatedBottomRow = bottomRowImages
+// Triple each row for seamless infinite scroll: [SET A][SET B][SET C]
+const tripledTopRow = [...topRowImages, ...topRowImages, ...topRowImages]
+const tripledBottomRow = [...bottomRowImages, ...bottomRowImages, ...bottomRowImages]
 
 function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; onMouseDown: () => void; onTouchStart: () => void }) {
   return (
@@ -209,10 +209,12 @@ export function DeckGallery() {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [hasDragged, setHasDragged] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const topRowRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const startYRef = useRef(0)
   const scrollLeftRef = useRef(0)
   const scrollPosRef = useRef(0)
+  const oneSetWidthRef = useRef(0)
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickedImageRef = useRef<GalleryImage | null>(null)
 
@@ -285,6 +287,20 @@ export function DeckGallery() {
     const startX = startXRef.current - (containerRef.current.offsetLeft || 0)
     const walk = (x - startX) * 2
     containerRef.current.scrollLeft = scrollLeftRef.current - walk
+
+    // Normalize during drag to prevent reaching edges
+    const oneSetWidth = oneSetWidthRef.current
+    if (oneSetWidth > 0) {
+      const pos = containerRef.current.scrollLeft
+      if (pos >= oneSetWidth * 2) {
+        containerRef.current.scrollLeft = pos - oneSetWidth
+        scrollLeftRef.current -= oneSetWidth
+      } else if (pos < oneSetWidth) {
+        containerRef.current.scrollLeft = pos + oneSetWidth
+        scrollLeftRef.current += oneSetWidth
+      }
+      scrollPosRef.current = containerRef.current.scrollLeft
+    }
   }
 
   const handleMouseUp = () => {
@@ -334,6 +350,23 @@ export function DeckGallery() {
     setIsPaused(true)
   }
 
+  // Normalize on every native scroll event (covers touch + wheel scrolling)
+  const handleScroll = () => {
+    const oneSetWidth = oneSetWidthRef.current
+    if (!containerRef.current || oneSetWidth === 0) return
+
+    const pos = containerRef.current.scrollLeft
+    if (pos >= oneSetWidth * 2) {
+      containerRef.current.scrollLeft = pos - oneSetWidth
+      scrollLeftRef.current -= oneSetWidth
+      scrollPosRef.current = containerRef.current.scrollLeft
+    } else if (pos < oneSetWidth) {
+      containerRef.current.scrollLeft = pos + oneSetWidth
+      scrollLeftRef.current += oneSetWidth
+      scrollPosRef.current = containerRef.current.scrollLeft
+    }
+  }
+
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
@@ -341,7 +374,38 @@ export function DeckGallery() {
     }, 3000)
   }, [])
 
-  // Auto-scroll effect
+  // Measure the width of one set of images (SET A) from the top row
+  const measureOneSetWidth = useCallback(() => {
+    if (!topRowRef.current) return
+    const children = topRowRef.current.children
+    const setSize = topRowImages.length
+    if (children.length > setSize) {
+      const firstOfSetB = children[setSize] as HTMLElement
+      oneSetWidthRef.current = firstOfSetB.offsetLeft
+    }
+  }, [])
+
+  // On mount and resize: measure one-set width and position at SET B
+  useEffect(() => {
+    measureOneSetWidth()
+    if (containerRef.current && oneSetWidthRef.current > 0) {
+      containerRef.current.scrollLeft = oneSetWidthRef.current
+      scrollPosRef.current = oneSetWidthRef.current
+    }
+
+    const handleResize = () => {
+      measureOneSetWidth()
+      if (containerRef.current && oneSetWidthRef.current > 0) {
+        containerRef.current.scrollLeft = oneSetWidthRef.current
+        scrollPosRef.current = oneSetWidthRef.current
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [measureOneSetWidth])
+
+  // Auto-scroll effect with seamless wrap
   useEffect(() => {
     if (isPaused || !containerRef.current) return
 
@@ -350,21 +414,21 @@ export function DeckGallery() {
     let animationId: number
 
     const scroll = () => {
+      const oneSetWidth = oneSetWidthRef.current
       scrollPosRef.current += 0.5
-      container.scrollLeft = scrollPosRef.current
-      if (scrollPosRef.current >= container.scrollWidth - container.clientWidth) {
-        // Reached the end — reset to start after a delay
-        scrollPosRef.current = 0
-        container.scrollLeft = 0
-        setIsPaused(true)
-        return
+
+      // Seamless wrap: when entering SET C, jump back to same position in SET B
+      if (oneSetWidth > 0 && scrollPosRef.current >= oneSetWidth * 2) {
+        scrollPosRef.current -= oneSetWidth
       }
+
+      container.scrollLeft = scrollPosRef.current
       animationId = requestAnimationFrame(scroll)
     }
 
     animationId = requestAnimationFrame(scroll)
     return () => cancelAnimationFrame(animationId)
-  }, [isPaused, scheduleResume])
+  }, [isPaused])
 
   // When paused by user interaction, auto-resume after 3 seconds
   useEffect(() => {
@@ -390,17 +454,18 @@ export function DeckGallery() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onWheel={handleWheel}
+        onScroll={handleScroll}
       >
         {/* Top row */}
-        <div className="flex gap-4 mb-4">
-          {duplicatedTopRow.map((image, idx) => (
-            <ImageCard key={`top-${image.id}-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
+        <div ref={topRowRef} className="flex gap-4 mb-4">
+          {tripledTopRow.map((image, idx) => (
+            <ImageCard key={`top-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
         </div>
         {/* Bottom row - offset for visual interest */}
         <div className="flex gap-4 pl-[140px] md:pl-[160px]">
-          {duplicatedBottomRow.map((image, idx) => (
-            <ImageCard key={`bottom-${image.id}-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
+          {tripledBottomRow.map((image, idx) => (
+            <ImageCard key={`bottom-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
         </div>
       </div>

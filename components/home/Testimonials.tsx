@@ -28,9 +28,7 @@ export function Testimonials() {
               <div className="text-5xl md:text-6xl font-bold text-white">
                 <AnimatedCounter
                   value={stat.value}
-                  prefix={stat.prefix}
                   suffix={stat.suffix}
-                  decimals={stat.decimals || 0}
                 />
               </div>
               <p className="mt-2 text-white/90 font-medium">{t(stat.labelKey)}</p>
