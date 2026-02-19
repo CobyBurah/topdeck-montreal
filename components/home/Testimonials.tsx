@@ -10,7 +10,7 @@ export function Testimonials() {
   const stats = [
     { value: 250, suffix: '+', labelKey: 'projectsCompleted' },
     { value: 10, suffix: '+', labelKey: 'yearsExperience' },
-    { value: 5.0, suffix: '', labelKey: 'starRating', decimals: 1 },
+    { value: 100, suffix: '%', labelKey: 'satisfactionGuaranteed' },
   ]
 
   return (
@@ -28,6 +28,7 @@ export function Testimonials() {
               <div className="text-5xl md:text-6xl font-bold text-white">
                 <AnimatedCounter
                   value={stat.value}
+                  prefix={stat.prefix}
                   suffix={stat.suffix}
                   decimals={stat.decimals || 0}
                 />

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
-import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 
@@ -27,22 +26,25 @@ export default function ClientLoginPage() {
     setIsLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?redirect_to=${encodeURIComponent(`/${locale}/client-portal`)}`,
-      },
-    })
+    try {
+      const res = await fetch('/api/client-portal/request-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
 
-    if (otpError) {
+      if (!res.ok) {
+        setError(t('error'))
+        setIsLoading(false)
+        return
+      }
+
+      setSent(true)
+      setIsLoading(false)
+    } catch {
       setError(t('error'))
       setIsLoading(false)
-      return
     }
-
-    setSent(true)
-    setIsLoading(false)
   }
 
   if (sent) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useInView, useSpring, useTransform, useReducedMotion } from 'framer-motion'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 interface AnimatedCounterProps {
   value: number
@@ -23,6 +23,7 @@ export function AnimatedCounter({
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.5 })
   const shouldReduceMotion = useReducedMotion()
+  const [hasStarted, setHasStarted] = useState(false)
 
   const spring = useSpring(0, {
     duration: duration * 1000,
@@ -33,8 +34,11 @@ export function AnimatedCounter({
     decimals > 0 ? current.toFixed(decimals) : Math.floor(current).toString()
   )
 
+  const formattedValue = decimals > 0 ? value.toFixed(decimals) : value.toString()
+
   useEffect(() => {
     if (isInView && !shouldReduceMotion) {
+      setHasStarted(true)
       spring.set(value)
     } else if (shouldReduceMotion) {
       spring.jump(value)
@@ -44,7 +48,7 @@ export function AnimatedCounter({
   if (shouldReduceMotion) {
     return (
       <span ref={ref} className={className}>
-        {prefix}{decimals > 0 ? value.toFixed(decimals) : value}{suffix}
+        {prefix}{formattedValue}{suffix}
       </span>
     )
   }
@@ -52,7 +56,7 @@ export function AnimatedCounter({
   return (
     <span ref={ref} className={className}>
       {prefix}
-      <motion.span>{display}</motion.span>
+      {hasStarted ? <motion.span>{display}</motion.span> : formattedValue}
       {suffix}
     </span>
   )

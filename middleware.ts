@@ -91,5 +91,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/(en|fr)/:path*'],
+  matcher: ['/', '/(en|fr)/:path*', '/client-portal/:path*', '/employee-portal/:path*'],
 }
