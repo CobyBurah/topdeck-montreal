@@ -712,12 +712,15 @@ export function GalleryGrid() {
     if (selectedProject) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
   }, [selectedProject, handleKeyDown])
 
@@ -748,7 +751,7 @@ export function GalleryGrid() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overscroll-none touch-none"
             onClick={() => setSelectedProject(null)}
           >
             {/* Close button */}

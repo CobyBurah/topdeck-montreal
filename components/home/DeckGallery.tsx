@@ -208,6 +208,7 @@ export function DeckGallery() {
   const [isDragging, setIsDragging] = useState(false)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [hasDragged, setHasDragged] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const topRowRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
@@ -217,6 +218,23 @@ export function DeckGallery() {
   const oneSetWidthRef = useRef(0)
   const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clickedImageRef = useRef<GalleryImage | null>(null)
+  const isVisibleRef = useRef(true)
+
+  // Track visibility with IntersectionObserver
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
 
   // Get current image index
   const currentIndex = selectedImage
@@ -255,12 +273,15 @@ export function DeckGallery() {
     if (selectedImage) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
   }, [selectedImage, handleKeyDown])
 
@@ -346,8 +367,12 @@ export function DeckGallery() {
     clickedImageRef.current = null
   }
 
-  const handleWheel = () => {
-    setIsPaused(true)
+  const handleWheel = (e: React.WheelEvent) => {
+    // Only pause on horizontal scroll (intentional gallery interaction),
+    // not vertical page scrolling
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      setIsPaused(true)
+    }
   }
 
   // Normalize on every native scroll event (covers touch + wheel scrolling)
@@ -414,6 +439,12 @@ export function DeckGallery() {
     let animationId: number
 
     const scroll = () => {
+      // Skip scrolling when not visible (saves CPU)
+      if (!isVisibleRef.current) {
+        animationId = requestAnimationFrame(scroll)
+        return
+      }
+
       const oneSetWidth = oneSetWidthRef.current
       scrollPosRef.current += 0.5
 
@@ -441,7 +472,7 @@ export function DeckGallery() {
   }, [isPaused, scheduleResume])
 
   return (
-    <section className="py-10 bg-secondary-50 overflow-hidden">
+    <section ref={sectionRef} className="py-10 bg-secondary-50 overflow-hidden">
       <div
         ref={containerRef}
         className="overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
@@ -484,7 +515,7 @@ export function DeckGallery() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overscroll-none touch-none"
             onClick={() => setSelectedImage(null)}
           >
             {/* Close button */}

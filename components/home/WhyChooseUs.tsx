@@ -30,11 +30,11 @@ export function WhyChooseUs() {
   const locale = useLocale()
 
   return (
-    <section className="py-16">
+    <section className="py-10 md:py-16">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="bg-primary-50 rounded-3xl px-8 py-16 md:px-12 md:py-20">
+        <div className="bg-primary-50 rounded-3xl px-8 py-10 md:px-12 md:py-20">
           {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-10 md:mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -91,7 +91,7 @@ export function WhyChooseUs() {
             transition={{ duration: 0.5, delay: 0.4 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="text-center mt-12 inline-block w-full"
+            className="text-center mt-8 md:mt-12 inline-block w-full"
           >
             <Button href={`/${locale}/gallery`} variant="outline">
               {tHero('seeOurWork')}

@@ -4,12 +4,12 @@ import { Hero } from '@/components/home/Hero'
 
 const meta = {
   en: {
-    title: 'Deck Staining Montreal | Topdeck | Get A Free Quote',
-    description: 'Expert deck staining, fence staining, railing services, and pressure washing in Montreal. Protect and enhance your outdoor spaces with Topdeck Montreal.',
+    title: 'Deck Staining Montreal | Topdeck | Free Quote',
+    description: 'Montreal\'s wood staining specialists. Professional pressure washing, sanding, and staining for decks and fences.',
   },
   fr: {
     title: 'Teinture de Terrasse Montréal | Topdeck | Soumission Gratuite',
-    description: 'Experts en teinture de terrasses, clôtures, rampes et lavage à pression à Montréal. Protégez et embellissez vos espaces extérieurs avec Topdeck Montréal.',
+    description: 'Spécialistes en teinture de bois à Montréal. Lavage à pression, sablage et teinture professionnels pour terrasses et clôtures.',
   },
 }
 

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Deck Painting Montreal | Topdeck | Get A Free Quote",
-    "description": "Montreal's trusted deck staining experts. Professional pressure washing, sanding, and staining services for decks, fences, and railings."
+    "title": "Deck Staining Montreal | Topdeck | Free Quote",
+    "description": "Montreal's wood staining specialists. Professional pressure washing, sanding, and staining for decks and fences."
   },
   "nav": {
     "home": "Home",
@@ -14,14 +14,14 @@
   "hero": {
     "title1": "Montreal's Wood",
     "title2": "Staining Pros",
-    "description": "Professional pressure washing, sanding, and staining for decks, fences, and railings across Montreal.",
+    "description": "Specializing in wooden surfaces — pressure washing, sanding, and staining for decks, fences, and railings.",
     "cta": "Get a Free Quote",
     "seeOurWork": "See our Work",
     "imageAlt": "Beautiful restored outdoor wood deck"
   },
   "servicesPreview": {
     "title": "Our 3-Step Process",
-    "description": "We bring your outdoor wood back to life with our proven restoration method.",
+    "description": "We bring your outdoor wood back to life using professional-grade equipment and our proven restoration method.",
     "steps": {
       "wash": {
         "title": "Wash",
@@ -50,15 +50,15 @@
   "whyChooseUs": {
     "subtitle": "Why Choose Us",
     "title": "Montreal's Trusted Deck Experts",
-    "description": "We're a fully licensed and insured team dedicated to restoring outdoor wood across Montreal. Our commitment to quality and customer satisfaction sets us apart.",
+    "description": "We specialize in one thing: restoring outdoor wood. Professional-grade equipment, premium products, and a proven process that delivers every time.",
     "features": {
       "quality": {
-        "title": "Quality Materials",
-        "description": "We use only premium stains and sealers from trusted brands that protect your wood for years to come."
+        "title": "Quality Work",
+        "description": "We deliver the highest quality results using only the best stains and equipment on the market."
       },
       "onTime": {
-        "title": "On-Time Service",
-        "description": "We respect your schedule and complete every project on time, keeping you informed every step of the way."
+        "title": "Reliable & Efficient",
+        "description": "We keep you informed every step of the way, work efficiently, and respect your time. Clear communication from start to finish."
       },
       "experience": {
         "title": "RBQ Licensed & Insured",
@@ -79,14 +79,14 @@
   },
   "servicesPage": {
     "heroTitle": "Our Services",
-    "heroDescription": "Professional wood restoration using our proven 3-step process.",
+    "heroDescription": "Professional wood restoration using professional-grade equipment and our proven 3-step process.",
     "processTitle": "The 3-Step Process",
-    "processDescription": "Every project follows our tried-and-true restoration method for consistent, beautiful results.",
+    "processDescription": "Every project follows the same proven method — wash, sand, stain — for consistent, beautiful results.",
     "step": "Step",
     "steps": {
       "washing": {
         "title": "Pressure Washing",
-        "description": "We start with a thorough deep clean using professional-grade pressure washing equipment. This removes years of dirt, grime, mold, and mildew, preparing the surface for sanding.",
+        "description": "We start with a thorough deep clean using professional-grade pressure washers. This strips away years of dirt, grime, mold, and mildew, preparing a clean surface for sanding.",
         "details": [
           "Removes built-up dirt and debris",
           "Eliminates mold and mildew",
@@ -96,19 +96,19 @@
       },
       "sanding": {
         "title": "Sanding",
-        "description": "Once dry, we carefully sand the entire surface to create the perfect canvas for staining. Sanding smooths rough spots, opens the wood grain, and ensures optimal stain absorption.",
+        "description": "Once dry, we sand the entire surface with professional-grade sanders to create the perfect canvas for staining. This smooths rough spots, opens the wood grain, and ensures optimal stain absorption.",
         "details": [
           "Prepares the wood texture for staining",
           "Opens wood pores for better absorption",
           "Creates even, uniform surface",
-          "Ensures a smooth, ready-to-stain surface"
+          "Removes old flaking stain or coatings"
         ]
       },
       "staining": {
         "title": "Staining",
-        "description": "The final step is applying premium-quality stain that penetrates deep into the wood. Our stains protect against UV damage, moisture, and wear while bringing out the natural beauty of your wood.",
+        "description": "The final step is applying premium-quality stain that penetrates deep into the wood grain. Our stains protect against UV damage, moisture, and wear while bringing out the natural character of your wood.",
         "details": [
-          "Premium penetrating stains",
+          "Deep-penetrating, pro-grade stains",
           "UV and moisture protection",
           "Wide range of color options",
           "Rich, beautiful finish"
@@ -116,23 +116,23 @@
       }
     },
     "surfacesTitle": "What We Work On",
-    "surfacesDescription": "We restore all types of outdoor wood surfaces.",
+    "surfacesDescription": "We stain and restore all types of outdoor wood surfaces.",
     "surfaces": {
       "decks": {
         "title": "Decks & Patios",
-        "description": "Restore your outdoor living space to its former glory."
+        "description": "Wash, sand, and stain your deck back to life."
       },
       "fences": {
         "title": "Fences & Gates",
-        "description": "Protect your privacy fence with a fresh, uniform finish."
+        "description": "A fresh stain protects your fence and gives it a clean, uniform look."
       },
       "railings": {
         "title": "Railings & Stairs",
-        "description": "Keep your railings safe and beautiful for years to come."
+        "description": "Stained railings look sharp and hold up against the elements."
       },
       "pergolas": {
         "title": "Pergolas & Gazebos",
-        "description": "Enhance your backyard structures with professional care."
+        "description": "Restore and protect your pergola or gazebo with a professional stain job."
       }
     },
     "ctaTitle": "Ready to Restore Your Wood?",
@@ -231,7 +231,7 @@
     "disclaimer": "* Required fields. We respect your privacy and will never share your information."
   },
   "footer": {
-    "tagline": "Professional deck staining & exterior painting in Montreal.",
+    "tagline": "Professional wood staining and restoration in Montreal.",
     "quickLinks": "Quick Links",
     "getInTouch": "Contact Us",
     "copyright": "Topdeck Montreal. All rights reserved."

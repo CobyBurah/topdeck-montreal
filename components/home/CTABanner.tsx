@@ -9,7 +9,7 @@ export function CTABanner() {
   const locale = useLocale()
 
   return (
-    <section className="py-20 px-6 lg:px-8 bg-secondary-800">
+    <section className="py-12 md:py-20 px-6 lg:px-8 bg-secondary-800">
       <div className="mx-auto max-w-3xl text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

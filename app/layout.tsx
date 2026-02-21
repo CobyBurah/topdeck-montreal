@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.topdeckmontreal.com'),
   title: 'Deck Painting Montreal | Topdeck | Get A Free Quote',
-  description: 'Expert deck staining, fence staining, and pressure washing in Montreal. Protect and enhance your outdoor spaces with Topdeck Montreal.',
+  description: 'Montreal\'s wood staining specialists. Professional pressure washing, sanding, and staining for decks and fences.',
   alternates: {
     canonical: '/en',
     languages: {

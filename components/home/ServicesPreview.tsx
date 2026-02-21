@@ -33,11 +33,11 @@ export function ServicesPreview() {
   const locale = useLocale()
 
   return (
-    <section className="py-20 px-6 lg:px-8 bg-secondary-50">
+    <section className="py-12 md:py-20 px-6 lg:px-8 bg-secondary-50">
       <div className="mx-auto max-w-7xl">
         {/* Section header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -52,7 +52,7 @@ export function ServicesPreview() {
         </motion.div>
 
         {/* Process cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-10 md:mb-16">
           {processSteps.map((item, index) => (
             <motion.div
               key={item.step}
@@ -115,7 +115,7 @@ export function ServicesPreview() {
 
         {/* CTA */}
         <motion.div
-          className="text-center mt-12"
+          className="text-center mt-8 md:mt-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

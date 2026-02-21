@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Peinture de Terrasse Montréal | Topdeck | Soumission Gratuite",
-    "description": "Les experts en teinture de terrasses de confiance à Montréal. Services professionnels de lavage à pression, ponçage et teinture pour terrasses, clôtures et rampes."
+    "title": "Teinture de Terrasse Montréal | Topdeck | Soumission Gratuite",
+    "description": "Spécialistes en teinture de bois à Montréal. Lavage à pression, sablage et teinture professionnels pour terrasses et clôtures."
   },
   "nav": {
     "home": "Accueil",
@@ -14,22 +14,22 @@
   "hero": {
     "title1": "Experts en teinture",
     "title2": "de bois à Montréal",
-    "description": "Lavage à pression, ponçage et teinture professionnels pour terrasses, clôtures et rampes à travers Montréal.",
+    "description": "Spécialisés dans les surfaces en bois — lavage à pression, sablage et teinture pour terrasses, clôtures et rampes.",
     "cta": "Soumission gratuite",
     "seeOurWork": "Voir nos réalisations",
     "imageAlt": "Belle terrasse en bois restaurée"
   },
   "servicesPreview": {
     "title": "Notre processus en 3 étapes",
-    "description": "Nous redonnons vie à votre bois extérieur avec notre méthode de restauration éprouvée.",
+    "description": "Nous redonnons vie à votre bois extérieur avec de l'équipement de grade professionnel et notre méthode de restauration éprouvée.",
     "steps": {
       "wash": {
         "title": "Lavage",
         "description": "Le lavage à pression en profondeur élimine des années de saleté, de moisissure et de crasse."
       },
       "sand": {
-        "title": "Ponçage",
-        "description": "Le ponçage lisse ouvre les pores du bois pour une absorption optimale de la teinture."
+        "title": "Sablage",
+        "description": "Le sablage lisse ouvre les pores du bois pour une absorption optimale de la teinture."
       },
       "stain": {
         "title": "Teinture",
@@ -50,15 +50,15 @@
   "whyChooseUs": {
     "subtitle": "Pourquoi nous choisir",
     "title": "Les experts en terrasses de confiance à Montréal",
-    "description": "Nous sommes une équipe entièrement licenciée et assurée, dédiée à la restauration du bois extérieur à travers Montréal. Notre engagement envers la qualité et la satisfaction client nous distingue.",
+    "description": "Nous sommes spécialisés dans une seule chose : la restauration du bois extérieur. Équipement de grade professionnel, produits premium et un processus éprouvé qui livre à chaque fois.",
     "features": {
       "quality": {
-        "title": "Matériaux de qualité",
-        "description": "Nous utilisons uniquement des teintures et scellants premium de marques reconnues qui protègent votre bois pour les années à venir."
+        "title": "Travail de qualité",
+        "description": "Nous livrons des résultats de la plus haute qualité en utilisant uniquement les meilleures teintures et équipements sur le marché."
       },
       "onTime": {
-        "title": "Service ponctuel",
-        "description": "Nous respectons votre horaire et complétons chaque projet à temps, en vous tenant informé à chaque étape."
+        "title": "Fiables et efficaces",
+        "description": "Nous vous tenons informé à chaque étape, travaillons efficacement et respectons votre temps. Une communication claire du début à la fin."
       },
       "experience": {
         "title": "Licencié RBQ et assuré",
@@ -79,36 +79,36 @@
   },
   "servicesPage": {
     "heroTitle": "Nos services",
-    "heroDescription": "Restauration professionnelle du bois avec notre processus éprouvé en 3 étapes.",
+    "heroDescription": "Restauration professionnelle du bois avec de l'équipement de grade professionnel et notre processus éprouvé en 3 étapes.",
     "processTitle": "Le processus en 3 étapes",
-    "processDescription": "Chaque projet suit notre méthode de restauration éprouvée pour des résultats constants et magnifiques.",
+    "processDescription": "Chaque projet suit la même méthode éprouvée — laver, sabler, teindre — pour des résultats constants et magnifiques.",
     "step": "Étape",
     "steps": {
       "washing": {
         "title": "Lavage à pression",
-        "description": "Nous commençons par un nettoyage en profondeur à l'aide d'équipement de lavage à pression professionnel. Cela élimine des années de saleté, de crasse et de moisissure, préparant la surface pour le ponçage.",
+        "description": "Nous commençons par un nettoyage en profondeur à l'aide de laveuses à pression de grade professionnel. Cela élimine des années de saleté, de crasse et de moisissure, préparant une surface propre pour le sablage.",
         "details": [
           "Élimine la saleté et les débris accumulés",
           "Élimine la moisissure",
           "Ravive et rafraîchit la surface du bois",
-          "Prépare la surface pour le ponçage"
+          "Prépare la surface pour le sablage"
         ]
       },
       "sanding": {
-        "title": "Ponçage",
-        "description": "Une fois sec, nous ponçons soigneusement toute la surface pour créer la toile parfaite pour la teinture. Le ponçage lisse les zones rugueuses, ouvre le grain du bois et assure une absorption optimale de la teinture.",
+        "title": "Sablage",
+        "description": "Une fois sec, nous sablons toute la surface avec des sableuses de grade professionnel pour créer la toile parfaite pour la teinture. Cela lisse les zones rugueuses, ouvre le grain du bois et assure une absorption optimale de la teinture.",
         "details": [
           "Prépare la texture du bois pour la teinture",
           "Ouvre les pores du bois pour une meilleure absorption",
           "Crée une surface uniforme",
-          "Assure une surface lisse, prête à teindre"
+          "Retire la vieille teinture écaillée ou les revêtements"
         ]
       },
       "staining": {
         "title": "Teinture",
-        "description": "La dernière étape consiste à appliquer une teinture de qualité premium qui pénètre profondément dans le bois. Nos teintures protègent contre les dommages UV, l'humidité et l'usure tout en faisant ressortir la beauté naturelle de votre bois.",
+        "description": "La dernière étape consiste à appliquer une teinture de qualité premium qui pénètre profondément dans le grain du bois. Nos teintures protègent contre les dommages UV, l'humidité et l'usure tout en faisant ressortir le caractère naturel de votre bois.",
         "details": [
-          "Teintures pénétrantes premium",
+          "Teintures pénétrantes de grade professionnel",
           "Protection UV et contre l'humidité",
           "Large gamme d'options de couleurs",
           "Fini riche et magnifique"
@@ -116,23 +116,23 @@
       }
     },
     "surfacesTitle": "Ce que nous traitons",
-    "surfacesDescription": "Nous restaurons tous types de surfaces en bois extérieur.",
+    "surfacesDescription": "Nous teignons et restaurons tous types de surfaces en bois extérieur.",
     "surfaces": {
       "decks": {
         "title": "Terrasses et patios",
-        "description": "Redonnez à votre espace de vie extérieur sa splendeur d'antan."
+        "description": "Lavage, sablage et teinture pour redonner vie à votre terrasse."
       },
       "fences": {
         "title": "Clôtures et portails",
-        "description": "Protégez votre clôture d'intimité avec un fini frais et uniforme."
+        "description": "Une teinture fraîche protège votre clôture et lui donne un look propre et uniforme."
       },
       "railings": {
         "title": "Rampes et escaliers",
-        "description": "Gardez vos rampes sécuritaires et belles pour les années à venir."
+        "description": "Des rampes bien teintes ont fière allure et résistent aux intempéries."
       },
       "pergolas": {
         "title": "Pergolas et gazebos",
-        "description": "Embellissez vos structures de jardin avec des soins professionnels."
+        "description": "Restaurez et protégez votre pergola ou gazebo avec une teinture professionnelle."
       }
     },
     "ctaTitle": "Prêt à restaurer votre bois?",
@@ -231,7 +231,7 @@
     "disclaimer": "* Champs obligatoires. Nous respectons votre vie privée et ne partagerons jamais vos informations."
   },
   "footer": {
-    "tagline": "Teinture de terrasse et peinture extérieure professionnelle à Montréal.",
+    "tagline": "Teinture et restauration de bois professionnelle à Montréal.",
     "quickLinks": "Liens rapides",
     "getInTouch": "Contactez-nous",
     "copyright": "Topdeck Montréal. Tous droits réservés."
