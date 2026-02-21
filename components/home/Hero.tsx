@@ -26,7 +26,7 @@ export function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 0.8], [0, -50])
 
   return (
-    <section ref={ref} className="relative h-[calc(85vh-80px)] md:h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
+    <section ref={ref} className="relative h-[calc(92vh-80px)] md:h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
       {/* Parallax background image */}
       <motion.div
         className="absolute inset-0 -top-[10%] -bottom-[10%]"
