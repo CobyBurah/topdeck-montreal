@@ -26,7 +26,7 @@ export function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 0.8], [0, -50])
 
   return (
-    <section ref={ref} className="relative h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
+    <section ref={ref} className="relative h-[calc(85vh-80px)] md:h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
       {/* Parallax background image */}
       <motion.div
         className="absolute inset-0 -top-[10%] -bottom-[10%]"
@@ -44,7 +44,7 @@ export function Hero() {
       </motion.div>
 
       {/* Softer gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/5" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
       {/* Content - positioned at bottom-left with scroll fade */}
       <motion.div
@@ -57,6 +57,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4)' }}
           >
             {t('title1')}
             <br />
@@ -68,6 +69,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
             className="mt-6 text-lg md:text-xl text-white/90 max-w-lg"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4)' }}
           >
             {t('description')}
           </motion.p>

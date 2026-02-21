@@ -69,6 +69,7 @@ export default function ServicesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4)' }}
           >
             {t('heroTitle')}
           </motion.h1>
@@ -76,7 +77,8 @@ export default function ServicesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-4 text-lg text-white/80 max-w-xl"
+            className="mt-4 text-lg text-white max-w-xl"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4)' }}
           >
             {t('heroDescription')}
           </motion.p>

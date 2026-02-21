@@ -24,7 +24,7 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
 const variantStyles = {
   primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 shadow-md hover:shadow-lg',
   secondary: 'bg-secondary-800 text-white hover:bg-secondary-700 active:bg-secondary-900',
-  outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50 active:bg-primary-100',
+  outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white hover:scale-105 active:bg-primary-700 active:text-white active:scale-95',
   ghost: 'text-secondary-700 hover:bg-secondary-100 active:bg-secondary-200',
 }
 

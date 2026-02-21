@@ -822,8 +822,10 @@ export function GalleryGrid() {
               transition={{ duration: 0.2, delay: 0.1 }}
               className="absolute bottom-6 left-0 right-0 text-center"
             >
-              <p className="text-white text-lg font-medium">{t(`projects.${selectedProject.project.titleKey}`)}</p>
-              <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {projects.length}</p>
+              <span className="inline-flex flex-col items-center bg-black/50 backdrop-blur-sm rounded-full px-5 py-2">
+                <p className="text-white text-lg font-medium">{t(`projects.${selectedProject.project.titleKey}`)}</p>
+                <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {projects.length}</p>
+              </span>
             </motion.div>
           </motion.div>
         )}

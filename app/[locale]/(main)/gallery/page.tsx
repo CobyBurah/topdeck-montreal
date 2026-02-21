@@ -3,12 +3,12 @@ import GalleryPageClient from './GalleryPageClient'
 
 const meta = {
   en: {
-    title: 'Gallery | Deck & Fence Staining Portfolio | Topdeck',
-    description: 'View our gallery of restored outdoor wood in Montreal. See before and after photos of our premium deck staining, fence staining, and pressure washing projects.',
+    title: 'Gallery | Wood Restoration Portfolio | Topdeck',
+    description: 'See the results for yourself — before & after photos of 25+ Montreal deck, fence, and railing restoration projects. Request a free quote.',
   },
   fr: {
-    title: 'Galerie | Portfolio de teinture de terrasses et clôtures | Topdeck',
-    description: 'Consultez notre galerie de bois extérieur restauré à Montréal. Voyez les photos avant et après de nos projets de teinture de terrasses, teinture de clôtures et lavage à pression.',
+    title: 'Galerie | Portfolio de restauration | Topdeck',
+    description: 'Voyez les résultats par vous-même — photos avant et après de 25+ projets de restauration de terrasses, clôtures et rampes à Montréal. Soumission gratuite.',
   },
 }
 

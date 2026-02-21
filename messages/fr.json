@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Teinture de Terrasse Montréal | Topdeck | Soumission Gratuite",
-    "description": "Spécialistes en teinture de bois à Montréal. Lavage à pression, sablage et teinture professionnels pour terrasses et clôtures."
+    "title": "Teinture et restauration de bois | Topdeck Montréal",
+    "description": "Spécialistes en teinture de terrasses et clôtures à Montréal. On lave, sable et teint votre bois — licence RBQ, 250+ projets complétés. Soumission gratuite."
   },
   "nav": {
     "home": "Accueil",
@@ -12,9 +12,9 @@
     "toggleMenu": "Ouvrir le menu de navigation"
   },
   "hero": {
-    "title1": "Experts en teinture",
+    "title1": "Spécialistes en teinture",
     "title2": "de bois à Montréal",
-    "description": "Spécialisés dans les surfaces en bois — lavage à pression, sablage et teinture pour terrasses, clôtures et rampes.",
+    "description": "Le climat montréalais est dur sur le bois. On lave, sable et teint pour le garder protégé et à son meilleur.",
     "cta": "Soumission gratuite",
     "seeOurWork": "Voir nos réalisations",
     "imageAlt": "Belle terrasse en bois restaurée"
@@ -47,22 +47,25 @@
     },
     "learnMore": "En savoir plus sur nos services"
   },
+  "deckGallery": {
+    "viewAllWork": "Voir tous nos projets"
+  },
   "whyChooseUs": {
-    "subtitle": "Pourquoi nous choisir",
-    "title": "Les experts en terrasses de confiance à Montréal",
+    "subtitle": "LA DIFFÉRENCE TOPDECK",
+    "title": "Restauration spécialisée du bois extérieur",
     "description": "Nous sommes spécialisés dans une seule chose : la restauration du bois extérieur. Équipement de grade professionnel, produits premium et un processus éprouvé qui livre à chaque fois.",
     "features": {
       "quality": {
-        "title": "Travail de qualité",
-        "description": "Nous livrons des résultats de la plus haute qualité en utilisant uniquement les meilleures teintures et équipements sur le marché."
+        "title": "Préparation et produits professionnels",
+        "description": "Nous utilisons de l'équipement robuste pour préparer adéquatement votre bois, suivi des bonnes teintures adaptées à votre projet spécifique. Cela garantit que votre espace extérieur reçoit exactement ce dont il a besoin pour rester protégé."
       },
       "onTime": {
-        "title": "Fiables et efficaces",
-        "description": "Nous vous tenons informé à chaque étape, travaillons efficacement et respectons votre temps. Une communication claire du début à la fin."
+        "title": "Travail efficace et rigoureux",
+        "description": "Nous valorisons votre temps autant que votre propriété. Notre équipe travaille efficacement pour restaurer votre bois à un haut standard, livrant d'excellents résultats sans étirer les délais ni couper les coins ronds."
       },
       "experience": {
         "title": "Licencié RBQ et assuré",
-        "description": "Nous détenons une licence RBQ valide et une assurance responsabilité de 2 millions de dollars, pour que votre projet soit entièrement protégé."
+        "description": "Nous détenons une licence RBQ valide et une assurance responsabilité de 2 millions de dollars, vous offrant une tranquillité d'esprit totale que votre maison et votre propriété sont entièrement protégées du début à la fin."
       }
     },
     "servingAreas": "Fièrement au service de Montréal, Laval, Longueuil et les environs"
@@ -79,7 +82,7 @@
   },
   "servicesPage": {
     "heroTitle": "Nos services",
-    "heroDescription": "Restauration professionnelle du bois avec de l'équipement de grade professionnel et notre processus éprouvé en 3 étapes.",
+    "heroDescription": "Restauration experte du bois utilisant de l'équipement robuste et notre processus éprouvé en 3 étapes",
     "processTitle": "Le processus en 3 étapes",
     "processDescription": "Chaque projet suit la même méthode éprouvée — laver, sabler, teindre — pour des résultats constants et magnifiques.",
     "step": "Étape",
@@ -234,7 +237,8 @@
     "tagline": "Teinture et restauration de bois professionnelle à Montréal.",
     "quickLinks": "Liens rapides",
     "getInTouch": "Contactez-nous",
-    "copyright": "Topdeck Montréal. Tous droits réservés."
+    "copyright": "Topdeck Montréal. Tous droits réservés.",
+    "servingAreas": "Fièrement au service de Montréal, Laval, la Rive-Sud, l'Ouest-de-l'Île et la grande région de Montréal."
   },
   "portal": {
     "title": "Topdeck CRM",

@@ -3,12 +3,12 @@ import ContactPageClient from './ContactPageClient'
 
 const meta = {
   en: {
-    title: 'Contact Us | Free Wood Staining Quote Montreal | Topdeck',
-    description: 'Get a free, no-obligation quote for wood staining and pressure washing in Montreal. Contact the Topdeck team today to restore your deck, fence, or railings.',
+    title: 'Contact Us | Free Quote | Topdeck Montreal',
+    description: 'Get a free, no-obligation quote for exterior wood restoration in Montreal. We restore decks, fences, railings, pergolas & more. Contact us today.',
   },
   fr: {
-    title: 'Contactez-nous | Soumission gratuite pour teinture de bois Montréal | Topdeck',
-    description: 'Obtenez une soumission gratuite et sans obligation pour la teinture de bois et le lavage à pression à Montréal. Contactez l\'équipe Topdeck dès aujourd\'hui.',
+    title: 'Contactez-nous | Soumission gratuite | Topdeck Montréal',
+    description: 'Soumission gratuite pour la restauration de bois extérieur à Montréal. Terrasses, clôtures, rampes et pergolas. Contactez-nous dès aujourd\'hui.',
   },
 }
 

@@ -94,7 +94,7 @@ export function Header() {
                   animate={{ rotate: 0, opacity: 1 }}
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="h-6 w-6"
+                  className="h-7 w-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={2}
@@ -109,7 +109,7 @@ export function Header() {
                   animate={{ rotate: 0, opacity: 1 }}
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="h-6 w-6"
+                  className="h-7 w-7"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={2}

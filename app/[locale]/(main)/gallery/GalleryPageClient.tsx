@@ -27,6 +27,7 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.4)' }}
           >
             {t('title')}
           </motion.h1>

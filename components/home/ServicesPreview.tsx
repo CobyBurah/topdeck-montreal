@@ -101,9 +101,10 @@ export function ServicesPreview() {
             {surfaceKeys.map((key, index) => (
               <motion.span
                 key={key}
-                className="px-4 py-2 bg-white rounded-full text-secondary-700 font-medium shadow-sm"
+                className="px-4 py-2 bg-white rounded-full text-secondary-700 font-medium shadow-sm cursor-default transition-colors duration-200 hover:bg-primary-50 hover:text-primary-800 hover:shadow-md"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
               >
@@ -123,11 +124,11 @@ export function ServicesPreview() {
         >
           <Link
             href={`/${locale}/services`}
-            className="inline-flex items-center gap-2 text-primary-500 font-semibold hover:text-primary-600 transition-colors"
+            className="group inline-flex items-center gap-2 text-primary-500 font-semibold hover:text-primary-600 transition-colors"
           >
             {t('learnMore')}
             <svg
-              className="w-5 h-5"
+              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}

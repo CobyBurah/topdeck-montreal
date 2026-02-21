@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Deck Staining Montreal | Topdeck | Free Quote",
-    "description": "Montreal's wood staining specialists. Professional pressure washing, sanding, and staining for decks and fences."
+    "title": "Wood Staining & Restoration Montreal | Topdeck",
+    "description": "Montreal's deck and fence staining specialists. We wash, sand, and stain your wood back to life — RBQ licensed, 250+ projects completed. Free quotes."
   },
   "nav": {
     "home": "Home",
@@ -13,8 +13,8 @@
   },
   "hero": {
     "title1": "Montreal's Wood",
-    "title2": "Staining Pros",
-    "description": "Specializing in wooden surfaces — pressure washing, sanding, and staining for decks, fences, and railings.",
+    "title2": "Staining Specialists",
+    "description": "Montreal's weather is tough on wood. We wash, sand, and stain to keep it protected and looking its best.",
     "cta": "Get a Free Quote",
     "seeOurWork": "See our Work",
     "imageAlt": "Beautiful restored outdoor wood deck"
@@ -47,22 +47,25 @@
     },
     "learnMore": "Learn more about our services"
   },
+  "deckGallery": {
+    "viewAllWork": "View all our work"
+  },
   "whyChooseUs": {
-    "subtitle": "Why Choose Us",
-    "title": "Montreal's Trusted Deck Experts",
+    "subtitle": "THE TOPDECK DIFFERENCE",
+    "title": "Specialized Exterior Wood Restoration",
     "description": "We specialize in one thing: restoring outdoor wood. Professional-grade equipment, premium products, and a proven process that delivers every time.",
     "features": {
       "quality": {
-        "title": "Quality Work",
-        "description": "We deliver the highest quality results using only the best stains and equipment on the market."
+        "title": "Professional Prep & Products",
+        "description": "We use heavy-duty equipment to properly prepare your wood, followed by the right stains tailored to your specific project. This ensures your outdoor space gets exactly what it needs to stay protected."
       },
       "onTime": {
-        "title": "Reliable & Efficient",
-        "description": "We keep you informed every step of the way, work efficiently, and respect your time. Clear communication from start to finish."
+        "title": "Efficient & Effective Work",
+        "description": "We value your time as much as your property. Our team works efficiently to restore your wood to a high standard, delivering excellent results without dragging out the timeline or cutting corners."
       },
       "experience": {
         "title": "RBQ Licensed & Insured",
-        "description": "We hold a valid RBQ license and carry $2 million in liability insurance, so your project is fully protected."
+        "description": "We hold a valid RBQ license and carry $2 million in liability insurance, providing you with complete peace of mind that your home and property are fully protected from start to finish."
       }
     },
     "servingAreas": "Proudly serving Montreal, Laval, Longueuil, and surrounding areas"
@@ -79,7 +82,7 @@
   },
   "servicesPage": {
     "heroTitle": "Our Services",
-    "heroDescription": "Professional wood restoration using professional-grade equipment and our proven 3-step process.",
+    "heroDescription": "Expert wood restoration utilizing heavy-duty equipment and our proven 3-step process",
     "processTitle": "The 3-Step Process",
     "processDescription": "Every project follows the same proven method — wash, sand, stain — for consistent, beautiful results.",
     "step": "Step",
@@ -234,7 +237,8 @@
     "tagline": "Professional wood staining and restoration in Montreal.",
     "quickLinks": "Quick Links",
     "getInTouch": "Contact Us",
-    "copyright": "Topdeck Montreal. All rights reserved."
+    "copyright": "Topdeck Montreal. All rights reserved.",
+    "servingAreas": "Proudly serving Montreal, Laval, the South Shore, the West Island, and the greater Montreal area."
   },
   "portal": {
     "title": "Topdeck CRM",

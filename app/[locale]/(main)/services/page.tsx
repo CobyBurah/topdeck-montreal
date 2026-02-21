@@ -3,12 +3,12 @@ import ServicesPageClient from './ServicesPageClient'
 
 const meta = {
   en: {
-    title: 'Wood Staining & Restoration Services | Topdeck Montreal',
-    description: 'Explore our professional 3-step wood restoration process. We specialize in pressure washing, sanding, and staining decks and fences in Montreal.',
+    title: 'Wood Restoration Services | Topdeck Montreal',
+    description: 'Professional 3-step wood restoration: wash, sand & stain. We restore decks, fences, railings, pergolas & gazebos across Montreal. Get a free quote.',
   },
   fr: {
-    title: 'Services de teinture et restauration de bois | Topdeck Montréal',
-    description: 'Découvrez notre processus professionnel de restauration du bois en 3 étapes. Nous sommes spécialisés en lavage à pression, ponçage et teinture de terrasses et clôtures à Montréal.',
+    title: 'Services de restauration du bois | Topdeck Montréal',
+    description: 'Restauration en 3 étapes : lavage, sablage et teinture. Terrasses, clôtures, rampes, pergolas et gazebos à Montréal. Soumission gratuite.',
   },
 }
 

@@ -3,8 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.topdeckmontreal.com'),
-  title: 'Deck Painting Montreal | Topdeck | Get A Free Quote',
-  description: 'Montreal\'s wood staining specialists. Professional pressure washing, sanding, and staining for decks and fences.',
+  title: 'Topdeck Montreal | Exterior Wood Staining & Restoration',
+  description: 'Montreal\'s deck and fence staining specialists. We wash, sand, and stain your wood back to life — RBQ licensed, 250+ projects completed. Free quotes.',
   alternates: {
     canonical: '/en',
     languages: {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: '/Homepage-Hero.avif',
         width: 1200,
         height: 630,
-        alt: 'Topdeck Montreal - Professional Deck Staining & Restoration',
+        alt: 'Topdeck Montreal - Specialized Exterior Wood Restoration',
       },
     ],
   },
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
   },
   icons: {
-    icon: '/Topdeck-Square.jpg',
-    apple: '/Topdeck-Square.jpg',
+    icon: '/Topdeck-Icon.ico',
+    apple: '/Topdeck-Icon.jpg',
   },
 }
 

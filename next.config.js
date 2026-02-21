@@ -6,11 +6,11 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 const nextConfig = {
   async redirects() {
     return [
-      { source: '/about-us', destination: '/en/services', permanent: true },
+      { source: '/about-us', destination: '/en', permanent: true },
       { source: '/services', destination: '/en/services', permanent: true },
       { source: '/gallery', destination: '/en/gallery', permanent: true },
       { source: '/contact', destination: '/en/contact', permanent: true },
-      { source: '/fr/about-us', destination: '/fr/services', permanent: true },
+      { source: '/fr/about-us', destination: '/fr', permanent: true },
       { source: '/fr/fences', destination: '/fr', permanent: true },
       { source: '/blank', destination: '/en', permanent: true },
       { source: '/fr/blank', destination: '/fr', permanent: true },

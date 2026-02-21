@@ -1,8 +1,10 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface GalleryImage {
   id: number
@@ -35,12 +37,6 @@ const galleryImages: GalleryImage[] = [
     src: '/GalleryImages/4-after-Steina-LightOak.avif',
     alt: 'Deck stained with Steina Light Oak',
     title: 'Steina Light Oak',
-  },
-  {
-    id: 5,
-    src: '/GalleryImages/5-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
   },
   {
     id: 6,
@@ -204,6 +200,8 @@ function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; 
 }
 
 export function DeckGallery() {
+  const t = useTranslations('deckGallery')
+  const locale = useLocale()
   const [isPaused, setIsPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
@@ -472,7 +470,7 @@ export function DeckGallery() {
   }, [isPaused, scheduleResume])
 
   return (
-    <section ref={sectionRef} className="py-10 bg-secondary-50 overflow-hidden">
+    <section ref={sectionRef} className="pt-10 pb-6 bg-secondary-50 overflow-hidden">
       <div
         ref={containerRef}
         className="overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
@@ -500,6 +498,31 @@ export function DeckGallery() {
           ))}
         </div>
       </div>
+
+      {/* View All Work CTA */}
+      <motion.div
+        className="text-center mt-6"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <Link
+          href={`/${locale}/gallery`}
+          className="group inline-flex items-center gap-2 text-primary-500 font-semibold hover:text-primary-600 transition-colors"
+        >
+          {t('viewAllWork')}
+          <svg
+            className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </Link>
+      </motion.div>
 
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
@@ -588,8 +611,10 @@ export function DeckGallery() {
               transition={{ duration: 0.2, delay: 0.1 }}
               className="absolute bottom-6 left-0 right-0 text-center"
             >
-              <p className="text-white text-lg font-medium">{selectedImage.title}</p>
-              <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {galleryImages.length}</p>
+              <span className="inline-flex flex-col items-center bg-black/50 backdrop-blur-sm rounded-full px-5 py-2">
+                <p className="text-white text-lg font-medium">{selectedImage.title}</p>
+                <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {galleryImages.length}</p>
+              </span>
             </motion.div>
           </motion.div>
         )}
