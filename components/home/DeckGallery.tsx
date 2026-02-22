@@ -367,11 +367,14 @@ export function DeckGallery() {
         document.body.style.width = ''
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
-        document.documentElement.style.scrollBehavior = 'auto'
+
+        // Force Safari to respect the instant jump
+        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important')
         window.scrollTo(0, scrollY)
-        requestAnimationFrame(() => {
-          document.documentElement.style.scrollBehavior = ''
-        })
+
+        setTimeout(() => {
+          document.documentElement.style.removeProperty('scroll-behavior')
+        }, 50)
       }
     }
   }, [selectedImage, handleKeyDown])
@@ -484,29 +487,23 @@ export function DeckGallery() {
     }
   }
 
-  // Normalize on every native scroll event (covers touch + wheel scrolling)
-  const handleScroll = () => {
-    // Only normalize during user interaction; the animation loop handles its own wrapping
-    if (!isPausedRef.current) return
-
-    const oneSetWidth = oneSetWidthRef.current
-    if (!containerRef.current || oneSetWidth === 0) return
-
-    const pos = containerRef.current.scrollLeft
-    if (pos >= oneSetWidth * 2) {
-      containerRef.current.scrollLeft = pos - oneSetWidth
-      scrollLeftRef.current -= oneSetWidth
-      scrollPosRef.current = containerRef.current.scrollLeft
-    } else if (pos < oneSetWidth) {
-      containerRef.current.scrollLeft = pos + oneSetWidth
-      scrollLeftRef.current += oneSetWidth
-      scrollPosRef.current = containerRef.current.scrollLeft
-    }
-  }
-
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
+      if (containerRef.current) {
+        const oneSetWidth = oneSetWidthRef.current
+        let pos = containerRef.current.scrollLeft
+
+        // Normalize into the seamless range before resuming
+        if (oneSetWidth > 0) {
+          while (pos >= oneSetWidth * 2) pos -= oneSetWidth
+          while (pos < 0) pos += oneSetWidth
+          containerRef.current.scrollLeft = pos
+        }
+
+        // CRITICAL FIX: Sync the animation loop's memory to the new physical scroll position
+        scrollPosRef.current = pos
+      }
       isPausedRef.current = false
     }, 2000)
   }, [])
@@ -594,7 +591,6 @@ export function DeckGallery() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onWheel={handleWheel}
-        onScroll={handleScroll}
       >
         {/* Top row */}
         <div ref={topRowRef} className="flex gap-4 mb-4">

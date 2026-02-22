@@ -813,11 +813,14 @@ export function GalleryGrid() {
         document.body.style.width = ''
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
-        document.documentElement.style.scrollBehavior = 'auto'
+
+        // Force Safari to respect the instant jump
+        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important')
         window.scrollTo(0, scrollY)
-        requestAnimationFrame(() => {
-          document.documentElement.style.scrollBehavior = ''
-        })
+
+        setTimeout(() => {
+          document.documentElement.style.removeProperty('scroll-behavior')
+        }, 50)
       }
     }
   }, [selectedProject, handleKeyDown])
