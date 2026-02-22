@@ -367,7 +367,7 @@ export function DeckGallery() {
         document.body.style.width = ''
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
-        window.scrollTo(0, scrollY)
+        window.scrollTo({ top: scrollY, behavior: 'instant' })
       }
     }
   }, [selectedImage, handleKeyDown])
@@ -464,10 +464,8 @@ export function DeckGallery() {
       trackGalleryOpen(clickedImageRef.current.title)
       setSelectedImage(clickedImageRef.current)
     }
-    if (containerRef.current) {
-      scrollPosRef.current = containerRef.current.scrollLeft
-    }
-    isPausedRef.current = false
+    // Don't unpause here — let scheduleResume() handle it after momentum scrolling finishes.
+    // If user just tapped (no drag), animation was never paused so no action needed.
     clickedImageRef.current = null
   }
 
