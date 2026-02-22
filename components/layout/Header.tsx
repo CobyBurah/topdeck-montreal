@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/Button'
+import { trackLanguageSwitch, trackNavClick, trackMobileMenuToggle, trackCTAClick } from '@/lib/analytics'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -43,6 +44,7 @@ export function Header() {
                 key={item.name}
                 href={item.href}
                 className="text-lg font-medium text-secondary-600 hover:text-primary-500 transition-colors"
+                onClick={() => trackNavClick(item.name, false)}
               >
                 {item.name}
               </Link>
@@ -57,6 +59,7 @@ export function Header() {
                     ? 'bg-white text-primary-600 shadow-sm'
                     : 'text-secondary-500 hover:text-secondary-700'
                 }`}
+                onClick={() => locale !== 'en' && trackLanguageSwitch(locale, 'en')}
               >
                 EN
               </Link>
@@ -67,12 +70,13 @@ export function Header() {
                     ? 'bg-white text-primary-600 shadow-sm'
                     : 'text-secondary-500 hover:text-secondary-700'
                 }`}
+                onClick={() => locale !== 'fr' && trackLanguageSwitch(locale, 'fr')}
               >
                 FR
               </Link>
             </div>
 
-            <Button href={`/${locale}/contact`} size="md">
+            <Button href={`/${locale}/contact`} size="md" onClick={() => trackCTAClick('Get Quote', 'header')}>
               {t('getQuote')}
             </Button>
           </div>
@@ -81,7 +85,7 @@ export function Header() {
           <motion.button
             type="button"
             className="md:hidden inline-flex items-center justify-center rounded-full p-2 text-secondary-700 hover:bg-secondary-100 transition-colors"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => { trackMobileMenuToggle(!mobileMenuOpen); setMobileMenuOpen(!mobileMenuOpen) }}
             aria-expanded={mobileMenuOpen}
             aria-label={t('toggleMenu')}
             whileTap={{ scale: 0.95 }}
@@ -147,7 +151,7 @@ export function Header() {
                     <Link
                       href={item.href}
                       className="block px-4 py-3 text-base font-medium text-secondary-700 hover:bg-white hover:text-primary-500 rounded-xl transition-colors duration-200"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => { trackNavClick(item.name, true); setMobileMenuOpen(false) }}
                     >
                       {item.name}
                     </Link>
@@ -164,7 +168,7 @@ export function Header() {
                   <div className="flex items-center bg-secondary-100 rounded-full p-1 w-fit">
                     <Link
                       href="/en"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => { if (locale !== 'en') trackLanguageSwitch(locale, 'en'); setMobileMenuOpen(false) }}
                       className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                         locale === 'en'
                           ? 'bg-white text-primary-600 shadow-sm'
@@ -175,7 +179,7 @@ export function Header() {
                     </Link>
                     <Link
                       href="/fr"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => { if (locale !== 'fr') trackLanguageSwitch(locale, 'fr'); setMobileMenuOpen(false) }}
                       className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                         locale === 'fr'
                           ? 'bg-white text-primary-600 shadow-sm'
@@ -193,7 +197,7 @@ export function Header() {
                   exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
                   className="pt-2"
                 >
-                  <Button href={`/${locale}/contact`} className="w-full" onClick={() => setMobileMenuOpen(false)}>
+                  <Button href={`/${locale}/contact`} className="w-full" onClick={() => { trackCTAClick('Get Quote', 'header_mobile'); setMobileMenuOpen(false) }}>
                     {t('getQuote')}
                   </Button>
                 </motion.div>

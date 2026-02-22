@@ -7,6 +7,7 @@ import imageCompression from 'browser-image-compression'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { AddressAutocomplete } from '@/components/forms/AddressAutocomplete'
+import { trackFormStart, trackFormSubmit, trackFormError, trackFormSuccess } from '@/lib/analytics'
 
 interface FormDataState {
   name: string
@@ -105,6 +106,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
   const shouldReduceMotion = useReducedMotion()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const successMessageRef = useRef<HTMLDivElement>(null)
+  const formStartedRef = useRef(false)
 
   useEffect(() => {
     if (isSubmitted && successMessageRef.current) {
@@ -143,7 +145,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     }
   }
 
-  const validateForm = (): boolean => {
+  const validateForm = (): string[] => {
     const newErrors: FormErrors = {}
 
     if (!formData.name.trim()) {
@@ -165,16 +167,19 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     }
 
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return Object.keys(newErrors)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validateForm()) {
+    const errorFields = validateForm()
+    if (errorFields.length > 0) {
+      trackFormError(errorFields)
       return
     }
 
+    trackFormSubmit(formData.service)
     setIsSubmitting(true)
     setSubmitError(null)
 
@@ -208,6 +213,7 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
       setClientPortalLink(data.clientPortalLink || null)
       setIsSubmitted(true)
       onSubmitStateChange?.(true)
+      trackFormSuccess()
     } catch {
       setSubmitError(t('errors.submitFailed'))
     } finally {
@@ -219,6 +225,11 @@ export function QuoteForm({ onSubmitStateChange }: QuoteFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
+
+    if (!formStartedRef.current) {
+      formStartedRef.current = true
+      trackFormStart()
+    }
 
     // Apply phone formatting for phone field
     const formattedValue = name === 'phone' ? formatPhoneNumber(value) : value

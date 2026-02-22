@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
+import { trackGalleryOpen, trackGalleryNav, trackGallerySlider } from '@/lib/analytics'
 
 interface BeforeAfterProject {
   id: number
@@ -275,6 +276,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     e.stopPropagation()
     setIsDragging(true)
     hasDraggedRef.current = false
+    trackGallerySlider(title)
     handleMove(e.clientX)
   }
 
@@ -293,6 +295,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     e.stopPropagation()
     setIsDragging(true)
     hasDraggedRef.current = false
+    trackGallerySlider(title)
     handleMove(e.touches[0].clientX)
   }
 
@@ -817,7 +820,7 @@ export function GalleryGrid() {
             pauseLabel={t('pause')}
             playLabel={t('play')}
             title={t(`projects.${project.titleKey}`)}
-            onOpenFullscreen={(position, paused) => setSelectedProject({ project, initialPosition: position, initialPaused: paused })}
+            onOpenFullscreen={(position, paused) => { trackGalleryOpen(t(`projects.${project.titleKey}`)); setSelectedProject({ project, initialPosition: position, initialPaused: paused }) }}
             isFullscreenOpen={!!selectedProject}
           />
         ))}
@@ -928,6 +931,7 @@ export function GalleryGrid() {
                   className="absolute left-2 sm:left-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
+                    trackGalleryNav('previous')
                     goToPrevious()
                   }}
                   aria-label="Previous project"
@@ -946,6 +950,7 @@ export function GalleryGrid() {
                   className="absolute right-2 sm:right-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
+                    trackGalleryNav('next')
                     goToNext()
                   }}
                   aria-label="Next project"

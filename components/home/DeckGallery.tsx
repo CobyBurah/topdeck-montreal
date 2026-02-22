@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
+import { trackGalleryOpen, trackGalleryNav } from '@/lib/analytics'
 
 interface GalleryImage {
   id: number
@@ -407,6 +408,7 @@ export function DeckGallery() {
 
   const handleMouseUp = () => {
     if (!hasDragged && clickedImageRef.current) {
+      trackGalleryOpen(clickedImageRef.current.title)
       setSelectedImage(clickedImageRef.current)
     }
     setIsDragging(false)
@@ -442,6 +444,7 @@ export function DeckGallery() {
 
   const handleTouchEnd = () => {
     if (!hasDragged && clickedImageRef.current) {
+      trackGalleryOpen(clickedImageRef.current.title)
       setSelectedImage(clickedImageRef.current)
     }
     setIsPaused(false)
@@ -723,6 +726,7 @@ export function DeckGallery() {
                   className="absolute left-2 sm:left-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
+                    trackGalleryNav('previous')
                     goToPrevious()
                   }}
                   aria-label="Previous image"
@@ -741,6 +745,7 @@ export function DeckGallery() {
                   className="absolute right-2 sm:right-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
                   onClick={(e) => {
                     e.stopPropagation()
+                    trackGalleryNav('next')
                     goToNext()
                   }}
                   aria-label="Next image"

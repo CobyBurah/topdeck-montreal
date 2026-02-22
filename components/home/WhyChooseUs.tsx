@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/Button'
+import { trackCTAClick } from '@/lib/analytics'
 
 const featureKeys = ['quality', 'onTime', 'experience'] as const
 
@@ -91,7 +92,7 @@ export function WhyChooseUs() {
             transition={{ duration: 0.5 }}
             className="text-center mt-8 md:mt-12"
           >
-            <Button href={`/${locale}/gallery`} variant="outline">
+            <Button href={`/${locale}/gallery`} variant="outline" onClick={() => trackCTAClick('See Our Work', 'why_choose_us')}>
               {tHero('seeOurWork')}
             </Button>
           </motion.div>

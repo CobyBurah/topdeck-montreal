@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
 import { APIProvider } from '@vis.gl/react-google-maps'
 import { QuoteForm } from '@/components/forms/QuoteForm'
+import { trackPhoneClick, trackEmailClick } from '@/lib/analytics'
 
 export default function ContactPage() {
   const t = useTranslations('contactPage')
@@ -49,12 +50,14 @@ export default function ContactPage() {
             <a
               href="tel:+15144161588"
               className="block text-xl text-white/90 hover:text-white transition-colors"
+              onClick={() => trackPhoneClick('contact_page')}
             >
               (514) 416-1588
             </a>
             <a
               href="mailto:info@topdeckmontreal.com"
               className="block text-white/80 hover:text-white transition-colors"
+              onClick={() => trackEmailClick('contact_page')}
             >
               info@topdeckmontreal.com
             </a>

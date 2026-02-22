@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/Button'
+import { trackCTAClick } from '@/lib/analytics'
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
@@ -75,7 +76,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.7 }}
             className="mt-8"
           >
-            <Button href={`/${locale}/contact`} size="lg">
+            <Button href={`/${locale}/contact`} size="lg" onClick={() => trackCTAClick('Get Quote', 'hero')}>
               {t('cta')}
             </Button>
           </motion.div>

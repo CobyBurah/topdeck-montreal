@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/Button'
+import { trackCTAClick } from '@/lib/analytics'
 
 export function CTABanner() {
   const t = useTranslations('ctaBanner')
@@ -37,7 +38,7 @@ export function CTABanner() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Button href={`/${locale}/contact`} size="lg">
+          <Button href={`/${locale}/contact`} size="lg" onClick={() => trackCTAClick('Get Quote', 'cta_banner')}>
             {t('cta')}
           </Button>
         </motion.div>
