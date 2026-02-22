@@ -226,11 +226,13 @@ export function DeckGallery() {
   // Pinch-to-zoom state
   const [zoomScale, setZoomScale] = useState(1)
   const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 })
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 })
   const initialPinchDistRef = useRef(0)
   const initialScaleRef = useRef(1)
   const isPinchingRef = useRef(false)
   const panStartRef = useRef({ x: 0, y: 0 })
   const panTranslateRef = useRef({ x: 0, y: 0 })
+  const zoomContainerRef = useRef<HTMLDivElement>(null)
 
   // Track visibility with IntersectionObserver
   useEffect(() => {
@@ -257,6 +259,7 @@ export function DeckGallery() {
   const resetZoom = useCallback(() => {
     setZoomScale(1)
     setZoomTranslate({ x: 0, y: 0 })
+    setZoomOrigin({ x: 50, y: 50 })
     panTranslateRef.current = { x: 0, y: 0 }
   }, [])
 
@@ -288,8 +291,17 @@ export function DeckGallery() {
       const dy = e.touches[0].clientY - e.touches[1].clientY
       initialPinchDistRef.current = Math.hypot(dx, dy)
       initialScaleRef.current = zoomScale
+      // Set transform origin to pinch midpoint
+      if (zoomContainerRef.current) {
+        const rect = zoomContainerRef.current.getBoundingClientRect()
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2
+        setZoomOrigin({
+          x: ((midX - rect.left) / rect.width) * 100,
+          y: ((midY - rect.top) / rect.height) * 100,
+        })
+      }
     } else if (e.touches.length === 1 && zoomScale > 1) {
-      // Start panning when zoomed
       panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
       panTranslateRef.current = { ...zoomTranslate }
     }
@@ -678,10 +690,11 @@ export function DeckGallery() {
               onTouchEnd={handleImageTouchEnd}
             >
               <div
+                ref={zoomContainerRef}
                 className="relative w-full aspect-[4/3] rounded-xl overflow-hidden"
                 style={{
-                  transform: `scale(${zoomScale}) translate(${zoomTranslate.x / zoomScale}px, ${zoomTranslate.y / zoomScale}px)`,
-                  transformOrigin: 'center center',
+                  transform: `scale(${zoomScale}) translate(${zoomTranslate.x}px, ${zoomTranslate.y}px)`,
+                  transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
                   touchAction: zoomScale > 1 ? 'none' : 'pan-y',
                 }}
               >
@@ -703,38 +716,40 @@ export function DeckGallery() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.2, delay: 0.1 }}
-              className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center gap-3 px-4"
+              className="absolute bottom-4 sm:bottom-6 left-0 right-0"
             >
-              <button
-                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  goToPrevious()
-                }}
-                aria-label="Previous image"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+              <div className="relative flex items-center justify-center px-16 sm:max-w-md sm:mx-auto">
+                <button
+                  className="absolute left-2 sm:left-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToPrevious()
+                  }}
+                  aria-label="Previous image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
 
-              <span className="inline-flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2">
-                <p className="text-white text-lg font-medium text-center">{selectedImage.title}</p>
-                <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {galleryImages.length}</p>
-              </span>
+                <span className="flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2 w-[60vw] sm:w-80">
+                  <p className="text-white text-sm sm:text-base font-medium text-center w-full">{selectedImage.title}</p>
+                  <p className="text-white/60 text-xs sm:text-sm">{currentIndex + 1} / {galleryImages.length}</p>
+                </span>
 
-              <button
-                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  goToNext()
-                }}
-                aria-label="Next image"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                <button
+                  className="absolute right-2 sm:right-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToNext()
+                  }}
+                  aria-label="Next image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

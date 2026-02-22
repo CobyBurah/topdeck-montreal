@@ -21,10 +21,6 @@ export function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const springY = useSpring(y, { stiffness: 100, damping: 30 })
 
-  // Content fades and moves up as user scrolls
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-  const contentY = useTransform(scrollYProgress, [0, 0.8], [0, -50])
-
   return (
     <section ref={ref} className="relative h-[calc(92vh-80px)] md:h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
       {/* Parallax background image */}
@@ -46,10 +42,9 @@ export function Hero() {
       {/* Softer gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-      {/* Content - positioned at bottom-left with scroll fade */}
-      <motion.div
+      {/* Content - positioned at bottom-left */}
+      <div
         className="absolute bottom-0 left-0 right-0 p-8 md:p-16 lg:p-24"
-        style={shouldReduceMotion ? {} : { opacity: contentOpacity, y: contentY }}
       >
         <div className="max-w-3xl">
           <motion.h1
@@ -85,7 +80,7 @@ export function Hero() {
             </Button>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.div
