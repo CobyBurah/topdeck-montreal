@@ -133,74 +133,78 @@ export function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto', transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } }}
               exit={{ opacity: 0, height: 0, transition: { duration: 0.35, ease: [0.4, 0, 1, 1] } }}
-              className="md:hidden overflow-hidden bg-secondary-50 rounded-2xl mt-2"
+              className="md:hidden overflow-hidden"
             >
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { duration: 0.25, delay: 0.12 } }}
                 exit={{ opacity: 0, transition: { duration: 0.2, delay: 0 } }}
-                className="flex flex-col gap-1 p-4"
               >
-                {navigation.map((item, index) => (
+                {/* Grey card: nav links + phone + language switcher */}
+                <div className="bg-secondary-50 rounded-2xl mt-2 p-4 flex flex-col gap-1">
+                  {navigation.map((item, index) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * index } }}
+                      exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
+                    >
+                      <Link
+                        href={item.href}
+                        className="block px-4 py-3 text-base font-medium text-secondary-700 hover:bg-white hover:text-primary-500 rounded-xl transition-colors duration-200"
+                        onClick={() => { trackNavClick(item.name, true); setMobileMenuOpen(false) }}
+                      >
+                        {item.name}
+                      </Link>
+                    </motion.div>
+                  ))}
+
+                  {/* Mobile Language Switcher - Toggle Pills */}
                   <motion.div
-                    key={item.name}
                     initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * index } }}
+                    animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * navigation.length } }}
+                    exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
+                    className="px-4 py-1"
+                  >
+                    <div className="flex items-center bg-secondary-100 rounded-full p-1 w-fit">
+                      <Link
+                        href="/en"
+                        onClick={() => { if (locale !== 'en') trackLanguageSwitch(locale, 'en'); setMobileMenuOpen(false) }}
+                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                          locale === 'en'
+                            ? 'bg-white text-primary-600 shadow-sm'
+                            : 'text-secondary-500 hover:text-secondary-700'
+                        }`}
+                      >
+                        EN
+                      </Link>
+                      <Link
+                        href="/fr"
+                        onClick={() => { if (locale !== 'fr') trackLanguageSwitch(locale, 'fr'); setMobileMenuOpen(false) }}
+                        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                          locale === 'fr'
+                            ? 'bg-white text-primary-600 shadow-sm'
+                            : 'text-secondary-500 hover:text-secondary-700'
+                        }`}
+                      >
+                        FR
+                      </Link>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* CTA button — outside the card */}
+                <div className="px-4 pt-3 pb-3">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * (navigation.length + 1) } }}
                     exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
                   >
-                    <Link
-                      href={item.href}
-                      className="block px-4 py-3 text-base font-medium text-secondary-700 hover:bg-white hover:text-primary-500 rounded-xl transition-colors duration-200"
-                      onClick={() => { trackNavClick(item.name, true); setMobileMenuOpen(false) }}
-                    >
-                      {item.name}
-                    </Link>
+                    <Button href={`/${locale}/contact`} className="w-full" onClick={() => { trackCTAClick('Get Quote', 'header_mobile'); setMobileMenuOpen(false) }}>
+                      {t('getQuote')}
+                    </Button>
                   </motion.div>
-                ))}
-
-                {/* Mobile Language Switcher - Toggle Pills */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * navigation.length } }}
-                  exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
-                  className="px-4 py-2"
-                >
-                  <div className="flex items-center bg-secondary-100 rounded-full p-1 w-fit">
-                    <Link
-                      href="/en"
-                      onClick={() => { if (locale !== 'en') trackLanguageSwitch(locale, 'en'); setMobileMenuOpen(false) }}
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                        locale === 'en'
-                          ? 'bg-white text-primary-600 shadow-sm'
-                          : 'text-secondary-500 hover:text-secondary-700'
-                      }`}
-                    >
-                      EN
-                    </Link>
-                    <Link
-                      href="/fr"
-                      onClick={() => { if (locale !== 'fr') trackLanguageSwitch(locale, 'fr'); setMobileMenuOpen(false) }}
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                        locale === 'fr'
-                          ? 'bg-white text-primary-600 shadow-sm'
-                          : 'text-secondary-500 hover:text-secondary-700'
-                      }`}
-                    >
-                      FR
-                    </Link>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0, transition: { duration: 0.25, delay: 0.05 * (navigation.length + 1) } }}
-                  exit={{ opacity: 0, x: -20, transition: { duration: 0.15, delay: 0 } }}
-                  className="pt-2"
-                >
-                  <Button href={`/${locale}/contact`} className="w-full" onClick={() => { trackCTAClick('Get Quote', 'header_mobile'); setMobileMenuOpen(false) }}>
-                    {t('getQuote')}
-                  </Button>
-                </motion.div>
+                </div>
               </motion.div>
             </motion.div>
           )}

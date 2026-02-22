@@ -450,7 +450,8 @@ function FullscreenSlider({
   playLabel,
   title,
   initialPosition,
-  initialPaused
+  initialPaused,
+  isSliderDraggingRef
 }: {
   project: BeforeAfterProject
   beforeLabel: string
@@ -460,6 +461,7 @@ function FullscreenSlider({
   title: string
   initialPosition: number
   initialPaused: boolean
+  isSliderDraggingRef: React.MutableRefObject<boolean>
 }) {
   const [sliderPosition, setSliderPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
@@ -540,6 +542,7 @@ function FullscreenSlider({
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(true)
+    isSliderDraggingRef.current = true
     handleMove(e.clientX)
   }
 
@@ -550,7 +553,8 @@ function FullscreenSlider({
 
   const handleSliderMouseUp = useCallback(() => {
     setIsDragging(false)
-  }, [])
+    setTimeout(() => { isSliderDraggingRef.current = false }, 0)
+  }, [isSliderDraggingRef])
 
   const handleSliderTouchStart = (e: React.TouchEvent) => {
     e.stopPropagation()
@@ -685,6 +689,8 @@ export function GalleryGrid() {
   const swipeStartXRef = useRef(0)
   const swipeStartYRef = useRef(0)
   const isSwipingRef = useRef(false)
+  const swipeTouchActiveRef = useRef(false)
+  const isSliderDraggingRef = useRef(false)
 
   // Pinch-to-zoom state
   const [zoomScale, setZoomScale] = useState(1)
@@ -793,17 +799,22 @@ export function GalleryGrid() {
 
   useEffect(() => {
     if (selectedProject) {
+      const scrollY = window.scrollY
       document.addEventListener('keydown', handleKeyDown)
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
       document.documentElement.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        document.documentElement.style.overflow = ''
+        window.scrollTo(0, scrollY)
+      }
     }
   }, [selectedProject, handleKeyDown])
 
@@ -836,6 +847,10 @@ export function GalleryGrid() {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-1 sm:px-4 py-4 overscroll-none"
             onClick={() => {
+              if (isSliderDraggingRef.current) {
+                isSliderDraggingRef.current = false
+                return
+              }
               if (!isSwipingRef.current) {
                 resetZoom()
                 setSelectedProject(null)
@@ -847,26 +862,15 @@ export function GalleryGrid() {
                 swipeStartXRef.current = e.touches[0].clientX
                 swipeStartYRef.current = e.touches[0].clientY
                 isSwipingRef.current = false
+                swipeTouchActiveRef.current = true
               }
             }}
             onTouchEnd={(e) => {
+              if (!swipeTouchActiveRef.current) return
+              swipeTouchActiveRef.current = false
               if (zoomScale > 1 || isPinchingRef.current) return
               const deltaX = e.changedTouches[0].clientX - swipeStartXRef.current
               const deltaY = e.changedTouches[0].clientY - swipeStartYRef.current
-              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-                isSwipingRef.current = true
-                if (deltaX > 0) goToPrevious()
-                else goToNext()
-              }
-            }}
-            onMouseDown={(e) => {
-              swipeStartXRef.current = e.clientX
-              swipeStartYRef.current = e.clientY
-              isSwipingRef.current = false
-            }}
-            onMouseUp={(e) => {
-              const deltaX = e.clientX - swipeStartXRef.current
-              const deltaY = e.clientY - swipeStartYRef.current
               if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
                 isSwipingRef.current = true
                 if (deltaX > 0) goToPrevious()
@@ -915,6 +919,7 @@ export function GalleryGrid() {
                 title={t(`projects.${selectedProject.project.titleKey}`)}
                 initialPosition={selectedProject.initialPosition}
                 initialPaused={selectedProject.initialPaused}
+                isSliderDraggingRef={isSliderDraggingRef}
               />
             </motion.div>
 

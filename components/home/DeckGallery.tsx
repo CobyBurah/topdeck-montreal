@@ -203,7 +203,7 @@ function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; 
 export function DeckGallery() {
   const t = useTranslations('deckGallery')
   const locale = useLocale()
-  const [isPaused, setIsPaused] = useState(false)
+  const isPausedRef = useRef(false)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
   const [hasDragged, setHasDragged] = useState(false)
@@ -353,17 +353,22 @@ export function DeckGallery() {
 
   useEffect(() => {
     if (selectedImage) {
+      const scrollY = window.scrollY
       document.addEventListener('keydown', handleKeyDown)
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
       document.documentElement.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        document.documentElement.style.overflow = ''
+        window.scrollTo(0, scrollY)
+      }
     }
   }, [selectedImage, handleKeyDown])
 
@@ -383,7 +388,10 @@ export function DeckGallery() {
     const deltaY = Math.abs(e.pageY - startYRef.current)
     if (deltaX > 5 || deltaY > 5) {
       setHasDragged(true)
-      if (deltaX > 5) setIsPaused(true)
+      if (deltaX > 5) {
+        isPausedRef.current = true
+        scheduleResume()
+      }
     }
 
     const x = e.pageX - (containerRef.current.offsetLeft || 0)
@@ -412,13 +420,19 @@ export function DeckGallery() {
       setSelectedImage(clickedImageRef.current)
     }
     setIsDragging(false)
-    setIsPaused(false)
+    if (containerRef.current) {
+      scrollPosRef.current = containerRef.current.scrollLeft
+    }
+    isPausedRef.current = false
     clickedImageRef.current = null
   }
 
   const handleMouseLeave = () => {
     setIsDragging(false)
-    setIsPaused(false)
+    if (containerRef.current) {
+      scrollPosRef.current = containerRef.current.scrollLeft
+    }
+    isPausedRef.current = false
     clickedImageRef.current = null
   }
 
@@ -438,7 +452,10 @@ export function DeckGallery() {
     const deltaY = Math.abs(e.touches[0].pageY - startYRef.current)
     if (deltaX > 5 || deltaY > 5) {
       setHasDragged(true)
-      if (deltaX > 5) setIsPaused(true)
+      if (deltaX > 5) {
+        isPausedRef.current = true
+        scheduleResume()
+      }
     }
   }
 
@@ -447,7 +464,10 @@ export function DeckGallery() {
       trackGalleryOpen(clickedImageRef.current.title)
       setSelectedImage(clickedImageRef.current)
     }
-    setIsPaused(false)
+    if (containerRef.current) {
+      scrollPosRef.current = containerRef.current.scrollLeft
+    }
+    isPausedRef.current = false
     clickedImageRef.current = null
   }
 
@@ -455,12 +475,16 @@ export function DeckGallery() {
     // Only pause on horizontal scroll (intentional gallery interaction),
     // not vertical page scrolling
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      setIsPaused(true)
+      isPausedRef.current = true
+      scheduleResume()
     }
   }
 
   // Normalize on every native scroll event (covers touch + wheel scrolling)
   const handleScroll = () => {
+    // Only normalize during user interaction; the animation loop handles its own wrapping
+    if (!isPausedRef.current) return
+
     const oneSetWidth = oneSetWidthRef.current
     if (!containerRef.current || oneSetWidth === 0) return
 
@@ -479,7 +503,10 @@ export function DeckGallery() {
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
-      setIsPaused(false)
+      if (containerRef.current) {
+        scrollPosRef.current = containerRef.current.scrollLeft
+      }
+      isPausedRef.current = false
     }, 3000)
   }, [])
 
@@ -514,17 +541,16 @@ export function DeckGallery() {
     return () => window.removeEventListener('resize', handleResize)
   }, [measureOneSetWidth])
 
-  // Auto-scroll effect with seamless wrap
+  // Auto-scroll effect with seamless wrap — runs for entire component lifetime
   useEffect(() => {
-    if (isPaused || !containerRef.current) return
-
     const container = containerRef.current
-    scrollPosRef.current = container.scrollLeft
+    if (!container) return
+
     let animationId: number
 
     const scroll = () => {
-      // Skip scrolling when not visible (saves CPU)
-      if (!isVisibleRef.current) {
+      // When paused or not visible, keep the loop alive but skip advancing
+      if (isPausedRef.current || !isVisibleRef.current) {
         animationId = requestAnimationFrame(scroll)
         return
       }
@@ -542,18 +568,12 @@ export function DeckGallery() {
     }
 
     animationId = requestAnimationFrame(scroll)
-    return () => cancelAnimationFrame(animationId)
-  }, [isPaused])
-
-  // When paused by user interaction, auto-resume after 3 seconds
-  useEffect(() => {
-    if (isPaused) {
-      scheduleResume()
-    }
     return () => {
+      cancelAnimationFrame(animationId)
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     }
-  }, [isPaused, scheduleResume])
+  }, [])
+
 
   return (
     <section ref={sectionRef} className="pt-10 pb-6 bg-secondary-50 overflow-hidden">
@@ -681,6 +701,7 @@ export function DeckGallery() {
 
             {/* Image container */}
             <motion.div
+              ref={zoomContainerRef}
               key={selectedImage.id}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -691,16 +712,12 @@ export function DeckGallery() {
               onTouchStart={handleImageTouchStart}
               onTouchMove={handleImageTouchMove}
               onTouchEnd={handleImageTouchEnd}
+              style={{
+                transform: `scale(${zoomScale}) translate(${zoomTranslate.x}px, ${zoomTranslate.y}px)`,
+                transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+              }}
             >
-              <div
-                ref={zoomContainerRef}
-                className="relative w-full aspect-[4/3] rounded-xl overflow-hidden"
-                style={{
-                  transform: `scale(${zoomScale}) translate(${zoomTranslate.x}px, ${zoomTranslate.y}px)`,
-                  transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
-                  touchAction: zoomScale > 1 ? 'none' : 'pan-y',
-                }}
-              >
+              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
                 <Image
                   src={selectedImage.src}
                   alt={selectedImage.alt}

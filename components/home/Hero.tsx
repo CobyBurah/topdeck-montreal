@@ -20,13 +20,13 @@ export function Hero() {
 
   // Parallax: background moves slower than scroll
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
-  const springY = useSpring(y, { stiffness: 100, damping: 30 })
+  const springY = useSpring(y, { stiffness: 200, damping: 50 })
 
   return (
     <section ref={ref} className="relative h-[calc(92vh-80px)] md:h-[calc(100vh-80px)] w-full overflow-hidden pt-20">
       {/* Parallax background image */}
       <motion.div
-        className="absolute inset-0 -top-[10%] -bottom-[10%]"
+        className="absolute inset-0 -top-[10%] -bottom-[10%] will-change-transform"
         style={shouldReduceMotion ? {} : { y: springY }}
       >
         <Image
