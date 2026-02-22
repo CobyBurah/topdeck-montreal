@@ -218,6 +218,20 @@ export function DeckGallery() {
   const clickedImageRef = useRef<GalleryImage | null>(null)
   const isVisibleRef = useRef(true)
 
+  // Fullscreen swipe refs
+  const swipeStartXRef = useRef(0)
+  const swipeStartYRef = useRef(0)
+  const isSwipingRef = useRef(false)
+
+  // Pinch-to-zoom state
+  const [zoomScale, setZoomScale] = useState(1)
+  const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 })
+  const initialPinchDistRef = useRef(0)
+  const initialScaleRef = useRef(1)
+  const isPinchingRef = useRef(false)
+  const panStartRef = useRef({ x: 0, y: 0 })
+  const panTranslateRef = useRef({ x: 0, y: 0 })
+
   // Track visibility with IntersectionObserver
   useEffect(() => {
     const section = sectionRef.current
@@ -239,22 +253,79 @@ export function DeckGallery() {
     ? galleryImages.findIndex(img => img.id === selectedImage.id)
     : -1
 
+  // Reset zoom when changing images
+  const resetZoom = useCallback(() => {
+    setZoomScale(1)
+    setZoomTranslate({ x: 0, y: 0 })
+    panTranslateRef.current = { x: 0, y: 0 }
+  }, [])
+
   // Navigate to previous/next image
   const goToPrevious = useCallback(() => {
+    resetZoom()
     if (currentIndex > 0) {
       setSelectedImage(galleryImages[currentIndex - 1])
     } else if (currentIndex === 0) {
       setSelectedImage(galleryImages[galleryImages.length - 1])
     }
-  }, [currentIndex])
+  }, [currentIndex, resetZoom])
 
   const goToNext = useCallback(() => {
+    resetZoom()
     if (currentIndex < galleryImages.length - 1) {
       setSelectedImage(galleryImages[currentIndex + 1])
     } else if (currentIndex === galleryImages.length - 1) {
       setSelectedImage(galleryImages[0])
     }
-  }, [currentIndex])
+  }, [currentIndex, resetZoom])
+
+  // Pinch-to-zoom handlers for the image container
+  const handleImageTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      e.preventDefault()
+      isPinchingRef.current = true
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      initialPinchDistRef.current = Math.hypot(dx, dy)
+      initialScaleRef.current = zoomScale
+    } else if (e.touches.length === 1 && zoomScale > 1) {
+      // Start panning when zoomed
+      panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
+
+  const handleImageTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2 && isPinchingRef.current) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.hypot(dx, dy)
+      const newScale = Math.min(3, Math.max(1, initialScaleRef.current * (dist / initialPinchDistRef.current)))
+      setZoomScale(newScale)
+      if (newScale === 1) {
+        setZoomTranslate({ x: 0, y: 0 })
+        panTranslateRef.current = { x: 0, y: 0 }
+      }
+    } else if (e.touches.length === 1 && zoomScale > 1 && !isPinchingRef.current) {
+      // Pan when zoomed
+      const dx = e.touches[0].clientX - panStartRef.current.x
+      const dy = e.touches[0].clientY - panStartRef.current.y
+      setZoomTranslate({
+        x: panTranslateRef.current.x + dx,
+        y: panTranslateRef.current.y + dy,
+      })
+    }
+  }, [zoomScale])
+
+  const handleImageTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length < 2) {
+      isPinchingRef.current = false
+    }
+    if (e.touches.length === 0 && zoomScale > 1) {
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -538,45 +609,58 @@ export function DeckGallery() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overscroll-none touch-none"
-            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-1 sm:px-4 py-4 overscroll-none"
+            onClick={() => {
+              if (!isSwipingRef.current) {
+                resetZoom()
+                setSelectedImage(null)
+              }
+              isSwipingRef.current = false
+            }}
+            onTouchStart={(e) => {
+              if (e.touches.length === 1) {
+                swipeStartXRef.current = e.touches[0].clientX
+                swipeStartYRef.current = e.touches[0].clientY
+                isSwipingRef.current = false
+              }
+            }}
+            onTouchEnd={(e) => {
+              if (zoomScale > 1 || isPinchingRef.current) return
+              const deltaX = e.changedTouches[0].clientX - swipeStartXRef.current
+              const deltaY = e.changedTouches[0].clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
+            onMouseDown={(e) => {
+              swipeStartXRef.current = e.clientX
+              swipeStartYRef.current = e.clientY
+              isSwipingRef.current = false
+            }}
+            onMouseUp={(e) => {
+              const deltaX = e.clientX - swipeStartXRef.current
+              const deltaY = e.clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
           >
             {/* Close button */}
             <button
               className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white transition-colors"
-              onClick={() => setSelectedImage(null)}
+              onClick={(e) => {
+                e.stopPropagation()
+                resetZoom()
+                setSelectedImage(null)
+              }}
               aria-label="Close"
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Previous button */}
-            <button
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                goToPrevious()
-              }}
-              aria-label="Previous image"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            {/* Next button */}
-            <button
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                goToNext()
-              }}
-              aria-label="Next image"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
 
@@ -587,10 +671,20 @@ export function DeckGallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-5xl px-4"
+              className="w-full max-w-5xl"
               onClick={(e) => e.stopPropagation()}
+              onTouchStart={handleImageTouchStart}
+              onTouchMove={handleImageTouchMove}
+              onTouchEnd={handleImageTouchEnd}
             >
-              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
+              <div
+                className="relative w-full aspect-[4/3] rounded-xl overflow-hidden"
+                style={{
+                  transform: `scale(${zoomScale}) translate(${zoomTranslate.x / zoomScale}px, ${zoomTranslate.y / zoomScale}px)`,
+                  transformOrigin: 'center center',
+                  touchAction: zoomScale > 1 ? 'none' : 'pan-y',
+                }}
+              >
                 <Image
                   src={selectedImage.src}
                   alt={selectedImage.alt}
@@ -603,18 +697,44 @@ export function DeckGallery() {
               </div>
             </motion.div>
 
-            {/* Image title and counter */}
+            {/* Bottom navigation bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.2, delay: 0.1 }}
-              className="absolute bottom-6 left-0 right-0 text-center"
+              className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center gap-3 px-4"
             >
-              <span className="inline-flex flex-col items-center bg-black/50 backdrop-blur-sm rounded-full px-5 py-2">
-                <p className="text-white text-lg font-medium">{selectedImage.title}</p>
+              <button
+                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToPrevious()
+                }}
+                aria-label="Previous image"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <span className="inline-flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2">
+                <p className="text-white text-lg font-medium text-center">{selectedImage.title}</p>
                 <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {galleryImages.length}</p>
               </span>
+
+              <button
+                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToNext()
+                }}
+                aria-label="Next image"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </motion.div>
           </motion.div>
         )}

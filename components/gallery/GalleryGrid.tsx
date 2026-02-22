@@ -631,13 +631,13 @@ function FullscreenSlider({
 
       {/* Labels */}
       <div
-        className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-sm rounded-lg text-white font-medium transition-opacity duration-300"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1.5 sm:px-4 sm:py-2 bg-black/60 backdrop-blur-sm rounded-lg text-white text-sm sm:text-base font-medium transition-opacity duration-300"
         style={{ opacity: sliderPosition > 20 ? 1 : 0 }}
       >
         {beforeLabel}
       </div>
       <div
-        className="absolute top-6 right-6 px-4 py-2 bg-primary-500 backdrop-blur-sm rounded-lg text-white font-medium transition-opacity duration-300"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary-500 backdrop-blur-sm rounded-lg text-white text-sm sm:text-base font-medium transition-opacity duration-300"
         style={{ opacity: sliderPosition < 80 ? 1 : 0 }}
       >
         {afterLabel}
@@ -678,25 +678,93 @@ export function GalleryGrid() {
   const t = useTranslations('galleryPage')
   const [selectedProject, setSelectedProject] = useState<{ project: BeforeAfterProject; initialPosition: number; initialPaused: boolean } | null>(null)
 
+  // Fullscreen swipe refs
+  const swipeStartXRef = useRef(0)
+  const swipeStartYRef = useRef(0)
+  const isSwipingRef = useRef(false)
+
+  // Pinch-to-zoom state
+  const [zoomScale, setZoomScale] = useState(1)
+  const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 })
+  const initialPinchDistRef = useRef(0)
+  const initialScaleRef = useRef(1)
+  const isPinchingRef = useRef(false)
+  const panStartRef = useRef({ x: 0, y: 0 })
+  const panTranslateRef = useRef({ x: 0, y: 0 })
+
   const currentIndex = selectedProject
     ? projects.findIndex(p => p.id === selectedProject.project.id)
     : -1
 
+  const resetZoom = useCallback(() => {
+    setZoomScale(1)
+    setZoomTranslate({ x: 0, y: 0 })
+    panTranslateRef.current = { x: 0, y: 0 }
+  }, [])
+
   const goToPrevious = useCallback(() => {
+    resetZoom()
     if (currentIndex > 0) {
       setSelectedProject(prev => prev ? { project: projects[currentIndex - 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     } else if (currentIndex === 0) {
       setSelectedProject(prev => prev ? { project: projects[projects.length - 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     }
-  }, [currentIndex])
+  }, [currentIndex, resetZoom])
 
   const goToNext = useCallback(() => {
+    resetZoom()
     if (currentIndex < projects.length - 1) {
       setSelectedProject(prev => prev ? { project: projects[currentIndex + 1], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     } else if (currentIndex === projects.length - 1) {
       setSelectedProject(prev => prev ? { project: projects[0], initialPosition: prev.initialPosition, initialPaused: prev.initialPaused } : null)
     }
-  }, [currentIndex])
+  }, [currentIndex, resetZoom])
+
+  // Pinch-to-zoom handlers for the slider container
+  const handleImageTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      e.preventDefault()
+      isPinchingRef.current = true
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      initialPinchDistRef.current = Math.hypot(dx, dy)
+      initialScaleRef.current = zoomScale
+    } else if (e.touches.length === 1 && zoomScale > 1) {
+      panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
+
+  const handleImageTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2 && isPinchingRef.current) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.hypot(dx, dy)
+      const newScale = Math.min(3, Math.max(1, initialScaleRef.current * (dist / initialPinchDistRef.current)))
+      setZoomScale(newScale)
+      if (newScale === 1) {
+        setZoomTranslate({ x: 0, y: 0 })
+        panTranslateRef.current = { x: 0, y: 0 }
+      }
+    } else if (e.touches.length === 1 && zoomScale > 1 && !isPinchingRef.current) {
+      const dx = e.touches[0].clientX - panStartRef.current.x
+      const dy = e.touches[0].clientY - panStartRef.current.y
+      setZoomTranslate({
+        x: panTranslateRef.current.x + dx,
+        y: panTranslateRef.current.y + dy,
+      })
+    }
+  }, [zoomScale])
+
+  const handleImageTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length < 2) {
+      isPinchingRef.current = false
+    }
+    if (e.touches.length === 0 && zoomScale > 1) {
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -751,45 +819,58 @@ export function GalleryGrid() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 overscroll-none touch-none"
-            onClick={() => setSelectedProject(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-1 sm:px-4 py-4 overscroll-none"
+            onClick={() => {
+              if (!isSwipingRef.current) {
+                resetZoom()
+                setSelectedProject(null)
+              }
+              isSwipingRef.current = false
+            }}
+            onTouchStart={(e) => {
+              if (e.touches.length === 1) {
+                swipeStartXRef.current = e.touches[0].clientX
+                swipeStartYRef.current = e.touches[0].clientY
+                isSwipingRef.current = false
+              }
+            }}
+            onTouchEnd={(e) => {
+              if (zoomScale > 1 || isPinchingRef.current) return
+              const deltaX = e.changedTouches[0].clientX - swipeStartXRef.current
+              const deltaY = e.changedTouches[0].clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
+            onMouseDown={(e) => {
+              swipeStartXRef.current = e.clientX
+              swipeStartYRef.current = e.clientY
+              isSwipingRef.current = false
+            }}
+            onMouseUp={(e) => {
+              const deltaX = e.clientX - swipeStartXRef.current
+              const deltaY = e.clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
           >
             {/* Close button */}
             <button
               className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white transition-colors"
-              onClick={() => setSelectedProject(null)}
+              onClick={(e) => {
+                e.stopPropagation()
+                resetZoom()
+                setSelectedProject(null)
+              }}
               aria-label="Close"
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {/* Previous button */}
-            <button
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                goToPrevious()
-              }}
-              aria-label="Previous project"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            {/* Next button */}
-            <button
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                goToNext()
-              }}
-              aria-label="Next project"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
 
@@ -800,7 +881,14 @@ export function GalleryGrid() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-full max-w-5xl px-4"
+              className="w-full max-w-5xl"
+              onTouchStart={handleImageTouchStart}
+              onTouchMove={handleImageTouchMove}
+              onTouchEnd={handleImageTouchEnd}
+              style={{
+                transform: `scale(${zoomScale}) translate(${zoomTranslate.x / zoomScale}px, ${zoomTranslate.y / zoomScale}px)`,
+                transformOrigin: 'center center',
+              }}
             >
               <FullscreenSlider
                 project={selectedProject.project}
@@ -814,18 +902,44 @@ export function GalleryGrid() {
               />
             </motion.div>
 
-            {/* Title and counter */}
+            {/* Bottom navigation bar */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.2, delay: 0.1 }}
-              className="absolute bottom-6 left-0 right-0 text-center"
+              className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex items-center justify-center gap-3 px-4"
             >
-              <span className="inline-flex flex-col items-center bg-black/50 backdrop-blur-sm rounded-full px-5 py-2">
-                <p className="text-white text-lg font-medium">{t(`projects.${selectedProject.project.titleKey}`)}</p>
+              <button
+                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToPrevious()
+                }}
+                aria-label="Previous project"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <span className="inline-flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2">
+                <p className="text-white text-lg font-medium text-center">{t(`projects.${selectedProject.project.titleKey}`)}</p>
                 <p className="text-white/60 text-sm mt-1">{currentIndex + 1} / {projects.length}</p>
               </span>
+
+              <button
+                className="p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToNext()
+                }}
+                aria-label="Next project"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </motion.div>
           </motion.div>
         )}
