@@ -367,7 +367,11 @@ export function DeckGallery() {
         document.body.style.width = ''
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
-        window.scrollTo({ top: scrollY, behavior: 'instant' })
+        document.documentElement.style.scrollBehavior = 'auto'
+        window.scrollTo(0, scrollY)
+        requestAnimationFrame(() => {
+          document.documentElement.style.scrollBehavior = ''
+        })
       }
     }
   }, [selectedImage, handleKeyDown])
@@ -441,6 +445,8 @@ export function DeckGallery() {
   }
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    isPausedRef.current = true
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     setHasDragged(false)
     startXRef.current = e.touches[0].pageX
     startYRef.current = e.touches[0].pageY
@@ -501,11 +507,8 @@ export function DeckGallery() {
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
-      if (containerRef.current) {
-        scrollPosRef.current = containerRef.current.scrollLeft
-      }
       isPausedRef.current = false
-    }, 3000)
+    }, 2000)
   }, [])
 
   // Measure the width of one set of images (SET A) from the top row
@@ -545,23 +548,27 @@ export function DeckGallery() {
     if (!container) return
 
     let animationId: number
+    let lastTime = performance.now()
 
-    const scroll = () => {
-      // When paused or not visible, keep the loop alive but skip advancing
-      if (isPausedRef.current || !isVisibleRef.current) {
+    const scroll = (time: DOMHighResTimeStamp) => {
+      const deltaTime = time - lastTime
+      lastTime = time
+
+      if (isPausedRef.current) {
         animationId = requestAnimationFrame(scroll)
         return
       }
 
       const oneSetWidth = oneSetWidthRef.current
-      scrollPosRef.current += 0.5
-
-      // Seamless wrap: when entering SET C, jump back to same position in SET B
-      if (oneSetWidth > 0 && scrollPosRef.current >= oneSetWidth * 2) {
-        scrollPosRef.current -= oneSetWidth
+      if (oneSetWidth > 0) {
+        const speedPerMs = 30 / 1000
+        scrollPosRef.current += speedPerMs * deltaTime
+        if (scrollPosRef.current >= oneSetWidth * 2) {
+          scrollPosRef.current -= oneSetWidth
+        }
+        container.scrollLeft = scrollPosRef.current
       }
 
-      container.scrollLeft = scrollPosRef.current
       animationId = requestAnimationFrame(scroll)
     }
 

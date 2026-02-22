@@ -813,7 +813,11 @@ export function GalleryGrid() {
         document.body.style.width = ''
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
-        window.scrollTo({ top: scrollY, behavior: 'instant' })
+        document.documentElement.style.scrollBehavior = 'auto'
+        window.scrollTo(0, scrollY)
+        requestAnimationFrame(() => {
+          document.documentElement.style.scrollBehavior = ''
+        })
       }
     }
   }, [selectedProject, handleKeyDown])
