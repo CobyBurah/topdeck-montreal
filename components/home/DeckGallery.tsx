@@ -175,6 +175,8 @@ const bottomRowImages = galleryImages.filter((_, i) => i % 2 === 1)
 const tripledTopRow = [...topRowImages, ...topRowImages, ...topRowImages]
 const tripledBottomRow = [...bottomRowImages, ...bottomRowImages, ...bottomRowImages]
 
+const BOTTOM_ROW_OFFSET = 140
+
 function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; onMouseDown: () => void; onTouchStart: () => void }) {
   return (
     <div
@@ -200,24 +202,50 @@ function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; 
   )
 }
 
+// Keep offset in range [oneSetWidth, 2 * oneSetWidth) for seamless looping
+function normalizeOffset(offset: number, oneSetWidth: number): number {
+  if (oneSetWidth <= 0) return offset
+  while (offset >= oneSetWidth * 2) offset -= oneSetWidth
+  while (offset < oneSetWidth) offset += oneSetWidth
+  return offset
+}
+
 export function DeckGallery() {
   const t = useTranslations('deckGallery')
   const locale = useLocale()
+
+  // --- Gallery scroll state (translateX-based) ---
   const isPausedRef = useRef(false)
-  const [isDragging, setIsDragging] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
-  const [hasDragged, setHasDragged] = useState(false)
+  const topOffsetRef = useRef(0)
+  const bottomOffsetRef = useRef(0)
+  const oneSetWidthRef = useRef(0)
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // --- DOM refs ---
   const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const topRowRef = useRef<HTMLDivElement>(null)
+  const bottomRowRef = useRef<HTMLDivElement>(null)
+
+  // --- Drag state ---
+  const [isDragging, setIsDragging] = useState(false)
+  const [hasDragged, setHasDragged] = useState(false)
   const startXRef = useRef(0)
   const startYRef = useRef(0)
-  const scrollLeftRef = useRef(0)
-  const scrollPosRef = useRef(0)
-  const oneSetWidthRef = useRef(0)
-  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const startOffsetTopRef = useRef(0)
+  const startOffsetBottomRef = useRef(0)
+  const isHorizontalDragRef = useRef<boolean | null>(null)
   const clickedImageRef = useRef<GalleryImage | null>(null)
   const isVisibleRef = useRef(true)
+
+  // --- Momentum/inertia state ---
+  const lastDragXRef = useRef(0)
+  const lastDragTimeRef = useRef(0)
+  const velocityRef = useRef(0)
+  const momentumIdRef = useRef<number | null>(null)
+
+  // --- Lightbox state ---
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null)
 
   // Fullscreen swipe refs
   const swipeStartXRef = useRef(0)
@@ -234,6 +262,16 @@ export function DeckGallery() {
   const panStartRef = useRef({ x: 0, y: 0 })
   const panTranslateRef = useRef({ x: 0, y: 0 })
   const zoomContainerRef = useRef<HTMLDivElement>(null)
+
+  // Apply current offsets to row transforms
+  const applyTransforms = useCallback(() => {
+    if (topRowRef.current) {
+      topRowRef.current.style.transform = `translateX(${-topOffsetRef.current}px)`
+    }
+    if (bottomRowRef.current) {
+      bottomRowRef.current.style.transform = `translateX(${-bottomOffsetRef.current}px)`
+    }
+  }, [])
 
   // Track visibility with IntersectionObserver
   useEffect(() => {
@@ -292,7 +330,6 @@ export function DeckGallery() {
       const dy = e.touches[0].clientY - e.touches[1].clientY
       initialPinchDistRef.current = Math.hypot(dx, dy)
       initialScaleRef.current = zoomScale
-      // Set transform origin to pinch midpoint
       if (zoomContainerRef.current) {
         const rect = zoomContainerRef.current.getBoundingClientRect()
         const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2
@@ -321,7 +358,6 @@ export function DeckGallery() {
         panTranslateRef.current = { x: 0, y: 0 }
       }
     } else if (e.touches.length === 1 && zoomScale > 1 && !isPinchingRef.current) {
-      // Pan when zoomed
       const dx = e.touches[0].clientX - panStartRef.current.x
       const dy = e.touches[0].clientY - panStartRef.current.y
       setZoomTranslate({
@@ -368,7 +404,6 @@ export function DeckGallery() {
         document.body.style.overflow = ''
         document.documentElement.style.overflow = ''
 
-        // Force Safari to respect the instant jump
         document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important')
         window.scrollTo(0, scrollY)
 
@@ -379,46 +414,96 @@ export function DeckGallery() {
     }
   }, [selectedImage, handleKeyDown])
 
+  // --- Stop any running momentum animation ---
+  const stopMomentum = useCallback(() => {
+    if (momentumIdRef.current) {
+      cancelAnimationFrame(momentumIdRef.current)
+      momentumIdRef.current = null
+    }
+  }, [])
+
+  // --- Schedule resume after user interaction ---
+  const scheduleResume = useCallback(() => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = setTimeout(() => {
+      const oneSetWidth = oneSetWidthRef.current
+      if (oneSetWidth > 0) {
+        topOffsetRef.current = normalizeOffset(topOffsetRef.current, oneSetWidth)
+        bottomOffsetRef.current = normalizeOffset(bottomOffsetRef.current, oneSetWidth)
+        applyTransforms()
+      }
+      isPausedRef.current = false
+    }, 2000)
+  }, [applyTransforms])
+
+  // --- Momentum deceleration after drag release ---
+  const startMomentum = useCallback(() => {
+    stopMomentum()
+
+    let velocity = velocityRef.current // px/ms (negative = dragging left / content moves right)
+    let lastTime = performance.now()
+
+    const step = (time: DOMHighResTimeStamp) => {
+      const dt = time - lastTime
+      lastTime = time
+
+      velocity *= 0.95 // friction per frame
+
+      if (Math.abs(velocity) < 0.01) {
+        momentumIdRef.current = null
+        scheduleResume()
+        return
+      }
+
+      const frameDelta = velocity * dt
+      topOffsetRef.current -= frameDelta
+      bottomOffsetRef.current -= frameDelta
+      applyTransforms()
+
+      momentumIdRef.current = requestAnimationFrame(step)
+    }
+
+    momentumIdRef.current = requestAnimationFrame(step)
+  }, [applyTransforms, scheduleResume, stopMomentum])
+
+  // --- Mouse drag handlers ---
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
     setHasDragged(false)
-    startXRef.current = e.pageX
-    startYRef.current = e.pageY
-    scrollLeftRef.current = containerRef.current?.scrollLeft || 0
+    stopMomentum()
+    startXRef.current = e.clientX
+    startYRef.current = e.clientY
+    startOffsetTopRef.current = topOffsetRef.current
+    startOffsetBottomRef.current = bottomOffsetRef.current
+    lastDragXRef.current = e.clientX
+    lastDragTimeRef.current = performance.now()
+    velocityRef.current = 0
+    isPausedRef.current = true
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !containerRef.current) return
+    if (!isDragging) return
     e.preventDefault()
 
-    const deltaX = Math.abs(e.pageX - startXRef.current)
-    const deltaY = Math.abs(e.pageY - startYRef.current)
-    if (deltaX > 5 || deltaY > 5) {
+    const deltaX = e.clientX - startXRef.current
+
+    if (Math.abs(deltaX) > 5 || Math.abs(e.clientY - startYRef.current) > 5) {
       setHasDragged(true)
-      if (deltaX > 5) {
-        isPausedRef.current = true
-        scheduleResume()
-      }
     }
 
-    const x = e.pageX - (containerRef.current.offsetLeft || 0)
-    const startX = startXRef.current - (containerRef.current.offsetLeft || 0)
-    const walk = (x - startX) * 2
-    containerRef.current.scrollLeft = scrollLeftRef.current - walk
-
-    // Normalize during drag to prevent reaching edges
-    const oneSetWidth = oneSetWidthRef.current
-    if (oneSetWidth > 0) {
-      const pos = containerRef.current.scrollLeft
-      if (pos >= oneSetWidth * 2) {
-        containerRef.current.scrollLeft = pos - oneSetWidth
-        scrollLeftRef.current -= oneSetWidth
-      } else if (pos < oneSetWidth) {
-        containerRef.current.scrollLeft = pos + oneSetWidth
-        scrollLeftRef.current += oneSetWidth
-      }
-      scrollPosRef.current = containerRef.current.scrollLeft
+    // Track velocity
+    const now = performance.now()
+    const dt = now - lastDragTimeRef.current
+    if (dt > 0) {
+      velocityRef.current = (e.clientX - lastDragXRef.current) / dt
     }
+    lastDragXRef.current = e.clientX
+    lastDragTimeRef.current = now
+
+    topOffsetRef.current = startOffsetTopRef.current - deltaX
+    bottomOffsetRef.current = startOffsetBottomRef.current - deltaX
+    applyTransforms()
   }
 
   const handleMouseUp = () => {
@@ -427,45 +512,45 @@ export function DeckGallery() {
       setSelectedImage(clickedImageRef.current)
     }
     setIsDragging(false)
-    if (containerRef.current) {
-      scrollPosRef.current = containerRef.current.scrollLeft
-    }
-    isPausedRef.current = false
     clickedImageRef.current = null
+
+    if (hasDragged && Math.abs(velocityRef.current) > 0.1) {
+      startMomentum()
+    } else {
+      scheduleResume()
+    }
   }
 
   const handleMouseLeave = () => {
-    setIsDragging(false)
-    if (containerRef.current) {
-      scrollPosRef.current = containerRef.current.scrollLeft
+    if (isDragging) {
+      setIsDragging(false)
+      clickedImageRef.current = null
+      if (hasDragged && Math.abs(velocityRef.current) > 0.1) {
+        startMomentum()
+      } else {
+        scheduleResume()
+      }
     }
-    isPausedRef.current = false
-    clickedImageRef.current = null
   }
 
   const handleImageMouseDown = (image: GalleryImage) => {
     clickedImageRef.current = image
   }
 
+  // --- Touch handlers ---
   const handleTouchStart = (e: React.TouchEvent) => {
+    stopMomentum()
     isPausedRef.current = true
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     setHasDragged(false)
-    startXRef.current = e.touches[0].pageX
-    startYRef.current = e.touches[0].pageY
-    scrollLeftRef.current = containerRef.current?.scrollLeft || 0
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const deltaX = Math.abs(e.touches[0].pageX - startXRef.current)
-    const deltaY = Math.abs(e.touches[0].pageY - startYRef.current)
-    if (deltaX > 5 || deltaY > 5) {
-      setHasDragged(true)
-      if (deltaX > 5) {
-        isPausedRef.current = true
-        scheduleResume()
-      }
-    }
+    isHorizontalDragRef.current = null
+    startXRef.current = e.touches[0].clientX
+    startYRef.current = e.touches[0].clientY
+    startOffsetTopRef.current = topOffsetRef.current
+    startOffsetBottomRef.current = bottomOffsetRef.current
+    lastDragXRef.current = e.touches[0].clientX
+    lastDragTimeRef.current = performance.now()
+    velocityRef.current = 0
   }
 
   const handleTouchEnd = () => {
@@ -473,42 +558,82 @@ export function DeckGallery() {
       trackGalleryOpen(clickedImageRef.current.title)
       setSelectedImage(clickedImageRef.current)
     }
-    // Don't unpause here — let scheduleResume() handle it after momentum scrolling finishes.
-    // If user just tapped (no drag), animation was never paused so no action needed.
     clickedImageRef.current = null
-  }
+    isHorizontalDragRef.current = null
 
-  const handleWheel = (e: React.WheelEvent) => {
-    // Only pause on horizontal scroll (intentional gallery interaction),
-    // not vertical page scrolling
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      isPausedRef.current = true
+    if (hasDragged && Math.abs(velocityRef.current) > 0.1) {
+      startMomentum()
+    } else {
       scheduleResume()
     }
   }
 
-  const scheduleResume = useCallback(() => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
-    resumeTimerRef.current = setTimeout(() => {
-      if (containerRef.current) {
-        const oneSetWidth = oneSetWidthRef.current
-        let pos = containerRef.current.scrollLeft
+  // Register touchmove with { passive: false } to allow preventDefault on horizontal drags
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
 
-        // Normalize into the seamless range before resuming
-        if (oneSetWidth > 0) {
-          while (pos >= oneSetWidth * 2) pos -= oneSetWidth
-          while (pos < 0) pos += oneSetWidth
-          containerRef.current.scrollLeft = pos
+    const touchMoveHandler = (e: TouchEvent) => {
+      const deltaX = e.touches[0].clientX - startXRef.current
+      const deltaY = e.touches[0].clientY - startYRef.current
+
+      // Decide direction on first significant movement
+      if (isHorizontalDragRef.current === null) {
+        if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+          isHorizontalDragRef.current = Math.abs(deltaX) > Math.abs(deltaY)
         }
-
-        // CRITICAL FIX: Sync the animation loop's memory to the new physical scroll position
-        scrollPosRef.current = pos
       }
-      isPausedRef.current = false
-    }, 2000)
-  }, [])
 
-  // Measure the width of one set of images (SET A) from the top row
+      // Vertical: let page scroll normally
+      if (isHorizontalDragRef.current === false) return
+
+      // Horizontal: capture and move gallery
+      if (isHorizontalDragRef.current === true) {
+        e.preventDefault()
+        setHasDragged(true)
+
+        // Track velocity
+        const now = performance.now()
+        const dt = now - lastDragTimeRef.current
+        if (dt > 0) {
+          velocityRef.current = (e.touches[0].clientX - lastDragXRef.current) / dt
+        }
+        lastDragXRef.current = e.touches[0].clientX
+        lastDragTimeRef.current = now
+
+        topOffsetRef.current = startOffsetTopRef.current - deltaX
+        bottomOffsetRef.current = startOffsetBottomRef.current - deltaX
+        applyTransforms()
+      }
+    }
+
+    container.addEventListener('touchmove', touchMoveHandler, { passive: false })
+    return () => container.removeEventListener('touchmove', touchMoveHandler)
+  }, [applyTransforms])
+
+  // Register wheel handler with { passive: false } for horizontal trackpad swipe
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const wheelHandler = (e: WheelEvent) => {
+      // Only capture horizontal swipes (trackpad two-finger gesture)
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+
+      e.preventDefault()
+      stopMomentum()
+      isPausedRef.current = true
+      topOffsetRef.current += e.deltaX
+      bottomOffsetRef.current += e.deltaX
+      applyTransforms()
+      scheduleResume()
+    }
+
+    container.addEventListener('wheel', wheelHandler, { passive: false })
+    return () => container.removeEventListener('wheel', wheelHandler)
+  }, [applyTransforms, scheduleResume, stopMomentum])
+
+  // --- Measurement and initialization ---
   const measureOneSetWidth = useCallback(() => {
     if (!topRowRef.current) return
     const children = topRowRef.current.children
@@ -519,87 +644,88 @@ export function DeckGallery() {
     }
   }, [])
 
-  // On mount and resize: measure one-set width and position at SET B
   useEffect(() => {
     measureOneSetWidth()
-    if (containerRef.current && oneSetWidthRef.current > 0) {
-      containerRef.current.scrollLeft = oneSetWidthRef.current
-      scrollPosRef.current = oneSetWidthRef.current
+    if (oneSetWidthRef.current > 0) {
+      topOffsetRef.current = oneSetWidthRef.current
+      bottomOffsetRef.current = oneSetWidthRef.current + BOTTOM_ROW_OFFSET
+      applyTransforms()
     }
 
     const handleResize = () => {
       measureOneSetWidth()
-      if (containerRef.current && oneSetWidthRef.current > 0) {
-        containerRef.current.scrollLeft = oneSetWidthRef.current
-        scrollPosRef.current = oneSetWidthRef.current
+      if (oneSetWidthRef.current > 0) {
+        topOffsetRef.current = normalizeOffset(topOffsetRef.current, oneSetWidthRef.current)
+        bottomOffsetRef.current = normalizeOffset(bottomOffsetRef.current, oneSetWidthRef.current)
+        applyTransforms()
       }
     }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [measureOneSetWidth])
+  }, [measureOneSetWidth, applyTransforms])
 
-  // Auto-scroll effect with seamless wrap — runs for entire component lifetime
+  // --- Auto-scroll animation loop ---
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
     let animationId: number
     let lastTime = performance.now()
 
-    const scroll = (time: DOMHighResTimeStamp) => {
+    const animate = (time: DOMHighResTimeStamp) => {
       const deltaTime = time - lastTime
       lastTime = time
 
-      if (isPausedRef.current) {
-        animationId = requestAnimationFrame(scroll)
-        return
-      }
+      if (!isPausedRef.current && isVisibleRef.current && deltaTime < 200) {
+        const oneSetWidth = oneSetWidthRef.current
+        if (oneSetWidth > 0) {
+          const speed = 30 / 1000
+          const increment = speed * deltaTime
 
-      const oneSetWidth = oneSetWidthRef.current
-      if (oneSetWidth > 0) {
-        const speedPerMs = 30 / 1000
-        scrollPosRef.current += speedPerMs * deltaTime
-        if (scrollPosRef.current >= oneSetWidth * 2) {
-          scrollPosRef.current -= oneSetWidth
+          topOffsetRef.current += increment
+          bottomOffsetRef.current += increment
+
+          if (topOffsetRef.current >= oneSetWidth * 2) {
+            topOffsetRef.current -= oneSetWidth
+          }
+          if (bottomOffsetRef.current >= oneSetWidth * 2) {
+            bottomOffsetRef.current -= oneSetWidth
+          }
+
+          applyTransforms()
         }
-        container.scrollLeft = scrollPosRef.current
       }
 
-      animationId = requestAnimationFrame(scroll)
+      animationId = requestAnimationFrame(animate)
     }
 
-    animationId = requestAnimationFrame(scroll)
+    animationId = requestAnimationFrame(animate)
     return () => {
       cancelAnimationFrame(animationId)
       if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
+      if (momentumIdRef.current) cancelAnimationFrame(momentumIdRef.current)
     }
-  }, [])
+  }, [applyTransforms])
 
 
   return (
     <section ref={sectionRef} className="pt-10 pb-6 bg-secondary-50 overflow-hidden">
       <div
         ref={containerRef}
-        className="overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="overflow-hidden cursor-grab active:cursor-grabbing select-none"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onWheel={handleWheel}
       >
         {/* Top row */}
-        <div ref={topRowRef} className="flex gap-4 mb-4">
+        <div ref={topRowRef} className="flex gap-4 mb-4 will-change-transform">
           {tripledTopRow.map((image, idx) => (
             <ImageCard key={`top-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
         </div>
-        {/* Bottom row - offset for visual interest */}
-        <div className="flex gap-4 pl-[140px] md:pl-[160px]">
+        {/* Bottom row */}
+        <div ref={bottomRowRef} className="flex gap-4 will-change-transform">
           {tripledBottomRow.map((image, idx) => (
             <ImageCard key={`bottom-${idx}`} image={image} onMouseDown={() => handleImageMouseDown(image)} onTouchStart={() => handleImageMouseDown(image)} />
           ))}
@@ -630,12 +756,6 @@ export function DeckGallery() {
           </svg>
         </Link>
       </motion.div>
-
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
 
       {/* Fullscreen Lightbox Modal */}
       <AnimatePresence>
