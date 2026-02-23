@@ -263,8 +263,13 @@ export function DeckGallery() {
   const panTranslateRef = useRef({ x: 0, y: 0 })
   const zoomContainerRef = useRef<HTMLDivElement>(null)
 
-  // Apply current offsets to row transforms
+  // Normalize and apply current offsets to row transforms
   const applyTransforms = useCallback(() => {
+    const oneSetWidth = oneSetWidthRef.current
+    if (oneSetWidth > 0) {
+      topOffsetRef.current = normalizeOffset(topOffsetRef.current, oneSetWidth)
+      bottomOffsetRef.current = normalizeOffset(bottomOffsetRef.current, oneSetWidth)
+    }
     if (topRowRef.current) {
       topRowRef.current.style.transform = `translateX(${-topOffsetRef.current}px)`
     }
@@ -426,15 +431,9 @@ export function DeckGallery() {
   const scheduleResume = useCallback(() => {
     if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = setTimeout(() => {
-      const oneSetWidth = oneSetWidthRef.current
-      if (oneSetWidth > 0) {
-        topOffsetRef.current = normalizeOffset(topOffsetRef.current, oneSetWidth)
-        bottomOffsetRef.current = normalizeOffset(bottomOffsetRef.current, oneSetWidth)
-        applyTransforms()
-      }
       isPausedRef.current = false
     }, 2000)
-  }, [applyTransforms])
+  }, [])
 
   // --- Momentum deceleration after drag release ---
   const startMomentum = useCallback(() => {
@@ -654,11 +653,7 @@ export function DeckGallery() {
 
     const handleResize = () => {
       measureOneSetWidth()
-      if (oneSetWidthRef.current > 0) {
-        topOffsetRef.current = normalizeOffset(topOffsetRef.current, oneSetWidthRef.current)
-        bottomOffsetRef.current = normalizeOffset(bottomOffsetRef.current, oneSetWidthRef.current)
-        applyTransforms()
-      }
+      applyTransforms()
     }
 
     window.addEventListener('resize', handleResize)
@@ -682,14 +677,6 @@ export function DeckGallery() {
 
           topOffsetRef.current += increment
           bottomOffsetRef.current += increment
-
-          if (topOffsetRef.current >= oneSetWidth * 2) {
-            topOffsetRef.current -= oneSetWidth
-          }
-          if (bottomOffsetRef.current >= oneSetWidth * 2) {
-            bottomOffsetRef.current -= oneSetWidth
-          }
-
           applyTransforms()
         }
       }
