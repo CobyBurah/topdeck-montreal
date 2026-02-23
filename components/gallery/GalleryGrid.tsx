@@ -174,7 +174,6 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
   const [sliderPosition, setSliderPosition] = useState(0) // 0 = before, 100 = after
   const [isDragging, setIsDragging] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
@@ -339,10 +338,8 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
     >
       <div
         ref={containerRef}
-        className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
+        className="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
         onClick={handleCardClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Before image - full, visible on left side */}
         <div className="absolute inset-0">
@@ -410,33 +407,31 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
           <p className="text-white font-semibold text-lg">{title}</p>
         </div>
 
-        {/* Pause/Play button - visible on hover OR when paused */}
-        {(isHovered || isPaused) && (
-          <button
-            className="absolute bottom-4 right-4 z-20 px-3 py-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors flex items-center gap-2"
-            onClick={(e) => {
-              e.stopPropagation()
-              setIsPaused(!isPaused)
-            }}
-            aria-label={isPaused ? 'Play' : 'Pause'}
-          >
-            {isPaused ? (
-              <>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-                <span className="text-sm font-medium">{playLabel}</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                </svg>
-                <span className="text-sm font-medium">{pauseLabel}</span>
-              </>
-            )}
-          </button>
-        )}
+        {/* Pause/Play button - always visible on mobile (icon only), hover on desktop (with text) */}
+        <button
+          className={`absolute bottom-4 right-4 z-20 bg-black/50 hover:bg-black/70 rounded-full text-white transition-all flex items-center gap-2 p-2 md:px-3 md:py-2 ${isPaused ? 'opacity-100' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'}`}
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsPaused(!isPaused)
+          }}
+          aria-label={isPaused ? 'Play' : 'Pause'}
+        >
+          {isPaused ? (
+            <>
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span className="hidden md:inline text-sm font-medium">{playLabel}</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+              </svg>
+              <span className="hidden md:inline text-sm font-medium">{pauseLabel}</span>
+            </>
+          )}
+        </button>
       </div>
     </motion.div>
   )
