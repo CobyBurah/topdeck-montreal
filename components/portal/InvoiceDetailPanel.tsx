@@ -13,6 +13,7 @@ import {
   STAIN_CHOICES,
   type LeadPhoto,
 } from '@/types/lead'
+import { resolveStainById } from '@/lib/stain-data'
 import type { Invoice, InvoiceStatus } from '@/types/invoice'
 
 interface InvoiceDetailPanelProps {
@@ -479,6 +480,24 @@ export function InvoiceDetailPanel({ invoice, onUpdate, onDelete, onBack }: Invo
                   </div>
                 )}
               </div>
+
+              {/* Favourite stains (read-only, set by customer) */}
+              {lead?.favourite_stains && lead.favourite_stains.length > 0 && (
+                <div className="inline-flex items-center gap-1 bg-pink-50 rounded-full px-2 py-0.5">
+                  <svg className="w-3 h-3 text-pink-500 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                  {lead.favourite_stains.map((stainId) => {
+                    const resolved = resolveStainById(stainId)
+                    const label = resolved ? resolved.color.nameKey.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase()) : stainId
+                    return (
+                      <span key={stainId} className="px-1.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                        {label}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

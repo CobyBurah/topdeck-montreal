@@ -127,7 +127,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
       {
         id: 'solid-sea-gull-gray',
         nameKey: 'seaGullGray',
-        thumbnail: '/stains/solid/sea-gull-gray.jpg',
+        thumbnail: '/stains/solid/sea-gull-gray.png',
         images: [
           '/stains/solid/sea-gull-gray-1.jpg',
           '/stains/solid/sea-gull-gray-2.jpg',
