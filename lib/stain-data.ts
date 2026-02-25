@@ -8,6 +8,7 @@ export interface StainColor {
   nameKey: string
   thumbnail: string
   images: string[]
+  badge?: string
 }
 
 export interface StainBrandConfig {
@@ -40,9 +41,12 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             id: 'ligna-golden-pine',
             nameKey: 'goldenPine',
             thumbnail: '/stains/semi-transparent/ligna/golden-pine.jpg',
+            badge: 'mostPopular',
             images: [
-              '/stains/semi-transparent/ligna/golden-pine-1.jpg',
-              '/stains/semi-transparent/ligna/golden-pine-2.jpg',
+              '/GalleryImages/3-after-Ligna-GoldenPine.avif',
+              '/GalleryImages/5-after-Ligna-GoldenPine.avif',
+              '/GalleryImages/11-after-Ligna-GoldenPine.avif',
+              '/GalleryImages/16-after-Ligna-GoldenPine.avif',
             ],
           },
           {
@@ -50,8 +54,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             nameKey: 'mapleSugar',
             thumbnail: '/stains/semi-transparent/ligna/maple-sugar.jpg',
             images: [
-              '/stains/semi-transparent/ligna/maple-sugar-1.jpg',
-              '/stains/semi-transparent/ligna/maple-sugar-2.jpg',
+              '/GalleryImages/6-after-Ligna-MapleSugar.avif',
             ],
           },
           {
@@ -59,8 +62,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             nameKey: 'camel',
             thumbnail: '/stains/semi-transparent/ligna/camel.jpg',
             images: [
-              '/stains/semi-transparent/ligna/camel-1.jpg',
-              '/stains/semi-transparent/ligna/camel-2.jpg',
+              '/GalleryImages/13-after-Ligna-Camel.avif',
             ],
           },
           {
@@ -68,8 +70,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             nameKey: 'paprika',
             thumbnail: '/stains/semi-transparent/ligna/paprika.jpg',
             images: [
-              '/stains/semi-transparent/ligna/paprika-1.jpg',
-              '/stains/semi-transparent/ligna/paprika-2.jpg',
+              '/GalleryImages/17-after-Ligna-Paprika.avif',
             ],
           },
         ],
@@ -84,8 +85,10 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             nameKey: 'lightOak',
             thumbnail: '/stains/semi-transparent/steina/light-oak.jpg',
             images: [
-              '/stains/semi-transparent/steina/light-oak-1.jpg',
-              '/stains/semi-transparent/steina/light-oak-2.jpg',
+              '/GalleryImages/4-after-Steina-LightOak.avif',
+              '/GalleryImages/9-after-Steina-LightOak.avif',
+              '/GalleryImages/14-after-Steina-LightOak.avif',
+              '/GalleryImages/22-after-Steina-LightOak.avif',
             ],
           },
           {
@@ -93,27 +96,20 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             nameKey: 'naturalCedar',
             thumbnail: '/stains/semi-transparent/steina/natural-cedar.jpg',
             images: [
-              '/stains/semi-transparent/steina/natural-cedar-1.jpg',
-              '/stains/semi-transparent/steina/natural-cedar-2.jpg',
+              '/GalleryImages/12-after-Steina-NaturalCedar.avif',
             ],
           },
           {
             id: 'steina-honey-gold',
             nameKey: 'honeyGold',
             thumbnail: '/stains/semi-transparent/steina/honey-gold.jpg',
-            images: [
-              '/stains/semi-transparent/steina/honey-gold-1.jpg',
-              '/stains/semi-transparent/steina/honey-gold-2.jpg',
-            ],
+            images: [],
           },
           {
             id: 'steina-redwood',
             nameKey: 'redwood',
             thumbnail: '/stains/semi-transparent/steina/redwood.jpg',
-            images: [
-              '/stains/semi-transparent/steina/redwood-1.jpg',
-              '/stains/semi-transparent/steina/redwood-2.jpg',
-            ],
+            images: [],
           },
         ],
       },
@@ -129,53 +125,48 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
         nameKey: 'seaGullGray',
         thumbnail: '/stains/solid/sea-gull-gray.png',
         images: [
-          '/stains/solid/sea-gull-gray-1.jpg',
-          '/stains/solid/sea-gull-gray-2.jpg',
+          '/GalleryImages/2-after-BM-Solid-SeaGullGray(ES-72).avif',
         ],
       },
       {
         id: 'solid-kendall-charcoal',
         nameKey: 'kendallCharcoal',
-        thumbnail: '/stains/solid/kendall-charcoal.jpg',
+        thumbnail: '/stains/solid/kendall-charcoal.png',
         images: [
-          '/stains/solid/kendall-charcoal-1.jpg',
-          '/stains/solid/kendall-charcoal-2.jpg',
+          '/GalleryImages/7-after-BM-Solid-KendallCharcoal(HC-166).avif',
         ],
       },
       {
         id: 'solid-tudor-brown',
         nameKey: 'tudorBrown',
-        thumbnail: '/stains/solid/tudor-brown.jpg',
+        thumbnail: '/stains/solid/tudor-brown.png',
         images: [
-          '/stains/solid/tudor-brown-1.jpg',
-          '/stains/solid/tudor-brown-2.jpg',
+          '/GalleryImages/21-after-BM-Solid-TudorBrown(HC-185).avif',
+          '/GalleryImages/24-after-BM-Solid-TudorBrown(HC-185).avif',
         ],
       },
       {
         id: 'solid-cordovan-brown',
         nameKey: 'cordovanBrown',
-        thumbnail: '/stains/solid/cordovan-brown.jpg',
+        thumbnail: '/stains/solid/cordovan-brown.png',
         images: [
-          '/stains/solid/cordovan-brown-1.jpg',
-          '/stains/solid/cordovan-brown-2.jpg',
+          '/GalleryImages/15-after-BM-Solid-CordovanBrown(ES-62).avif',
         ],
       },
       {
         id: 'solid-platinum-gray',
         nameKey: 'platinumGray',
-        thumbnail: '/stains/solid/platinum-gray.jpg',
+        thumbnail: '/stains/solid/platinum-gray.png',
         images: [
-          '/stains/solid/platinum-gray-1.jpg',
-          '/stains/solid/platinum-gray-2.jpg',
+          '/GalleryImages/18-after-BM-Solid-PlatinumGray(HC-179).avif',
         ],
       },
       {
         id: 'solid-hidden-valley',
         nameKey: 'hiddenValley',
-        thumbnail: '/stains/solid/hidden-valley.jpg',
+        thumbnail: '/stains/solid/hidden-valley.png',
         images: [
-          '/stains/solid/hidden-valley-1.jpg',
-          '/stains/solid/hidden-valley-2.jpg',
+          '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
         ],
       },
     ],

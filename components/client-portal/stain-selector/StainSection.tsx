@@ -3,11 +3,8 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
-import type { LeadCondition } from '@/types/lead'
 import {
   STAIN_CATALOG,
-  getMostPermissiveCondition,
-  getAvailableOptions,
   getAvailableOptionsFromChoices,
   resolveStainById,
   type StainCategory,
@@ -22,7 +19,6 @@ import { ColorGalleryStep } from './ColorGalleryStep'
 import { ColorDetailStep } from './ColorDetailStep'
 
 interface StainSectionProps {
-  conditions: (LeadCondition | null)[]
   stainChoices?: string[]
   initialFavourites: string[]
 }
@@ -57,11 +53,9 @@ const fadeTransition = {
   opacity: { duration: 0.15 },
 }
 
-export function StainSection({ conditions, stainChoices = [], initialFavourites }: StainSectionProps) {
+export function StainSection({ stainChoices = [], initialFavourites }: StainSectionProps) {
   const t = useTranslations('clientPortal.stainSelector')
   const prefersReducedMotion = useReducedMotion()
-
-  const condition = getMostPermissiveCondition(conditions)
 
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(1)
@@ -153,9 +147,16 @@ export function StainSection({ conditions, stainChoices = [], initialFavourites 
       if (response.ok) {
         const data = await response.json()
         setFavourites(data.favourites)
+      } else {
+        // Revert on non-OK response
+        setFavourites((prev) =>
+          prev.includes(stainId)
+            ? prev.filter((id) => id !== stainId)
+            : [...prev, stainId]
+        )
       }
     } catch {
-      // Revert on error
+      // Revert on network error
       setFavourites((prev) =>
         prev.includes(stainId)
           ? prev.filter((id) => id !== stainId)
@@ -175,14 +176,11 @@ export function StainSection({ conditions, stainChoices = [], initialFavourites 
     setCurrentStep(4)
   }, [])
 
-  // Don't render if no condition or stain choices are set
-  if (!condition && stainChoices.length === 0) return null
+  // Don't render if no stain choices are set
+  if (stainChoices.length === 0) return null
 
-  // Use stain_choices if available, otherwise fall back to condition-based filtering
   const { categories: availableCategories, brands: availableBrands } =
-    stainChoices.length > 0
-      ? getAvailableOptionsFromChoices(stainChoices)
-      : getAvailableOptions(condition!)
+    getAvailableOptionsFromChoices(stainChoices)
 
   // Get colors for the current selection
   const getColors = (): StainColor[] => {
@@ -273,6 +271,7 @@ export function StainSection({ conditions, stainChoices = [], initialFavourites 
                 <ColorGalleryStep
                   colors={getColors()}
                   onSelect={handleColorSelect}
+                  note={selectedCategory === 'solid' ? t('solidNote') : undefined}
                 />
               )}
 

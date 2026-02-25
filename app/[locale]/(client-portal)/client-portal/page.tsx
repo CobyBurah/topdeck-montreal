@@ -126,7 +126,6 @@ export default function ClientPortalPage() {
 
       {/* Stain Selector */}
       <StainSection
-        conditions={data.leads.map((l) => l.condition)}
         stainChoices={Array.from(new Set(data.leads.flatMap((l) => l.stain_choices || [])))}
         initialFavourites={
           Array.from(new Set(data.leads.flatMap((l) => l.favourite_stains || [])))

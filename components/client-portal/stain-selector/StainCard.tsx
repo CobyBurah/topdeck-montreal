@@ -60,7 +60,20 @@ export function StainCard({
           </div>
         )}
         <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6'}>
-          <h4 className="text-lg font-semibold text-secondary-900">{title}</h4>
+          <h4 className="text-lg font-semibold text-secondary-900 flex items-center gap-1.5">
+            {title}
+            {imageSrc && (
+              <svg
+                className="w-4 h-4 text-secondary-400 transition-transform group-hover:translate-x-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            )}
+          </h4>
           {description && (
             <p className="text-secondary-500 mt-1.5 text-sm leading-relaxed">
               {description}

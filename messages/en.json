@@ -394,6 +394,10 @@
         "platinumGray": "Platinum Gray",
         "hiddenValley": "Hidden Valley"
       },
+      "badges": {
+        "mostPopular": "Most Popular"
+      },
+      "solidNote": "Many more colours are available — ask us about our full selection.",
       "colorDetail": {
         "title": "{name}",
         "galleryLabel": "Project examples with this color"

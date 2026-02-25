@@ -37,7 +37,6 @@ export async function POST(request: Request) {
     .from('leads')
     .select('id, favourite_stains')
     .eq('customer_id', customer.id)
-    .not('condition', 'is', null)
 
   if (leadsError || !leads || leads.length === 0) {
     return NextResponse.json({ error: 'No eligible leads found' }, { status: 404 })

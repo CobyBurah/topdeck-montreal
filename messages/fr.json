@@ -393,6 +393,10 @@
         "platinumGray": "Gris platine",
         "hiddenValley": "Vallée cachée"
       },
+      "badges": {
+        "mostPopular": "Le plus populaire"
+      },
+      "solidNote": "Plusieurs autres couleurs sont disponibles — demandez-nous pour voir notre sélection complète.",
       "colorDetail": {
         "title": "{name}",
         "galleryLabel": "Exemples de projets avec cette couleur"
