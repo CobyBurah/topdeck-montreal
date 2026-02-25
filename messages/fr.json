@@ -318,12 +318,12 @@
     "logout": "Déconnexion",
     "steps": {
       "requestReceived": "Formulaire soumis",
-      "estimateSent": "Soumission envoyée",
+      "estimateSent": "Estimation envoyée",
       "invoiceCreated": "Facture créée"
     },
     "stepsDescription": {
       "requestReceived": "Nous avons reçu votre demande et vous contacterons bientôt.",
-      "estimateSent": "Votre soumission est prête à être consultée.",
+      "estimateSent": "Votre estimation est prête à être consultée.",
       "invoiceCreated": "Votre facture a été créée."
     },
     "estimateCard": {
@@ -396,6 +396,7 @@
       "badges": {
         "mostPopular": "Le plus populaire"
       },
+      "exploreColors": "Voir les couleurs",
       "solidNote": "Plusieurs autres couleurs sont disponibles — demandez-nous pour voir notre sélection complète.",
       "colorDetail": {
         "title": "{name}",

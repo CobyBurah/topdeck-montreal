@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { Card } from '@/components/ui/Card'
 
@@ -24,6 +25,7 @@ export function StainCard({
   index = 0,
 }: StainCardProps) {
   const prefersReducedMotion = useReducedMotion()
+  const t = useTranslations('clientPortal.stainSelector')
 
   return (
     <motion.div
@@ -61,13 +63,13 @@ export function StainCard({
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
             />
             {badge && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10 whitespace-nowrap rounded-full bg-primary-600 px-3 py-0.5 text-xs font-semibold text-white shadow-sm">
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 whitespace-nowrap rounded-full bg-primary-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
                 {badge}
               </span>
             )}
           </div>
         )}
-        <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6'}>
+        <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6 flex flex-col flex-grow'}>
           <h4 className="text-lg font-semibold text-secondary-900 flex items-center gap-1.5">
             {title}
             {imageSrc && (
@@ -88,8 +90,8 @@ export function StainCard({
             </p>
           )}
           {!imageSrc && (
-            <div className="mt-4 flex items-center text-primary-600 text-sm font-medium">
-              <span>Explore colors</span>
+            <div className="mt-auto pt-4 flex items-center text-primary-600 text-sm font-medium">
+              <span>{t('exploreColors')}</span>
               <svg
                 className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1"
                 fill="none"
