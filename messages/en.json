@@ -318,7 +318,7 @@
     "backToWebsite": "Back to Website",
     "logout": "Log Out",
     "steps": {
-      "requestReceived": "Request Received",
+      "requestReceived": "Form Submitted",
       "estimateSent": "Estimate Sent",
       "invoiceCreated": "Invoice Created"
     },

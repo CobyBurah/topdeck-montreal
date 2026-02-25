@@ -317,7 +317,7 @@
     "backToWebsite": "Retour au site",
     "logout": "Déconnexion",
     "steps": {
-      "requestReceived": "Demande reçue",
+      "requestReceived": "Formulaire soumis",
       "estimateSent": "Soumission envoyée",
       "invoiceCreated": "Facture créée"
     },

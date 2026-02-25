@@ -20,7 +20,7 @@ export function ColorGalleryStep({ colors, onSelect, note }: ColorGalleryStepPro
           <StainCard
             key={color.id}
             title={t(`colors.${color.nameKey}`)}
-            description={color.badge ? t(`badges.${color.badge}`) : undefined}
+            badge={color.badge ? t(`badges.${color.badge}`) : undefined}
             imageSrc={color.thumbnail}
             imageAlt={t(`colors.${color.nameKey}`)}
             onClick={() => onSelect(color)}

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 interface StainCardProps {
   title: string
   description?: string
+  badge?: string
   imageSrc?: string
   imageAlt?: string
   onClick: () => void
@@ -16,6 +17,7 @@ interface StainCardProps {
 export function StainCard({
   title,
   description,
+  badge,
   imageSrc,
   imageAlt,
   onClick,
@@ -25,6 +27,7 @@ export function StainCard({
 
   return (
     <motion.div
+      className="h-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -37,7 +40,7 @@ export function StainCard({
       <Card
         variant="elevated"
         padding="none"
-        className="cursor-pointer overflow-hidden group"
+        className="cursor-pointer overflow-hidden group h-full"
         onClick={onClick}
         role="button"
         tabIndex={0}
@@ -57,6 +60,11 @@ export function StainCard({
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
             />
+            {badge && (
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10 whitespace-nowrap rounded-full bg-primary-600 px-3 py-0.5 text-xs font-semibold text-white shadow-sm">
+                {badge}
+              </span>
+            )}
           </div>
         )}
         <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6'}>
