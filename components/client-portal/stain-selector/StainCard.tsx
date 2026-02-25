@@ -29,7 +29,7 @@ export function StainCard({
 
   return (
     <motion.div
-      className={`h-full relative ${badge ? 'pt-3' : ''}`}
+      className="h-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -39,11 +39,6 @@ export function StainCard({
       whileHover={prefersReducedMotion ? {} : { scale: 1.02, transition: { duration: 0.2 } }}
       whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
     >
-      {badge && (
-        <span className="absolute top-0 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap rounded-full bg-primary-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
-          {badge}
-        </span>
-      )}
       <Card
         variant="elevated"
         padding="none"
@@ -67,6 +62,11 @@ export function StainCard({
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
             />
+            {badge && (
+              <span className="absolute top-2 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap rounded-full bg-primary-600 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                {badge}
+              </span>
+            )}
           </div>
         )}
         <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6 flex flex-col flex-grow'}>
