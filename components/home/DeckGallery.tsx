@@ -93,7 +93,7 @@ const galleryImages: GalleryImage[] = [
   },
   {
     id: 11,
-    src: '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
+    src: '/GalleryImages/10-after-BM-Solid-HiddenValley(1134).avif',
     alt: 'Deck stained with Hidden Valley',
     title: 'Hidden Valley',
     stainType: 'bm-solid',

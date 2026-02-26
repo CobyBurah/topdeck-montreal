@@ -94,7 +94,7 @@ const projects: BeforeAfterProject[] = [
     id: 10,
     titleKey: 'bmHiddenValley',
     before: '/GalleryImages/10-before.avif',
-    after: '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
+    after: '/GalleryImages/10-after-BM-Solid-HiddenValley(1134).avif',
     stainType: 'bm-solid',
   },
   {

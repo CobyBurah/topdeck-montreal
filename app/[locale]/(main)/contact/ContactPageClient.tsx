@@ -24,7 +24,7 @@ export default function ContactPage() {
       {/* Left - Full image */}
       <div className="relative hidden md:block">
         <Image
-          src="/GalleryImages/10-after-BM-HiddenValley(1134).avif"
+          src="/GalleryImages/10-after-BM-Solid-HiddenValley(1134).avif"
           alt={t('imageAlt')}
           fill
           className="object-cover"

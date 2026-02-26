@@ -206,7 +206,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
         nameKey: 'hiddenValley',
         thumbnail: '/stains/solid/hidden-valley.png',
         images: [
-          '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
+          '/GalleryImages/10-after-BM-Solid-HiddenValley(1134).avif',
         ],
       },
     ],
