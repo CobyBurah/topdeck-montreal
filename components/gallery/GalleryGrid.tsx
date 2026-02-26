@@ -336,11 +336,11 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
         className="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
         onClick={handleCardClick}
       >
-        {/* Before image - full, visible on left side */}
+        {/* After image - base layer, always visible */}
         <div className="absolute inset-0">
           <Image
-            src={project.before}
-            alt={`${title} - ${beforeLabel}`}
+            src={project.after}
+            alt={`${title} - ${afterLabel}`}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
@@ -349,14 +349,14 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
           />
         </div>
 
-        {/* After image - clipped from left, reveals as slider moves right */}
+        {/* Before image - clipped overlay, reveals as slider moves right */}
         <div
           className="absolute inset-0"
-          style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
+          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
         >
           <Image
-            src={project.after}
-            alt={`${title} - ${afterLabel}`}
+            src={project.before}
+            alt={`${title} - ${beforeLabel}`}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
@@ -582,11 +582,11 @@ function FullscreenSlider({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Before image - full, visible on left side */}
+      {/* After image - base layer, always visible */}
       <div className="absolute inset-0">
         <Image
-          src={project.before}
-          alt={`${title} - ${beforeLabel}`}
+          src={project.after}
+          alt={`${title} - ${afterLabel}`}
           fill
           className="object-cover"
           sizes="90vw"
@@ -595,14 +595,14 @@ function FullscreenSlider({
         />
       </div>
 
-      {/* After image - clipped from left, reveals as slider moves right */}
+      {/* Before image - clipped overlay, reveals as slider moves right */}
       <div
         className="absolute inset-0"
-        style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
+        style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
         <Image
-          src={project.after}
-          alt={`${title} - ${afterLabel}`}
+          src={project.before}
+          alt={`${title} - ${beforeLabel}`}
           fill
           className="object-cover"
           sizes="90vw"

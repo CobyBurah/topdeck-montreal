@@ -367,15 +367,15 @@
       "back": "Retour",
       "categories": {
         "semiTransparent": "Semi-transparente",
-        "semiTransparentDescription": "Met en valeur l'apparence naturelle du bois, révélant le grain et la texture, tout en ajoutant couleur et protection UV. Disponible dans une sélection de teintes naturelles.",
+        "semiTransparentDescription": "Révèle le grain et la texture naturels du bois tout en offrant un rehaussement de couleur et une protection UV durable. Disponible dans une sélection de teintes naturelles.",
         "solid": "Opaque",
-        "solidDescription": "Offre une couverture complète avec une couleur riche et uniforme, masquant toutes les imperfections tout en protégeant le bois. Disponible en des centaines de couleurs différentes."
+        "solidDescription": "Offre une couverture complète et uniforme avec une couleur riche — dissimulant les imperfections tout en protégeant le bois. Disponible en des centaines de couleurs."
       },
       "brands": {
         "ligna": "Ligna Hybri-Deck",
-        "lignaDescription": "Une teinture semi-transparente hybride qui fait ressortir la couleur naturelle du bois tout en offrant une couverture plus uniforme que les teintures semi-transparentes traditionnelles.",
+        "lignaDescription": "Une formule semi-transparente hybride qui rehausse la couleur naturelle du bois avec une couverture plus uniforme que les teintures semi-transparentes traditionnelles.",
         "steina": "Steina",
-        "steinaDescription": "Une teinture pénétrante à base d'huile qui offre le look le plus naturel, révélant le grain du bois tout en le protégeant."
+        "steinaDescription": "Une teinture pénétrante premium à base d'huile offrant le fini le plus naturel — mettant en valeur le grain et le caractère du bois tout en assurant une protection durable."
       },
       "colors": {
         "goldenPine": "Pin doré",
