@@ -374,9 +374,9 @@
       },
       "brands": {
         "ligna": "Ligna Hybri-Deck",
-        "lignaDescription": "A hybrid semi-transparent stain that brings out the natural colour of the wood while providing more uniform coverage than traditional semi-transparent stains. Ideal for weathered decks that need renewed protection and a refreshed look.",
+        "lignaDescription": "A hybrid semi-transparent stain that brings out the natural colour of the wood while providing more uniform coverage than traditional semi-transparent stains.",
         "steina": "Steina",
-        "steinaDescription": "Premium semi-transparent stain with rich pigments for a natural, elegant finish that highlights wood grain."
+        "steinaDescription": "An oil-based penetrating stain that gives the most natural look, showing the grain of the wood while protecting it."
       },
       "colors": {
         "goldenPine": "Golden Pine",
@@ -385,8 +385,6 @@
         "paprika": "Paprika",
         "lightOak": "Light Oak",
         "naturalCedar": "Natural Cedar",
-        "honeyGold": "Honey Gold",
-        "redwood": "Redwood",
         "seaGullGray": "Sea Gull Gray",
         "kendallCharcoal": "Kendall Charcoal",
         "tudorBrown": "Tudor Brown",

@@ -83,7 +83,7 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
           {
             id: 'steina-light-oak',
             nameKey: 'lightOak',
-            thumbnail: '/stains/semi-transparent/steina/light-oak.jpg',
+            thumbnail: '/stains/semi-transparent/steina/light-oak.jpeg',
             images: [
               '/GalleryImages/4-after-Steina-LightOak.avif',
               '/GalleryImages/9-after-Steina-LightOak.avif',
@@ -94,22 +94,10 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
           {
             id: 'steina-natural-cedar',
             nameKey: 'naturalCedar',
-            thumbnail: '/stains/semi-transparent/steina/natural-cedar.jpg',
+            thumbnail: '/stains/semi-transparent/steina/natural-cedar.jpeg',
             images: [
               '/GalleryImages/12-after-Steina-NaturalCedar.avif',
             ],
-          },
-          {
-            id: 'steina-honey-gold',
-            nameKey: 'honeyGold',
-            thumbnail: '/stains/semi-transparent/steina/honey-gold.jpg',
-            images: [],
-          },
-          {
-            id: 'steina-redwood',
-            nameKey: 'redwood',
-            thumbnail: '/stains/semi-transparent/steina/redwood.jpg',
-            images: [],
           },
         ],
       },

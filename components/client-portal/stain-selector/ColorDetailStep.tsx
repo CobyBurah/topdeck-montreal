@@ -21,7 +21,17 @@ export function ColorDetailStep({ color, isFavourited, onToggleFavourite }: Colo
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-6 flex items-start gap-4">
+        <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden shadow-sm border border-secondary-200">
+          <Image
+            src={color.thumbnail}
+            alt={colorName}
+            fill
+            className="object-cover"
+            sizes="80px"
+          />
+        </div>
+        <div>
         <h3 className="text-2xl font-bold text-secondary-900">
           {t('colorDetail.title', { name: colorName })}
         </h3>
@@ -57,6 +67,7 @@ export function ColorDetailStep({ color, isFavourited, onToggleFavourite }: Colo
           <p className="text-xs text-secondary-400 mt-2 ml-1">
             {t('favouriteDescription')}
           </p>
+        </div>
         </div>
       </div>
 

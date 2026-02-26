@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import {
@@ -57,12 +57,22 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
   const t = useTranslations('clientPortal.stainSelector')
   const prefersReducedMotion = useReducedMotion()
 
+  const sectionRef = useRef<HTMLDivElement>(null)
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState<StainCategory | null>(null)
   const [selectedBrand, setSelectedBrand] = useState<StainBrand | null>(null)
   const [selectedColor, setSelectedColor] = useState<StainColor | null>(null)
   const [favourites, setFavourites] = useState<string[]>(initialFavourites)
+
+  useEffect(() => {
+    if (currentStep > 1 && sectionRef.current) {
+      sectionRef.current.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'start',
+      })
+    }
+  }, [currentStep, prefersReducedMotion])
 
   const variants = prefersReducedMotion ? fadeVariants : slideVariants
   const transition = prefersReducedMotion ? fadeTransition : slideTransition
@@ -207,6 +217,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
 
   return (
     <motion.div
+      ref={sectionRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.6 }}

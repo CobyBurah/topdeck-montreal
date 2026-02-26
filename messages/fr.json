@@ -373,9 +373,9 @@
       },
       "brands": {
         "ligna": "Ligna Hybri-Deck",
-        "lignaDescription": "Une teinture semi-transparente hybride qui fait ressortir la couleur naturelle du bois tout en offrant une couverture plus uniforme que les teintures semi-transparentes traditionnelles. Idéale pour les terrasses vieillies qui ont besoin d'une protection renouvelée et d'un look rafraîchi.",
+        "lignaDescription": "Une teinture semi-transparente hybride qui fait ressortir la couleur naturelle du bois tout en offrant une couverture plus uniforme que les teintures semi-transparentes traditionnelles.",
         "steina": "Steina",
-        "steinaDescription": "Teinture semi-transparente premium avec des pigments riches pour un fini naturel et élégant qui met en valeur le grain du bois."
+        "steinaDescription": "Une teinture pénétrante à base d'huile qui offre le look le plus naturel, révélant le grain du bois tout en le protégeant."
       },
       "colors": {
         "goldenPine": "Pin doré",
@@ -384,8 +384,6 @@
         "paprika": "Paprika",
         "lightOak": "Chêne clair",
         "naturalCedar": "Cèdre naturel",
-        "honeyGold": "Or miel",
-        "redwood": "Séquoia",
         "seaGullGray": "Gris mouette",
         "kendallCharcoal": "Charbon Kendall",
         "tudorBrown": "Brun Tudor",
