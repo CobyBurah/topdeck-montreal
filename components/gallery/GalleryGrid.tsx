@@ -330,12 +330,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
   }, [isDragging, handleSliderMouseMove, handleSliderMouseUp, handleMove])
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-    >
+    <div>
       <div
         ref={containerRef}
         className="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer select-none shadow-lg"
@@ -433,7 +428,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
           )}
         </button>
       </div>
-    </motion.div>
+    </div>
   )
 }
 

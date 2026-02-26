@@ -67,10 +67,13 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
 
   useEffect(() => {
     if (currentStep > 1 && sectionRef.current) {
-      sectionRef.current.scrollIntoView({
-        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'start',
-      })
+      const timeout = setTimeout(() => {
+        sectionRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        })
+      }, 500)
+      return () => clearTimeout(timeout)
     }
   }, [currentStep, prefersReducedMotion])
 
