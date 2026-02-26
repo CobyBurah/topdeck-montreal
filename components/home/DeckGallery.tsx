@@ -7,163 +7,201 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { trackGalleryOpen, trackGalleryNav } from '@/lib/analytics'
 
+type StainType = 'ligna' | 'steina' | 'bm-semi' | 'bm-solid' | 'penofin'
+
+function getStainPill(stainType: StainType): string {
+  switch (stainType) {
+    case 'ligna': return 'Semi-Transparent · Hybrid Oil'
+    case 'steina': return 'Semi-Transparent · Penetrating Oil'
+    case 'bm-semi': return 'Semi-Transparent · Penetrating Oil'
+    case 'bm-solid': return 'Solid'
+    case 'penofin': return 'Penetrating IPE Oil'
+  }
+}
+
 interface GalleryImage {
   id: number
   src: string
   alt: string
   title: string
+  stainType: StainType
 }
 
 const galleryImages: GalleryImage[] = [
   {
     id: 1,
     src: '/GalleryImages/1-after-BM-Semi-NaturalCedartone(ES-45).avif',
-    alt: 'Deck stained with Benjamin Moore Natural Cedartone',
-    title: 'Benjamin Moore Natural Cedartone',
+    alt: 'Deck stained with Natural Cedartone',
+    title: 'Natural Cedartone',
+    stainType: 'bm-semi',
   },
   {
     id: 2,
     src: '/GalleryImages/2-after-BM-Solid-SeaGullGray(ES-72).avif',
-    alt: 'Deck stained with Benjamin Moore Sea Gull Gray',
-    title: 'Benjamin Moore Sea Gull Gray',
+    alt: 'Deck stained with Sea Gull Gray',
+    title: 'Sea Gull Gray',
+    stainType: 'bm-solid',
   },
   {
     id: 3,
     src: '/GalleryImages/3-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
+    alt: 'Deck stained with Golden Pine',
+    title: 'Golden Pine',
+    stainType: 'ligna',
   },
   {
     id: 4,
     src: '/GalleryImages/4-after-Steina-LightOak.avif',
-    alt: 'Deck stained with Steina Light Oak',
-    title: 'Steina Light Oak',
+    alt: 'Deck stained with Light Oak',
+    title: 'Light Oak',
+    stainType: 'steina',
   },
   {
     id: 6,
     src: '/GalleryImages/6-after-Ligna-MapleSugar.avif',
-    alt: 'Deck stained with Ligna Maple Sugar',
-    title: 'Ligna Maple Sugar',
+    alt: 'Deck stained with Maple Sugar',
+    title: 'Maple Sugar',
+    stainType: 'ligna',
   },
   {
     id: 7,
     src: '/GalleryImages/7-after-BM-Solid-KendallCharcoal(HC-166).avif',
-    alt: 'Deck stained with Benjamin Moore Kendall Charcoal',
-    title: 'Benjamin Moore Kendall Charcoal',
+    alt: 'Deck stained with Kendall Charcoal',
+    title: 'Kendall Charcoal',
+    stainType: 'bm-solid',
   },
   {
     id: 8,
     src: '/GalleryImages/25-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
+    alt: 'Deck stained with Golden Pine',
+    title: 'Golden Pine',
+    stainType: 'ligna',
   },
   {
     id: 9,
     src: '/GalleryImages/8-after-BM-Semi-NaturalCedartone(ES-45).avif',
-    alt: 'Deck stained with Benjamin Moore Natural Cedartone',
-    title: 'Benjamin Moore Natural Cedartone',
+    alt: 'Deck stained with Natural Cedartone',
+    title: 'Natural Cedartone',
+    stainType: 'bm-semi',
   },
   {
     id: 10,
     src: '/GalleryImages/9-after-Steina-LightOak.avif',
-    alt: 'Deck stained with Steina Light Oak',
-    title: 'Steina Light Oak',
+    alt: 'Deck stained with Light Oak',
+    title: 'Light Oak',
+    stainType: 'steina',
   },
   {
     id: 11,
     src: '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
-    alt: 'Deck stained with Benjamin Moore Hidden Valley',
-    title: 'Benjamin Moore Hidden Valley',
+    alt: 'Deck stained with Hidden Valley',
+    title: 'Hidden Valley',
+    stainType: 'bm-solid',
   },
   {
     id: 12,
     src: '/GalleryImages/11-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
+    alt: 'Deck stained with Golden Pine',
+    title: 'Golden Pine',
+    stainType: 'ligna',
   },
   {
     id: 13,
     src: '/GalleryImages/12-after-Steina-NaturalCedar.avif',
-    alt: 'Deck stained with Steina Natural Cedar',
-    title: 'Steina Natural Cedar',
+    alt: 'Deck stained with Natural Cedar',
+    title: 'Natural Cedar',
+    stainType: 'steina',
   },
   {
     id: 14,
     src: '/GalleryImages/13-after-Ligna-Camel.avif',
-    alt: 'Deck stained with Ligna Camel',
-    title: 'Ligna Camel',
+    alt: 'Deck stained with Camel',
+    title: 'Camel',
+    stainType: 'ligna',
   },
   {
     id: 15,
     src: '/GalleryImages/14-after-Steina-LightOak.avif',
-    alt: 'Deck stained with Steina Light Oak',
-    title: 'Steina Light Oak',
+    alt: 'Deck stained with Light Oak',
+    title: 'Light Oak',
+    stainType: 'steina',
   },
   {
     id: 16,
     src: '/GalleryImages/15-after-BM-Solid-CordovanBrown(ES-62).avif',
-    alt: 'Deck stained with Benjamin Moore Cordovan Brown',
-    title: 'Benjamin Moore Cordovan Brown',
+    alt: 'Deck stained with Cordovan Brown',
+    title: 'Cordovan Brown',
+    stainType: 'bm-solid',
   },
   {
     id: 17,
     src: '/GalleryImages/16-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
+    alt: 'Deck stained with Golden Pine',
+    title: 'Golden Pine',
+    stainType: 'ligna',
   },
   {
     id: 18,
     src: '/GalleryImages/26-after-BM-Semi-NaturalCedartone.avif',
-    alt: 'Deck stained with Benjamin Moore Natural Cedartone',
-    title: 'Benjamin Moore Natural Cedartone',
+    alt: 'Deck stained with Natural Cedartone',
+    title: 'Natural Cedartone',
+    stainType: 'bm-semi',
   },
   {
     id: 19,
     src: '/GalleryImages/17-after-Ligna-Paprika.avif',
-    alt: 'Deck stained with Ligna Paprika',
-    title: 'Ligna Paprika',
+    alt: 'Deck stained with Paprika',
+    title: 'Paprika',
+    stainType: 'ligna',
   },
   {
     id: 20,
     src: '/GalleryImages/18-after-BM-Solid-PlatinumGray(HC-179).avif',
-    alt: 'Deck stained with Benjamin Moore Platinum Gray',
-    title: 'Benjamin Moore Platinum Gray',
+    alt: 'Deck stained with Platinum Gray',
+    title: 'Platinum Gray',
+    stainType: 'bm-solid',
   },
   {
     id: 21,
     src: '/GalleryImages/19-after-BM-Semi-NaturalCedartone.avif',
-    alt: 'Deck stained with Benjamin Moore Natural Cedartone',
-    title: 'Benjamin Moore Natural Cedartone',
+    alt: 'Deck stained with Natural Cedartone',
+    title: 'Natural Cedartone',
+    stainType: 'bm-semi',
   },
   {
     id: 22,
     src: '/GalleryImages/20-after-Penofin-IPEOil.avif',
-    alt: 'Deck stained with Penofin IPE Oil',
-    title: 'Penofin IPE Oil',
+    alt: 'Deck stained with IPE Oil',
+    title: 'IPE Oil',
+    stainType: 'penofin',
   },
   {
     id: 23,
     src: '/GalleryImages/21-after-BM-Solid-TudorBrown(HC-185).avif',
-    alt: 'Deck stained with Benjamin Moore Tudor Brown',
-    title: 'Benjamin Moore Tudor Brown',
+    alt: 'Deck stained with Tudor Brown',
+    title: 'Tudor Brown',
+    stainType: 'bm-solid',
   },
   {
     id: 24,
     src: '/GalleryImages/22-after-Steina-LightOak.avif',
-    alt: 'Deck stained with Steina Light Oak',
-    title: 'Steina Light Oak',
+    alt: 'Deck stained with Light Oak',
+    title: 'Light Oak',
+    stainType: 'steina',
   },
   {
     id: 25,
     src: '/GalleryImages/23-after-Ligna-GoldenPine.avif',
-    alt: 'Deck stained with Ligna Golden Pine',
-    title: 'Ligna Golden Pine',
+    alt: 'Deck stained with Golden Pine',
+    title: 'Golden Pine',
+    stainType: 'ligna',
   },
   {
     id: 26,
     src: '/GalleryImages/24-after-BM-Solid-TudorBrown(HC-185).avif',
-    alt: 'Deck stained with Benjamin Moore Tudor Brown',
-    title: 'Benjamin Moore Tudor Brown',
+    alt: 'Deck stained with Tudor Brown',
+    title: 'Tudor Brown',
+    stainType: 'bm-solid',
   },
 ]
 
@@ -195,7 +233,8 @@ function ImageCard({ image, onMouseDown, onTouchStart }: { image: GalleryImage; 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <p className="text-white font-medium text-sm">{image.title}</p>
+          <p className="text-white font-medium text-base">{image.title}</p>
+          <p className="text-white/70 text-xs mt-0.5">{getStainPill(image.stainType)}</p>
         </div>
       </div>
     </div>
@@ -861,9 +900,10 @@ export function DeckGallery() {
                   </svg>
                 </button>
 
-                <span className="flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2 w-[60vw] sm:w-80">
-                  <p className="text-white text-sm sm:text-base font-medium text-center w-full">{selectedImage.title}</p>
-                  <p className="text-white/60 text-xs sm:text-sm">{currentIndex + 1} / {galleryImages.length}</p>
+                <span className="flex flex-col items-center bg-black/60 rounded-2xl px-5 py-2.5 w-[70vw] sm:w-80">
+                  <p className="text-white text-base sm:text-lg font-medium text-center w-full">{selectedImage.title}</p>
+                  <p className="text-white/60 text-xs sm:text-sm mt-0.5">{getStainPill(selectedImage.stainType)}</p>
+                  <p className="text-white/40 text-xs sm:text-sm mt-0.5">{currentIndex + 1} / {galleryImages.length}</p>
                 </span>
 
                 <button

@@ -5,17 +5,21 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import {
   STAIN_CATALOG,
+  PRODUCT_TYPES,
+  BRAND_GROUP_LABELS,
   getAvailableOptionsFromChoices,
+  getProductTypeForBrand,
   resolveStainById,
   type StainCategory,
-  type StainBrand,
+  type StainProductType,
   type StainColor,
 } from '@/lib/stain-data'
 import { StainBreadcrumb } from './StainBreadcrumb'
 import { StainDisclaimer } from './StainDisclaimer'
 import { CategoryStep } from './CategoryStep'
-import { BrandStep } from './BrandStep'
+import { ProductTypeStep } from './ProductTypeStep'
 import { ColorGalleryStep } from './ColorGalleryStep'
+import type { ColorGroup } from './ColorGalleryStep'
 import { ColorDetailStep } from './ColorDetailStep'
 
 interface StainSectionProps {
@@ -60,7 +64,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
   const [currentStep, setCurrentStep] = useState(1)
   const [direction, setDirection] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState<StainCategory | null>(null)
-  const [selectedBrand, setSelectedBrand] = useState<StainBrand | null>(null)
+  const [selectedProductType, setSelectedProductType] = useState<StainProductType | null>(null)
   const [selectedColor, setSelectedColor] = useState<StainColor | null>(null)
   const [favourites, setFavourites] = useState<string[]>(initialFavourites)
 
@@ -74,7 +78,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
 
   const handleCategorySelect = useCallback((cat: StainCategory) => {
     setSelectedCategory(cat)
-    setSelectedBrand(null)
+    setSelectedProductType(null)
     setSelectedColor(null)
     if (cat === 'solid') {
       setDirection(1)
@@ -85,8 +89,8 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
     }
   }, [])
 
-  const handleBrandSelect = useCallback((brand: StainBrand) => {
-    setSelectedBrand(brand)
+  const handleProductTypeSelect = useCallback((productType: StainProductType) => {
+    setSelectedProductType(productType)
     setSelectedColor(null)
     setDirection(1)
     setCurrentStep(3)
@@ -106,7 +110,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
       setSelectedCategory(null)
       goToStep(1)
     } else if (currentStep === 3) {
-      setSelectedBrand(null)
+      setSelectedProductType(null)
       goToStep(2)
     } else if (currentStep === 2) {
       setSelectedCategory(null)
@@ -118,10 +122,10 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
     if (step < currentStep) {
       if (step <= 1) {
         setSelectedCategory(null)
-        setSelectedBrand(null)
+        setSelectedProductType(null)
         setSelectedColor(null)
       } else if (step <= 2) {
-        setSelectedBrand(null)
+        setSelectedProductType(null)
         setSelectedColor(null)
       } else if (step <= 3) {
         setSelectedColor(null)
@@ -170,7 +174,12 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
     if (!resolved) return
 
     setSelectedCategory(resolved.category)
-    setSelectedBrand(resolved.brand)
+    if (resolved.brand) {
+      const pt = getProductTypeForBrand(resolved.brand)
+      setSelectedProductType(pt)
+    } else {
+      setSelectedProductType(null)
+    }
     setSelectedColor(resolved.color)
     setDirection(1)
     setCurrentStep(4)
@@ -179,7 +188,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
   // Don't render if no stain choices are set
   if (stainChoices.length === 0) return null
 
-  const { categories: availableCategories, brands: availableBrands } =
+  const { categories: availableCategories, brands: availableBrands, productTypes: availableProductTypes } =
     getAvailableOptionsFromChoices(stainChoices)
 
   // Get colors for the current selection
@@ -188,22 +197,51 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
       const solidCat = STAIN_CATALOG.find((c) => c.id === 'solid')
       return solidCat?.colors || []
     }
-    if (selectedCategory === 'semi_transparent' && selectedBrand) {
+    if (selectedCategory === 'semi_transparent' && selectedProductType) {
+      const ptConfig = PRODUCT_TYPES.find((pt) => pt.id === selectedProductType)
+      if (!ptConfig) return []
       const semiCat = STAIN_CATALOG.find((c) => c.id === 'semi_transparent')
-      const brand = semiCat?.brands?.find((b) => b.id === selectedBrand)
-      return brand?.colors || []
+      if (!semiCat?.brands) return []
+
+      // For non-grouped product types, return flat colors from the first available brand
+      if (!ptConfig.grouped) {
+        const brand = semiCat.brands.find(
+          (b) => ptConfig.brands.includes(b.id) && availableBrands.includes(b.id)
+        )
+        return brand?.colors || []
+      }
+
+      // For grouped product types, return all colors from all available brands (flat for getColors)
+      return ptConfig.brands
+        .filter((bid) => availableBrands.includes(bid))
+        .flatMap((bid) => semiCat.brands?.find((b) => b.id === bid)?.colors || [])
     }
     return []
   }
 
-  // Get brands for semi-transparent
-  const getBrands = () => {
+  // Get color groups for grouped product types (Penetrating Oil)
+  const getColorGroups = (): ColorGroup[] | undefined => {
+    if (selectedCategory !== 'semi_transparent' || !selectedProductType) return undefined
+
+    const ptConfig = PRODUCT_TYPES.find((pt) => pt.id === selectedProductType)
+    if (!ptConfig?.grouped) return undefined
+
     const semiCat = STAIN_CATALOG.find((c) => c.id === 'semi_transparent')
-    return semiCat?.brands || []
+    if (!semiCat?.brands) return undefined
+
+    const groups: ColorGroup[] = ptConfig.brands
+      .filter((bid) => availableBrands.includes(bid))
+      .map((bid) => ({
+        labelKey: BRAND_GROUP_LABELS[bid] || bid,
+        colors: semiCat.brands?.find((b) => b.id === bid)?.colors || [],
+      }))
+      .filter((g) => g.colors.length > 0)
+
+    return groups.length > 0 ? groups : undefined
   }
 
   // Composite key for AnimatePresence to force re-animation
-  const stepKey = `step-${currentStep}-${selectedCategory || ''}-${selectedBrand || ''}-${selectedColor?.id || ''}`
+  const stepKey = `step-${currentStep}-${selectedCategory || ''}-${selectedProductType || ''}-${selectedColor?.id || ''}`
 
   return (
     <motion.div
@@ -232,7 +270,7 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
         <StainBreadcrumb
           currentStep={currentStep}
           selectedCategory={selectedCategory}
-          selectedBrand={selectedBrand}
+          selectedProductType={selectedProductType}
           selectedColor={selectedColor}
           onBack={handleBack}
           onNavigateTo={handleNavigateTo}
@@ -260,16 +298,16 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
               )}
 
               {currentStep === 2 && (
-                <BrandStep
+                <ProductTypeStep
                   availableBrands={availableBrands}
-                  brands={getBrands()}
-                  onSelect={handleBrandSelect}
+                  onSelect={handleProductTypeSelect}
                 />
               )}
 
               {currentStep === 3 && (
                 <ColorGalleryStep
-                  colors={getColors()}
+                  colors={!getColorGroups() ? getColors() : undefined}
+                  colorGroups={getColorGroups()}
                   onSelect={handleColorSelect}
                   note={selectedCategory === 'solid' ? t('solidNote') : undefined}
                 />

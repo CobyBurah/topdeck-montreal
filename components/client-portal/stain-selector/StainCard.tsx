@@ -9,6 +9,7 @@ interface StainCardProps {
   title: string
   description?: string
   badge?: string
+  pill?: string
   imageSrc?: string
   imageAlt?: string
   onClick: () => void
@@ -19,6 +20,7 @@ export function StainCard({
   title,
   description,
   badge,
+  pill,
   imageSrc,
   imageAlt,
   onClick,
@@ -70,6 +72,11 @@ export function StainCard({
           </div>
         )}
         <div className={imageSrc ? 'p-3 md:p-4' : 'p-5 md:p-6 flex flex-col flex-grow'}>
+          {pill && !imageSrc && (
+            <span className="inline-block self-start rounded-full bg-primary-50 text-primary-700 px-2.5 py-0.5 text-xs font-medium mb-2">
+              {pill}
+            </span>
+          )}
           <h4 className="text-lg font-semibold text-secondary-900 flex items-center gap-1.5">
             {title}
             {imageSrc && (

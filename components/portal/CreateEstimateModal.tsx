@@ -3,19 +3,34 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/Button'
-import type { Lead } from '@/types/lead'
+import type { Lead, StainChoice, LeadCondition } from '@/types/lead'
 
 const SQUARE_ESTIMATES_URL = 'https://app.squareup.com/dashboard/invoices/estimates/new'
 
 function generateEstimateTemplate(
   clientPortalUrl: string,
   language: 'en' | 'fr',
-  hasStainChoices: boolean
+  stainChoices: StainChoice[],
+  condition: LeadCondition | null
 ): string {
+  const hasStainChoices = stainChoices.length > 0
+  const showOldStainWarning = condition !== 'unstained_new' && condition !== 'unstained_grey'
+
   if (language === 'fr') {
     const firstLine = hasStainChoices
-      ? `Suivez votre projet : ${clientPortalUrl}`
-      : `Suivez votre projet et explorez les options de teinture : ${clientPortalUrl}`
+      ? `Suivez votre projet et explorez les choix de teinture : ${clientPortalUrl}`
+      : `Suivez votre projet : ${clientPortalUrl}`
+
+    const stainPricing: string[] = []
+    if (stainChoices.includes('steina')) stainPricing.push('- La teinture pénétrante Steina est à 85 $ +taxes par gallon')
+    if (stainChoices.includes('ligna')) stainPricing.push('- La teinture hybride Ligna est à 110 $ +taxes par gallon')
+    if (stainChoices.includes('solid')) stainPricing.push('- La teinture solide Benjamin Moore est à 85 $ +taxes par gallon')
+
+    const stainLines = [
+      '- Le prix de la teinture n\'est pas inclus',
+      ...stainPricing,
+      ...(showOldStainWarning ? ['- L\'ancienne teinture pourrait ne pas être complètement enlevée'] : []),
+    ]
 
     return `${firstLine}
 
@@ -24,9 +39,7 @@ Détails
 - Le solde doit être payé à la fin des travaux
 
 Teinture
-- Le prix de la teinture n'est pas inclus
-- Le choix de teinture doit être approuvé par Topdeck
-- L'ancienne teinture pourrait ne pas être complètement enlevée
+${stainLines.join('\n')}
 
 Au plaisir de travailler avec vous !
 
@@ -34,8 +47,19 @@ RBQ : 5845-6906-01`
   }
 
   const firstLine = hasStainChoices
-    ? `Track your project: ${clientPortalUrl}`
-    : `Track your project and explore stain options: ${clientPortalUrl}`
+    ? `Track your project and explore stain choices: ${clientPortalUrl}`
+    : `Track your project: ${clientPortalUrl}`
+
+  const stainPricing: string[] = []
+  if (stainChoices.includes('steina')) stainPricing.push('- Steina Penetrating Oil Stain is $85 +tax per gallon')
+  if (stainChoices.includes('ligna')) stainPricing.push('- Ligna Hybrid Deck Stain is $110 +tax per gallon')
+  if (stainChoices.includes('solid')) stainPricing.push('- Benjamin Moore Solid Stain is $85 +tax per gallon')
+
+  const stainLines = [
+    '- Price of stain is not included',
+    ...stainPricing,
+    ...(showOldStainWarning ? ['- Old stain may not be completely removed'] : []),
+  ]
 
   return `${firstLine}
 
@@ -44,9 +68,7 @@ Details
 - Balance to be paid upon completion
 
 Stain
-- Price of stain is not included
-- Stain selection must be approved by Topdeck
-- Old stain may not be completely removed
+${stainLines.join('\n')}
 
 We look forward to working with you!
 
@@ -63,11 +85,13 @@ export function CreateEstimateModal({ lead, isOpen, onClose }: CreateEstimateMod
   const [copied, setCopied] = useState(false)
 
   const language = (lead.customer?.language ?? lead.language ?? 'en') as 'en' | 'fr'
-  const hasStainChoices = Array.isArray(lead.stain_choices) && lead.stain_choices.length > 0
-  const clientPortalUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/${language}/client-portal`
-    : `/${language}/client-portal`
-  const templateText = generateEstimateTemplate(clientPortalUrl, language, hasStainChoices)
+  const stainChoices = Array.isArray(lead.stain_choices) ? lead.stain_choices : []
+  const clientPortalUrl = lead.customer?.access_token && typeof window !== 'undefined'
+    ? `${window.location.origin}/auth/auto-login?token=${lead.customer.access_token}`
+    : typeof window !== 'undefined'
+      ? `${window.location.origin}/${language}/client-portal`
+      : `/${language}/client-portal`
+  const templateText = generateEstimateTemplate(clientPortalUrl, language, stainChoices, lead.condition)
 
   const handleCopy = async () => {
     try {

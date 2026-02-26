@@ -1,12 +1,13 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import type { StainCategory, StainBrand, StainColor } from '@/lib/stain-data'
+import { PRODUCT_TYPES } from '@/lib/stain-data'
+import type { StainCategory, StainProductType, StainColor } from '@/lib/stain-data'
 
 interface StainBreadcrumbProps {
   currentStep: number
   selectedCategory: StainCategory | null
-  selectedBrand: StainBrand | null
+  selectedProductType: StainProductType | null
   selectedColor: StainColor | null
   onBack: () => void
   onNavigateTo: (step: number) => void
@@ -15,7 +16,7 @@ interface StainBreadcrumbProps {
 export function StainBreadcrumb({
   currentStep,
   selectedCategory,
-  selectedBrand,
+  selectedProductType,
   selectedColor,
   onBack,
   onNavigateTo,
@@ -35,9 +36,10 @@ export function StainBreadcrumb({
     })
   }
 
-  if (selectedBrand && currentStep >= 3 && selectedCategory === 'semi_transparent') {
+  if (selectedProductType && currentStep >= 3 && selectedCategory === 'semi_transparent') {
+    const ptConfig = PRODUCT_TYPES.find((pt) => pt.id === selectedProductType)
     segments.push({
-      label: t(`brands.${selectedBrand}`),
+      label: ptConfig ? t(`productTypes.${ptConfig.nameKey}`) : '',
       step: 3,
     })
   }

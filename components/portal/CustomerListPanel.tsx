@@ -82,7 +82,7 @@ export function CustomerListPanel({
           </div>
           <button
             onClick={onAddCustomer}
-            className="px-3 py-2 text-xs font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 transition-colors shrink-0"
+            className="px-3 py-1.5 text-xs font-medium text-white bg-primary-500 rounded-lg hover:bg-primary-600 transition-colors shrink-0"
           >
             + Add
           </button>

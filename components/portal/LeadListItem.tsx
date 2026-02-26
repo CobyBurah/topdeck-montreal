@@ -63,13 +63,13 @@ export function LeadListItem({ lead, isSelected, hasUnrepliedMessage, isStale, l
       )}
     >
       {/* Row 1: Name + Indicators + Status Badge */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-2 min-w-0">
           {hasUnrepliedMessage && (
-            <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" title="New or unreplied message" />
+            <span className="w-2 h-2 mt-1.5 rounded-full bg-blue-500 shrink-0" title="New or unreplied message" />
           )}
           {isStale && (
-            <span title="In same status for over 24 hours">
+            <span title="In same status for over 24 hours" className="mt-0.5">
               <svg
                 className="w-3.5 h-3.5 text-red-500 shrink-0"
                 fill="none"
@@ -85,7 +85,7 @@ export function LeadListItem({ lead, isSelected, hasUnrepliedMessage, isStale, l
               </svg>
             </span>
           )}
-          <span className="font-semibold text-sm text-secondary-900 truncate">
+          <span className="font-semibold text-sm text-secondary-900 line-clamp-2">
             {lead.full_name}
           </span>
         </div>

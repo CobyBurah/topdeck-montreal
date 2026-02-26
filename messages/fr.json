@@ -150,30 +150,30 @@
     "pause": "Pause",
     "play": "Lecture",
     "projects": {
-      "bmNaturalCedartone1": "Benjamin Moore Natural Cedartone",
-      "bmSeaGullGray": "Benjamin Moore Sea Gull Gray",
-      "lignaGoldenPine1": "Ligna Golden Pine",
-      "steinaLightOak1": "Steina Light Oak",
-      "lignaGoldenPine2": "Ligna Golden Pine",
-      "lignaMapleSugar": "Ligna Maple Sugar",
-      "bmKendallCharcoal": "Benjamin Moore Kendall Charcoal",
-      "bmNaturalCedartone2": "Benjamin Moore Natural Cedartone",
-      "steinaLightOak2": "Steina Light Oak",
-      "bmHiddenValley": "Benjamin Moore Hidden Valley",
-      "lignaGoldenPine3": "Ligna Golden Pine",
-      "steinaNaturalCedar": "Steina Natural Cedar",
-      "lignaCamel": "Ligna Camel",
-      "steinaLightOak3": "Steina Light Oak",
-      "bmCordovanBrown": "Benjamin Moore Cordovan Brown",
-      "lignaGoldenPine4": "Ligna Golden Pine",
-      "lignaPaprika": "Ligna Paprika",
-      "bmPlatinumGray": "Benjamin Moore Platinum Gray",
-      "bmNaturalCedartone3": "Benjamin Moore Natural Cedartone",
-      "penofinIPEOil": "Penofin IPE Oil",
-      "bmTudorBrown1": "Benjamin Moore Tudor Brown",
-      "steinaLightOak4": "Steina Light Oak",
-      "lignaGoldenPine5": "Ligna Golden Pine",
-      "bmTudorBrown2": "Benjamin Moore Tudor Brown"
+      "bmNaturalCedartone1": "Natural Cedartone",
+      "bmSeaGullGray": "Sea Gull Gray",
+      "lignaGoldenPine1": "Golden Pine",
+      "steinaLightOak1": "Light Oak",
+      "lignaGoldenPine2": "Golden Pine",
+      "lignaMapleSugar": "Maple Sugar",
+      "bmKendallCharcoal": "Kendall Charcoal",
+      "bmNaturalCedartone2": "Natural Cedartone",
+      "steinaLightOak2": "Light Oak",
+      "bmHiddenValley": "Hidden Valley",
+      "lignaGoldenPine3": "Golden Pine",
+      "steinaNaturalCedar": "Natural Cedar",
+      "lignaCamel": "Camel",
+      "steinaLightOak3": "Light Oak",
+      "bmCordovanBrown": "Cordovan Brown",
+      "lignaGoldenPine4": "Golden Pine",
+      "lignaPaprika": "Paprika",
+      "bmPlatinumGray": "Platinum Gray",
+      "bmNaturalCedartone3": "Natural Cedartone",
+      "penofinIPEOil": "IPE Oil",
+      "bmTudorBrown1": "Tudor Brown",
+      "steinaLightOak4": "Light Oak",
+      "lignaGoldenPine5": "Golden Pine",
+      "bmTudorBrown2": "Tudor Brown"
     }
   },
   "contactPage": {
@@ -371,11 +371,15 @@
         "solid": "Opaque",
         "solidDescription": "Offre une couverture complète et uniforme avec une couleur riche — dissimulant les imperfections tout en protégeant le bois. Disponible en des centaines de couleurs."
       },
-      "brands": {
-        "ligna": "Ligna Hybri-Deck",
-        "lignaDescription": "Une formule semi-transparente hybride qui rehausse la couleur naturelle du bois avec une couverture plus uniforme que les teintures semi-transparentes traditionnelles.",
-        "steina": "Steina",
-        "steinaDescription": "Une teinture pénétrante premium à base d'huile offrant le fini le plus naturel — mettant en valeur le grain et le caractère du bois tout en assurant une protection durable."
+      "productTypes": {
+        "hybridOil": "Huile hybride",
+        "hybridOilDescription": "Une formule semi-transparente hybride qui rehausse la couleur naturelle du bois avec une couverture plus uniforme que les teintures semi-transparentes traditionnelles.",
+        "penetratingOil": "Huile pénétrante",
+        "penetratingOilDescription": "Teintures pénétrantes premium à base d'huile offrant le fini le plus naturel — mettant en valeur le grain et le caractère du bois tout en apportant une teinte naturelle."
+      },
+      "colorGroups": {
+        "mostNaturalLook": "Aspect le plus naturel",
+        "moreColourOptions": "Plus d'options de couleurs"
       },
       "colors": {
         "goldenPine": "Pin doré",
@@ -384,6 +388,7 @@
         "paprika": "Paprika",
         "lightOak": "Chêne clair",
         "naturalCedar": "Cèdre naturel",
+        "naturalCedartone": "Natural Cedartone",
         "seaGullGray": "Gris mouette",
         "kendallCharcoal": "Charbon Kendall",
         "tudorBrown": "Brun Tudor",

@@ -37,12 +37,12 @@ export function EstimateListItem({
       )}
     >
       {/* Row 1: Name + Indicators + Status Badge */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-2 min-w-0">
           {hasUnrepliedMessage && (
-            <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" title="New or unreplied message" />
+            <span className="w-2 h-2 mt-1.5 rounded-full bg-blue-500 shrink-0" title="New or unreplied message" />
           )}
-          <span className="font-semibold text-sm text-secondary-900 truncate">
+          <span className="font-semibold text-sm text-secondary-900 line-clamp-2">
             {customerName}
           </span>
         </div>

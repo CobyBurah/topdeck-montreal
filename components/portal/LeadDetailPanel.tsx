@@ -45,6 +45,7 @@ const STATUS_STYLES: Record<LeadStatus, string> = {
 const STAIN_CHOICE_COLORS: Record<string, string> = {
   steina: 'bg-sky-100 text-sky-800',
   ligna: 'bg-emerald-100 text-emerald-800',
+  bm_semi: 'bg-amber-100 text-amber-800',
   solid: 'bg-violet-100 text-violet-800',
 }
 
@@ -834,36 +835,38 @@ export function LeadDetailPanel({ lead, onUpdate, onDelete, onBack }: LeadDetail
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
-        <div>
-          {onDelete && isEditingContact && !showDeleteConfirm && (
-            <Button
-              variant="ghost"
-              onClick={() => setShowDeleteConfirm(true)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              Delete Lead
-            </Button>
-          )}
-          {isEditingContact && showDeleteConfirm && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-red-600">Are you sure?</span>
+      {isEditingContact && (
+        <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
+          <div>
+            {onDelete && !showDeleteConfirm && (
               <Button
                 variant="ghost"
-                onClick={handleDelete}
-                disabled={isDeleting}
+                onClick={() => setShowDeleteConfirm(true)}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
-                {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                Delete Lead
               </Button>
-              <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
-                Cancel
-              </Button>
-            </div>
-          )}
+            )}
+            {showDeleteConfirm && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-red-600">Are you sure?</span>
+                <Button
+                  variant="ghost"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                </Button>
+                <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </div>
+          <div />
         </div>
-        <div />
-      </div>
+      )}
     </div>
 
     <CreateEstimateModal

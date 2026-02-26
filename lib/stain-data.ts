@@ -1,7 +1,8 @@
 import type { LeadCondition } from '@/types/lead'
 
 export type StainCategory = 'semi_transparent' | 'solid'
-export type StainBrand = 'ligna' | 'steina'
+export type StainBrand = 'ligna' | 'steina' | 'bm_semi'
+export type StainProductType = 'hybrid_oil' | 'penetrating_oil'
 
 export interface StainColor {
   id: string
@@ -24,6 +25,39 @@ export interface StainCategoryConfig {
   descriptionKey: string
   brands?: StainBrandConfig[]
   colors?: StainColor[]
+}
+
+export interface ProductTypeConfig {
+  id: StainProductType
+  nameKey: string
+  descriptionKey: string
+  pillKey: string
+  brands: StainBrand[]
+  grouped: boolean
+}
+
+export const PRODUCT_TYPES: ProductTypeConfig[] = [
+  {
+    id: 'hybrid_oil',
+    nameKey: 'hybridOil',
+    descriptionKey: 'hybridOilDescription',
+    pillKey: 'semiTransparent',
+    brands: ['ligna'],
+    grouped: false,
+  },
+  {
+    id: 'penetrating_oil',
+    nameKey: 'penetratingOil',
+    descriptionKey: 'penetratingOilDescription',
+    pillKey: 'semiTransparent',
+    brands: ['steina', 'bm_semi'],
+    grouped: true,
+  },
+]
+
+export const BRAND_GROUP_LABELS: Partial<Record<StainBrand, string>> = {
+  steina: 'mostNaturalLook',
+  bm_semi: 'moreColourOptions',
 }
 
 export const STAIN_CATALOG: StainCategoryConfig[] = [
@@ -97,6 +131,24 @@ export const STAIN_CATALOG: StainCategoryConfig[] = [
             thumbnail: '/stains/semi-transparent/steina/natural-cedar.jpeg',
             images: [
               '/GalleryImages/12-after-Steina-NaturalCedar.avif',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'bm_semi',
+        nameKey: 'bmSemi',
+        descriptionKey: 'bmSemiDescription',
+        colors: [
+          {
+            id: 'bm-semi-natural-cedartone',
+            nameKey: 'naturalCedartone',
+            thumbnail: '/GalleryImages/1-after-BM-Semi-NaturalCedartone(ES-45).avif',
+            images: [
+              '/GalleryImages/1-after-BM-Semi-NaturalCedartone(ES-45).avif',
+              '/GalleryImages/8-after-BM-Semi-NaturalCedartone(ES-45).avif',
+              '/GalleryImages/19-after-BM-Semi-NaturalCedartone.avif',
+              '/GalleryImages/26-after-BM-Semi-NaturalCedartone.avif',
             ],
           },
         ],
@@ -208,23 +260,46 @@ export function getAvailableOptions(condition: LeadCondition): {
 export function getAvailableOptionsFromChoices(choices: string[]): {
   categories: StainCategory[]
   brands: StainBrand[]
+  productTypes: StainProductType[]
 } {
   const categories: StainCategory[] = []
   const brands: StainBrand[] = []
+  const productTypes: StainProductType[] = []
 
   if (choices.includes('steina')) {
-    if (!categories.includes('semi_transparent')) categories.push('semi_transparent')
     brands.push('steina')
   }
   if (choices.includes('ligna')) {
-    if (!categories.includes('semi_transparent')) categories.push('semi_transparent')
     brands.push('ligna')
+  }
+  if (choices.includes('bm_semi')) {
+    brands.push('bm_semi')
+  }
+
+  // Determine product types from available brands
+  if (brands.includes('ligna')) {
+    productTypes.push('hybrid_oil')
+  }
+  if (brands.includes('steina') || brands.includes('bm_semi')) {
+    productTypes.push('penetrating_oil')
+  }
+
+  if (productTypes.length > 0) {
+    categories.push('semi_transparent')
   }
   if (choices.includes('solid')) {
     categories.push('solid')
   }
 
-  return { categories, brands }
+  return { categories, brands, productTypes }
+}
+
+// Resolve a product type from a brand
+export function getProductTypeForBrand(brand: StainBrand): StainProductType | null {
+  for (const pt of PRODUCT_TYPES) {
+    if (pt.brands.includes(brand)) return pt.id
+  }
+  return null
 }
 
 // Resolve a stain color ID back to its color, category, and brand context

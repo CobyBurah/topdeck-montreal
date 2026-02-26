@@ -23,7 +23,7 @@ export type LeadCondition =
   | 'semi_transparent'
   | 'opaque'
 
-export type StainChoice = 'steina' | 'ligna' | 'solid'
+export type StainChoice = 'steina' | 'ligna' | 'solid' | 'bm_semi'
 
 export interface LeadPhoto {
   id: string
@@ -104,5 +104,6 @@ export const LEAD_CONDITIONS: { value: LeadCondition; label: string }[] = [
 export const STAIN_CHOICES: { value: StainChoice; label: string }[] = [
   { value: 'steina', label: 'Steina' },
   { value: 'ligna', label: 'Ligna' },
+  { value: 'bm_semi', label: 'BM Semi' },
   { value: 'solid', label: 'BM Solid' },
 ]

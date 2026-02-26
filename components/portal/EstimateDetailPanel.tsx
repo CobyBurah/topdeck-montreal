@@ -817,36 +817,38 @@ export function EstimateDetailPanel({ estimate, onUpdate, onDelete, onBack }: Es
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
-        <div>
-          {onDelete && isEditingContact && !showDeleteConfirm && (
-            <Button
-              variant="ghost"
-              onClick={() => setShowDeleteConfirm(true)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              Delete Estimate
-            </Button>
-          )}
-          {showDeleteConfirm && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-red-600">Are you sure?</span>
+      {isEditingContact && (
+        <div className="flex items-center justify-between px-6 py-4 border-t border-secondary-200 shrink-0">
+          <div>
+            {onDelete && !showDeleteConfirm && (
               <Button
                 variant="ghost"
-                onClick={handleDelete}
-                disabled={isDeleting}
+                onClick={() => setShowDeleteConfirm(true)}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
               >
-                {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                Delete Estimate
               </Button>
-              <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
-                Cancel
-              </Button>
-            </div>
-          )}
+            )}
+            {showDeleteConfirm && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-red-600">Are you sure?</span>
+                <Button
+                  variant="ghost"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                </Button>
+                <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
+                  Cancel
+                </Button>
+              </div>
+            )}
+          </div>
+          <div />
         </div>
-        <div />
-      </div>
+      )}
     </div>
   )
 }

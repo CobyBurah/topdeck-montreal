@@ -6,11 +6,24 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { trackGalleryOpen, trackGalleryNav, trackGallerySlider } from '@/lib/analytics'
 
+type StainType = 'ligna' | 'steina' | 'bm-semi' | 'bm-solid' | 'penofin'
+
 interface BeforeAfterProject {
   id: number
   titleKey: string
   before: string
   after: string
+  stainType: StainType
+}
+
+function getStainPill(stainType: StainType): string {
+  switch (stainType) {
+    case 'ligna': return 'Semi-Transparent · Hybrid Oil'
+    case 'steina': return 'Semi-Transparent · Penetrating Oil'
+    case 'bm-semi': return 'Semi-Transparent · Penetrating Oil'
+    case 'bm-solid': return 'Solid'
+    case 'penofin': return 'Penetrating IPE Oil'
+  }
 }
 
 const projects: BeforeAfterProject[] = [
@@ -19,148 +32,172 @@ const projects: BeforeAfterProject[] = [
     titleKey: 'bmNaturalCedartone1',
     before: '/GalleryImages/1-before.avif',
     after: '/GalleryImages/1-after-BM-Semi-NaturalCedartone(ES-45).avif',
+    stainType: 'bm-semi',
   },
   {
     id: 2,
     titleKey: 'bmSeaGullGray',
     before: '/GalleryImages/2-before.avif',
     after: '/GalleryImages/2-after-BM-Solid-SeaGullGray(ES-72).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 3,
     titleKey: 'lignaGoldenPine1',
     before: '/GalleryImages/3-before.avif',
     after: '/GalleryImages/3-after-Ligna-GoldenPine.avif',
+    stainType: 'ligna',
   },
   {
     id: 4,
     titleKey: 'steinaLightOak1',
     before: '/GalleryImages/4-before.avif',
     after: '/GalleryImages/4-after-Steina-LightOak.avif',
+    stainType: 'steina',
   },
   {
     id: 5,
     titleKey: 'lignaGoldenPine2',
     before: '/GalleryImages/5-before.avif',
     after: '/GalleryImages/5-after-Ligna-GoldenPine.avif',
+    stainType: 'ligna',
   },
   {
     id: 6,
     titleKey: 'lignaMapleSugar',
     before: '/GalleryImages/6-before.avif',
     after: '/GalleryImages/6-after-Ligna-MapleSugar.avif',
+    stainType: 'ligna',
   },
   {
     id: 7,
     titleKey: 'bmKendallCharcoal',
     before: '/GalleryImages/7-before.avif',
     after: '/GalleryImages/7-after-BM-Solid-KendallCharcoal(HC-166).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 8,
     titleKey: 'bmNaturalCedartone2',
     before: '/GalleryImages/8-before.avif',
     after: '/GalleryImages/8-after-BM-Semi-NaturalCedartone(ES-45).avif',
+    stainType: 'bm-semi',
   },
   {
     id: 9,
     titleKey: 'steinaLightOak2',
     before: '/GalleryImages/9-before.avif',
     after: '/GalleryImages/9-after-Steina-LightOak.avif',
+    stainType: 'steina',
   },
   {
     id: 10,
     titleKey: 'bmHiddenValley',
     before: '/GalleryImages/10-before.avif',
     after: '/GalleryImages/10-after-BM-HiddenValley(1134).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 11,
     titleKey: 'lignaGoldenPine3',
     before: '/GalleryImages/11-before.avif',
     after: '/GalleryImages/11-after-Ligna-GoldenPine.avif',
+    stainType: 'ligna',
   },
   {
     id: 12,
     titleKey: 'steinaNaturalCedar',
     before: '/GalleryImages/12-before.avif',
     after: '/GalleryImages/12-after-Steina-NaturalCedar.avif',
+    stainType: 'steina',
   },
   {
     id: 13,
     titleKey: 'lignaCamel',
     before: '/GalleryImages/13-before.avif',
     after: '/GalleryImages/13-after-Ligna-Camel.avif',
+    stainType: 'ligna',
   },
   {
     id: 14,
     titleKey: 'steinaLightOak3',
     before: '/GalleryImages/14-before.avif',
     after: '/GalleryImages/14-after-Steina-LightOak.avif',
+    stainType: 'steina',
   },
   {
     id: 15,
     titleKey: 'bmCordovanBrown',
     before: '/GalleryImages/15-before.avif',
     after: '/GalleryImages/15-after-BM-Solid-CordovanBrown(ES-62).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 16,
     titleKey: 'lignaGoldenPine4',
     before: '/GalleryImages/16-before.avif',
     after: '/GalleryImages/16-after-Ligna-GoldenPine.avif',
+    stainType: 'ligna',
   },
   {
     id: 17,
     titleKey: 'lignaPaprika',
     before: '/GalleryImages/17-before.avif',
     after: '/GalleryImages/17-after-Ligna-Paprika.avif',
+    stainType: 'ligna',
   },
   {
     id: 18,
     titleKey: 'bmPlatinumGray',
     before: '/GalleryImages/18-before.avif',
     after: '/GalleryImages/18-after-BM-Solid-PlatinumGray(HC-179).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 19,
     titleKey: 'bmNaturalCedartone3',
     before: '/GalleryImages/19-before.avif',
     after: '/GalleryImages/19-after-BM-Semi-NaturalCedartone.avif',
+    stainType: 'bm-semi',
   },
   {
     id: 20,
     titleKey: 'penofinIPEOil',
     before: '/GalleryImages/20-before.avif',
     after: '/GalleryImages/20-after-Penofin-IPEOil.avif',
+    stainType: 'penofin',
   },
   {
     id: 21,
     titleKey: 'bmTudorBrown1',
     before: '/GalleryImages/21-before.avif',
     after: '/GalleryImages/21-after-BM-Solid-TudorBrown(HC-185).avif',
+    stainType: 'bm-solid',
   },
   {
     id: 22,
     titleKey: 'steinaLightOak4',
     before: '/GalleryImages/22-before.avif',
     after: '/GalleryImages/22-after-Steina-LightOak.avif',
+    stainType: 'steina',
   },
   {
     id: 23,
     titleKey: 'lignaGoldenPine5',
     before: '/GalleryImages/23-before.avif',
     after: '/GalleryImages/23-after-Ligna-GoldenPine.avif',
+    stainType: 'ligna',
   },
   {
     id: 24,
     titleKey: 'bmTudorBrown2',
     before: '/GalleryImages/24-before.avif',
     after: '/GalleryImages/24-after-BM-Solid-TudorBrown(HC-185).avif',
+    stainType: 'bm-solid',
   },
 ]
 
-function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, playLabel, title, onOpenFullscreen, isFullscreenOpen }: {
+function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, playLabel, title, pillText, onOpenFullscreen, isFullscreenOpen }: {
   project: BeforeAfterProject
   index: number
   beforeLabel: string
@@ -168,6 +205,7 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
   pauseLabel: string
   playLabel: string
   title: string
+  pillText: string
   onOpenFullscreen: (position: number, isPaused: boolean) => void
   isFullscreenOpen: boolean
 }) {
@@ -401,9 +439,11 @@ function BeforeAfterCard({ project, index, beforeLabel, afterLabel, pauseLabel, 
           {afterLabel}
         </div>
 
-        {/* Title overlay at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+        {/* Title overlay at bottom - hover only on desktop, hidden on mobile */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 hidden md:block" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full md:group-hover:translate-y-0 transition-transform duration-300 hidden md:block">
           <p className="text-white font-semibold text-lg">{title}</p>
+          <p className="text-white/70 text-sm mt-0.5">{pillText}</p>
         </div>
 
         {/* Pause/Play button - always visible on mobile (icon only), hover on desktop (with text) */}
@@ -832,6 +872,7 @@ export function GalleryGrid() {
             pauseLabel={t('pause')}
             playLabel={t('play')}
             title={t(`projects.${project.titleKey}`)}
+            pillText={getStainPill(project.stainType)}
             onOpenFullscreen={(position, paused) => { trackGalleryOpen(t(`projects.${project.titleKey}`)); setSelectedProject({ project, initialPosition: position, initialPaused: paused }) }}
             isFullscreenOpen={!!selectedProject}
           />
@@ -947,9 +988,10 @@ export function GalleryGrid() {
                   </svg>
                 </button>
 
-                <span className="flex flex-col items-center bg-black/60 backdrop-blur-sm rounded-full px-5 py-2 w-[60vw] sm:w-80">
-                  <p className="text-white text-sm sm:text-base font-medium text-center w-full">{t(`projects.${selectedProject.project.titleKey}`)}</p>
-                  <p className="text-white/60 text-xs sm:text-sm">{currentIndex + 1} / {projects.length}</p>
+                <span className="flex flex-col items-center bg-black/60 rounded-2xl px-5 py-2.5 w-[70vw] sm:w-80">
+                  <p className="text-white text-base sm:text-lg font-medium text-center w-full">{t(`projects.${selectedProject.project.titleKey}`)}</p>
+                  <p className="text-white/60 text-xs sm:text-sm mt-0.5">{getStainPill(selectedProject.project.stainType)}</p>
+                  <p className="text-white/40 text-xs sm:text-sm mt-0.5">{currentIndex + 1} / {projects.length}</p>
                 </span>
 
                 <button
