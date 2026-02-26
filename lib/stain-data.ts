@@ -57,7 +57,7 @@ export const PRODUCT_TYPES: ProductTypeConfig[] = [
 
 export const BRAND_GROUP_LABELS: Partial<Record<StainBrand, string>> = {
   steina: 'mostNaturalLook',
-  bm_semi: 'moreColourOptions',
+  bm_semi: 'moreUniformColour',
 }
 
 export const STAIN_CATALOG: StainCategoryConfig[] = [

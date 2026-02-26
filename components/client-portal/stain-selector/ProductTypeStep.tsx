@@ -26,7 +26,6 @@ export function ProductTypeStep({ availableBrands, onSelect }: ProductTypeStepPr
       {filtered.map((pt, index) => (
         <StainCard
           key={pt.id}
-          pill={t(`categories.${pt.pillKey}`)}
           title={t(`productTypes.${pt.nameKey}`)}
           description={t(`productTypes.${pt.descriptionKey}`)}
           onClick={() => onSelect(pt.id)}
