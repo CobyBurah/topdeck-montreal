@@ -318,6 +318,13 @@ export function StainSection({ stainChoices = [], initialFavourites }: StainSect
                   color={selectedColor}
                   isFavourited={favourites.includes(selectedColor.id)}
                   onToggleFavourite={() => handleToggleFavourite(selectedColor.id)}
+                  stainTypePill={
+                    selectedCategory === 'solid'
+                      ? t('categories.solid')
+                      : selectedProductType
+                        ? `${t('categories.semiTransparent')} · ${t(`productTypes.${selectedProductType === 'hybrid_oil' ? 'hybridOil' : 'penetratingOil'}`)}`
+                        : undefined
+                  }
                 />
               )}
 

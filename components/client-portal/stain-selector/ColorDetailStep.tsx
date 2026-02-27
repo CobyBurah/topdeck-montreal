@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -10,14 +10,144 @@ interface ColorDetailStepProps {
   color: StainColor
   isFavourited: boolean
   onToggleFavourite: () => void
+  stainTypePill?: string
 }
 
-export function ColorDetailStep({ color, isFavourited, onToggleFavourite }: ColorDetailStepProps) {
+export function ColorDetailStep({ color, isFavourited, onToggleFavourite, stainTypePill }: ColorDetailStepProps) {
   const t = useTranslations('clientPortal.stainSelector')
   const prefersReducedMotion = useReducedMotion()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
+  // Swipe refs
+  const swipeStartXRef = useRef(0)
+  const swipeStartYRef = useRef(0)
+  const isSwipingRef = useRef(false)
+
+  // Pinch-to-zoom state
+  const [zoomScale, setZoomScale] = useState(1)
+  const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 })
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 })
+  const initialPinchDistRef = useRef(0)
+  const initialScaleRef = useRef(1)
+  const isPinchingRef = useRef(false)
+  const panStartRef = useRef({ x: 0, y: 0 })
+  const panTranslateRef = useRef({ x: 0, y: 0 })
+  const zoomContainerRef = useRef<HTMLDivElement>(null)
+
   const colorName = t(`colors.${color.nameKey}`)
+
+  const resetZoom = useCallback(() => {
+    setZoomScale(1)
+    setZoomTranslate({ x: 0, y: 0 })
+    setZoomOrigin({ x: 50, y: 50 })
+    panTranslateRef.current = { x: 0, y: 0 }
+  }, [])
+
+  const goToPrevious = useCallback(() => {
+    resetZoom()
+    if (lightboxIndex === null) return
+    setLightboxIndex((lightboxIndex - 1 + color.images.length) % color.images.length)
+  }, [lightboxIndex, color.images.length, resetZoom])
+
+  const goToNext = useCallback(() => {
+    resetZoom()
+    if (lightboxIndex === null) return
+    setLightboxIndex((lightboxIndex + 1) % color.images.length)
+  }, [lightboxIndex, color.images.length, resetZoom])
+
+  // Pinch-to-zoom handlers
+  const handleImageTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      e.preventDefault()
+      isPinchingRef.current = true
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      initialPinchDistRef.current = Math.hypot(dx, dy)
+      initialScaleRef.current = zoomScale
+      if (zoomContainerRef.current) {
+        const rect = zoomContainerRef.current.getBoundingClientRect()
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2
+        setZoomOrigin({
+          x: ((midX - rect.left) / rect.width) * 100,
+          y: ((midY - rect.top) / rect.height) * 100,
+        })
+      }
+    } else if (e.touches.length === 1 && zoomScale > 1) {
+      panStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
+
+  const handleImageTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2 && isPinchingRef.current) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.hypot(dx, dy)
+      const newScale = Math.min(3, Math.max(1, initialScaleRef.current * (dist / initialPinchDistRef.current)))
+      setZoomScale(newScale)
+      if (newScale === 1) {
+        setZoomTranslate({ x: 0, y: 0 })
+        panTranslateRef.current = { x: 0, y: 0 }
+      }
+    } else if (e.touches.length === 1 && zoomScale > 1 && !isPinchingRef.current) {
+      const dx = e.touches[0].clientX - panStartRef.current.x
+      const dy = e.touches[0].clientY - panStartRef.current.y
+      setZoomTranslate({
+        x: panTranslateRef.current.x + dx,
+        y: panTranslateRef.current.y + dy,
+      })
+    }
+  }, [zoomScale])
+
+  const handleImageTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length < 2) {
+      isPinchingRef.current = false
+    }
+    if (e.touches.length === 0 && zoomScale > 1) {
+      panTranslateRef.current = { ...zoomTranslate }
+    }
+  }, [zoomScale, zoomTranslate])
+
+  // Keyboard navigation + scroll lock
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      resetZoom()
+      setLightboxIndex(null)
+    } else if (e.key === 'ArrowLeft') {
+      goToPrevious()
+    } else if (e.key === 'ArrowRight') {
+      goToNext()
+    }
+  }, [goToPrevious, goToNext, resetZoom])
+
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      const scrollY = window.scrollY
+      document.addEventListener('keydown', handleKeyDown)
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        document.documentElement.style.overflow = ''
+
+        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important')
+        window.scrollTo(0, scrollY)
+
+        setTimeout(() => {
+          document.documentElement.style.removeProperty('scroll-behavior')
+        }, 50)
+      }
+    }
+  }, [lightboxIndex, handleKeyDown])
 
   return (
     <div>
@@ -105,7 +235,7 @@ export function ColorDetailStep({ color, isFavourited, onToggleFavourite }: Colo
         ))}
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox - matching homepage DeckGallery design */}
       <AnimatePresence>
         {lightboxIndex !== null && (
           <motion.div
@@ -113,66 +243,135 @@ export function ColorDetailStep({ color, isFavourited, onToggleFavourite }: Colo
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-            onClick={() => setLightboxIndex(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 px-1 sm:px-4 py-4 overscroll-none"
+            onClick={() => {
+              if (!isSwipingRef.current) {
+                resetZoom()
+                setLightboxIndex(null)
+              }
+              isSwipingRef.current = false
+            }}
+            onTouchStart={(e) => {
+              if (e.touches.length === 1) {
+                swipeStartXRef.current = e.touches[0].clientX
+                swipeStartYRef.current = e.touches[0].clientY
+                isSwipingRef.current = false
+              }
+            }}
+            onTouchEnd={(e) => {
+              if (zoomScale > 1 || isPinchingRef.current) return
+              const deltaX = e.changedTouches[0].clientX - swipeStartXRef.current
+              const deltaY = e.changedTouches[0].clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
+            onMouseDown={(e) => {
+              swipeStartXRef.current = e.clientX
+              swipeStartYRef.current = e.clientY
+              isSwipingRef.current = false
+            }}
+            onMouseUp={(e) => {
+              const deltaX = e.clientX - swipeStartXRef.current
+              const deltaY = e.clientY - swipeStartYRef.current
+              if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                isSwipingRef.current = true
+                if (deltaX > 0) goToPrevious()
+                else goToNext()
+              }
+            }}
           >
+            {/* Close button */}
             <button
-              onClick={() => setLightboxIndex(null)}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                resetZoom()
+                setLightboxIndex(null)
+              }}
               aria-label="Close"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            {/* Previous / Next buttons */}
-            {color.images.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setLightboxIndex((lightboxIndex - 1 + color.images.length) % color.images.length)
-                  }}
-                  className="absolute left-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                  aria-label="Previous image"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                  </svg>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setLightboxIndex((lightboxIndex + 1) % color.images.length)
-                  }}
-                  className="absolute right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                  aria-label="Next image"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                  </svg>
-                </button>
-              </>
-            )}
-
+            {/* Image container */}
             <motion.div
+              ref={zoomContainerRef}
               key={lightboxIndex}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-4xl aspect-[4/3] rounded-xl overflow-hidden"
+              className="w-full max-w-5xl"
               onClick={(e) => e.stopPropagation()}
+              onTouchStart={handleImageTouchStart}
+              onTouchMove={handleImageTouchMove}
+              onTouchEnd={handleImageTouchEnd}
+              style={{
+                transform: `scale(${zoomScale}) translate(${zoomTranslate.x}px, ${zoomTranslate.y}px)`,
+                transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+              }}
             >
-              <Image
-                src={color.images[lightboxIndex]}
-                alt={`${colorName} - ${lightboxIndex + 1}`}
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority
-              />
+              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
+                <Image
+                  src={color.images[lightboxIndex]}
+                  alt={`${colorName} - ${lightboxIndex + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  quality={100}
+                  priority
+                />
+              </div>
+            </motion.div>
+
+            {/* Bottom navigation bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
+              className="absolute bottom-4 sm:bottom-6 left-0 right-0"
+            >
+              <div className="relative flex items-center justify-center px-16 sm:max-w-md sm:mx-auto">
+                <button
+                  className="absolute left-2 sm:left-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToPrevious()
+                  }}
+                  aria-label="Previous image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                <span className="flex flex-col items-center bg-black/60 rounded-2xl px-5 py-2.5 w-[70vw] sm:w-80">
+                  <p className="text-white text-base sm:text-lg font-medium text-center w-full">{colorName}</p>
+                  {stainTypePill && (
+                    <p className="text-white/60 text-xs sm:text-sm mt-0.5">{stainTypePill}</p>
+                  )}
+                  <p className="text-white/40 text-xs sm:text-sm mt-0.5">{lightboxIndex + 1} / {color.images.length}</p>
+                </span>
+
+                <button
+                  className="absolute right-2 sm:right-0 p-3 bg-black/60 backdrop-blur-sm hover:bg-black/70 rounded-full text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToNext()
+                  }}
+                  aria-label="Next image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
