@@ -622,8 +622,11 @@ export function DeckGallery() {
         }
       }
 
-      // Vertical: let page scroll normally
-      if (isHorizontalDragRef.current === false) return
+      // Vertical: let page scroll normally, but mark as dragged to prevent lightbox
+      if (isHorizontalDragRef.current === false) {
+        setHasDragged(true)
+        return
+      }
 
       // Horizontal: capture and move gallery
       if (isHorizontalDragRef.current === true) {
